@@ -52,7 +52,7 @@ TBD: prerequisites, dependency installation, run commands, and test commands aft
    git pull --ff-only origin main
    git switch -c feature/description
    ```
-3. Make small, focused commits with clear messages, such as `Add challenge overview`.
+3. Make small, focused commits using the conventions in [AGENTS.md](AGENTS.md), such as `docs: add challenge overview`.
 4. Push your branch and open a pull request using the template. Link its issue and describe how you tested the change.
 5. Ask one teammate to review, merge after resolving feedback, and delete the merged branch.
 
