@@ -7,6 +7,7 @@ We are **Overfitted**, a team of three Business Informatics students at the Univ
 
 This repository is our shared workspace for the **KI-Hackathon für Weiterbildungsanbieter**. It provides lightweight project organization so we can start building as soon as the challenge is announced.
 
+- [Team schedule and deadlines](docs/hackathon-zeitplan.md)
 - [Official hackathon website](https://ki-hackathon.com/)
 - [Official agenda](https://ki-hackathon.com/ki-hackathon-fuer-weiterbildungsanbieter-agenda/)
 
