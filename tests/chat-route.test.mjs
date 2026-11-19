@@ -1,0 +1,322 @@
+// Prüft POST /api/chat gegen einen simulierten Langdock-Server. Läuft ohne echten Schlüssel.
+import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { createServer } from "node:http";
+import { after, before, describe, test } from "node:test";
+import { fileURLToPath } from "node:url";
+
+const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const catalog = JSON.parse(readFileSync(new URL("../data/json/foerderprogramme.json", import.meta.url), "utf8")).programme;
+const ESF = "esf-fachkursfoerderung-baden-wuerttemberg";
+const IDEE = "idee-bw";
+
+const profile = {
+  vorhaben: "Kurs zur digitalen Grundbildung für Erwachsene",
+  themen: ["digital"],
+  zielgruppen: ["erwachsene"],
+  bundesland: "Baden-Württemberg",
+  traeger: "verein",
+  groesse: "klein",
+  budget: 15000,
+  eigenanteil: null,
+  start: null,
+  startOffen: false,
+  partner: { international: null, startchancen: null, krankenkasse: null, kommune: null, azav: null },
+};
+
+// ---------- Simuliertes Langdock ----------
+
+function fakeLangdock() {
+  const requests = [];
+  let next = [];
+  const server = createServer((req, res) => {
+    let raw = "";
+    req.on("data", (chunk) => (raw += chunk));
+    req.on("end", () => {
+      requests.push({ url: req.url, auth: req.headers.authorization, body: raw ? JSON.parse(raw) : null });
+      const reply = next.length > 1 ? next.shift() : next[0];
+      if (!reply || reply.drop) return req.socket.destroy();
+      const body = reply.status === 200 ? responseBody(reply.text) : { error: { message: "fake error" } };
+      res.writeHead(reply.status, { "content-type": "application/json" });
+      res.end(JSON.stringify(body));
+    });
+  });
+  return {
+    requests,
+    /** Nächste Antwort(en): { status, text } oder { drop: true } für einen Verbindungsabbruch. */
+    respond(...replies) {
+      next = replies;
+      requests.length = 0;
+    },
+    listen: () => new Promise((resolve) => server.listen(0, "127.0.0.1", () => resolve(server.address().port))),
+    close: () => new Promise((resolve) => server.close(resolve)),
+  };
+}
+
+function responseBody(text) {
+  return {
+    id: "resp_test",
+    object: "response",
+    created_at: 0,
+    status: "completed",
+    model: "gpt-5.1",
+    output: [{
+      id: "msg_test",
+      type: "message",
+      role: "assistant",
+      status: "completed",
+      content: [{ type: "output_text", text, annotations: [] }],
+    }],
+  };
+}
+
+const modelJson = (value) => ({ status: 200, text: JSON.stringify(value) });
+
+// ---------- Next-Server ----------
+
+async function startApp(env) {
+  const port = 3400 + Math.floor(Math.random() * 500);
+  const child = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "-p", String(port)], {
+    cwd: ROOT,
+    env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1", ...env },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  let log = "";
+  child.stdout.on("data", (d) => (log += d));
+  child.stderr.on("data", (d) => (log += d));
+  const base = `http://127.0.0.1:${port}`;
+  for (let i = 0; i < 120; i++) {
+    if (child.exitCode !== null) throw new Error(`next dev beendet:\n${log}`);
+    try {
+      await fetch(`${base}/api/chat`, { method: "GET" });
+      break;
+    } catch {
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+  return {
+    base,
+    stop: () => new Promise((resolve) => {
+      if (child.exitCode !== null) return resolve();
+      child.once("exit", resolve);
+      child.kill("SIGTERM");
+    }),
+  };
+}
+
+async function chat(base, body, raw = false) {
+  const response = await fetch(`${base}/api/chat`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: raw ? body : JSON.stringify(body),
+  });
+  return { status: response.status, headers: response.headers, data: await response.json() };
+}
+
+function assertUnavailable(res, expectedProfile) {
+  assert.equal(res.status, 503);
+  assert.equal(res.headers.get("retry-after"), "60");
+  assert.equal(res.data.code, "KI_NICHT_ERREICHBAR");
+  assert.match(res.data.reply, /Problem mit der Anbindung/);
+  assert.equal(res.data.catalog.length, catalog.length);
+  assert.ok(res.data.catalog.every((e) => e.id && e.titel && "url" in e && e.frist));
+  if (expectedProfile) assert.deepEqual(res.data.profile, expectedProfile);
+}
+
+// ---------- Tests ----------
+
+describe("POST /api/chat", { timeout: 180_000 }, () => {
+  const langdock = fakeLangdock();
+  let app;
+
+  before(async () => {
+    const port = await langdock.listen();
+    app = await startApp({
+      LANGDOCK_API_KEY: "test-key",
+      LANGDOCK_BASE_URL: `http://127.0.0.1:${port}`,
+      LANGDOCK_MODEL: "gpt-5.1",
+    });
+  });
+  after(async () => {
+    await app?.stop();
+    await langdock.close();
+  });
+
+  test("a message returns reply, profile and enriched matches", async () => {
+    langdock.respond(modelJson({
+      reply: "Wann soll das Projekt starten?",
+      profile,
+      neueSuche: true,
+      treffer: [
+        { programmeId: ESF, status: "passend", begruendung: "Passt.", offenePunkte: [], anpassung: "wird verworfen" },
+        { programmeId: "erfunden", status: "passend", begruendung: "Gibt es nicht.", offenePunkte: [], anpassung: null },
+        { programmeId: ESF, status: "pruefen", begruendung: "Doppelt.", offenePunkte: [], anpassung: null },
+        { programmeId: IDEE, status: "aehnlich", begruendung: "Fast.", offenePunkte: ["Frist"], anpassung: "Später starten." },
+        { programmeId: "interreg", status: "pruefen", begruendung: "Drei.", offenePunkte: [], anpassung: null },
+        { programmeId: "horizon-europe", status: "pruefen", begruendung: "Vier.", offenePunkte: [], anpassung: null },
+      ],
+    }));
+    const res = await chat(app.base, {
+      action: "message",
+      message: "Wir planen einen Kurs zur digitalen Grundbildung.",
+      history: [{ role: "assistant", text: "Was planen Sie?" }],
+    });
+
+    assert.equal(res.status, 200);
+    assert.equal(res.data.reply, "Wann soll das Projekt starten?");
+    assert.deepEqual(res.data.profile, profile);
+    assert.deepEqual(res.data.matches.map((m) => m.programmeId), [ESF, IDEE, "interreg"]);
+    const [esf, idee] = res.data.matches;
+    assert.equal(esf.titel, catalog.find((p) => p.id === ESF).titel);
+    assert.match(esf.url, /^https:\/\/www\.esf-bw\.de\//);
+    assert.equal(esf.anpassung, null, "anpassung only for status aehnlich");
+    assert.equal(idee.anpassung, "Später starten.");
+  });
+
+  test("the Langdock request carries model, schema, history, profile and catalogue", async () => {
+    langdock.respond(modelJson({ reply: "ok", profile, neueSuche: false, treffer: [] }));
+    await chat(app.base, {
+      action: "message",
+      message: "Zweite Nachricht",
+      history: [{ role: "user", text: "Erste Nachricht" }, { role: "assistant", text: "Antwort" }],
+      profile,
+    });
+
+    assert.equal(langdock.requests.length, 1);
+    const { url, auth, body } = langdock.requests[0];
+    assert.equal(url, "/responses");
+    assert.equal(auth, "Bearer test-key");
+    assert.equal(body.model, "gpt-5.1");
+    assert.equal(body.store, false);
+    assert.equal(body.text.format.type, "json_schema");
+    assert.equal(body.text.format.strict, true);
+    assert.equal(body.text.format.schema.$schema, undefined);
+    assert.deepEqual(body.input.map((m) => [m.role, m.content]), [
+      ["user", "Erste Nachricht"],
+      ["assistant", "Antwort"],
+      ["user", "Zweite Nachricht"],
+    ]);
+    assert.ok(body.instructions.includes(JSON.stringify(profile)), "profile in instructions");
+    assert.ok(body.instructions.includes(ESF) && body.instructions.includes(IDEE), "catalogue in instructions");
+    assert.ok(!body.instructions.includes("hat das Programm"), "no selected programme");
+  });
+
+  test("without a new search the response has no matches", async () => {
+    langdock.respond(modelJson({ reply: "Antwort", profile, neueSuche: false, treffer: [{ programmeId: ESF, status: "passend", begruendung: "x", offenePunkte: [], anpassung: null }] }));
+    const res = await chat(app.base, { action: "message", message: "Danke", profile });
+    assert.equal(res.status, 200);
+    assert.equal("matches" in res.data, false);
+  });
+
+  test("a relevant correction without a new search triggers one follow-up search", async () => {
+    const bayern = { ...profile, bundesland: "Bayern" };
+    langdock.respond(
+      modelJson({ reply: "Notiert.", profile: bayern, neueSuche: false, treffer: [] }),
+      modelJson({ reply: "Neue Suche für Bayern.", profile: bayern, neueSuche: true, treffer: [{ programmeId: "esf-bundesprogramm", status: "pruefen", begruendung: "Bundesweit.", offenePunkte: [], anpassung: null }] }),
+    );
+    const res = await chat(app.base, { action: "message", message: "Wir sind in Bayern.", profile, selectedProgrammeId: ESF });
+    assert.equal(res.status, 200);
+    assert.equal(langdock.requests.length, 2);
+    assert.ok(langdock.requests[1].body.instructions.includes(JSON.stringify(bayern)), "second call uses the corrected profile");
+    assert.equal(res.data.reply, "Neue Suche für Bayern.");
+    assert.equal(res.data.profile.bundesland, "Bayern");
+    assert.deepEqual(res.data.matches.map((m) => m.programmeId), ["esf-bundesprogramm"]);
+  });
+
+  test("an irrelevant profile change does not trigger a second call", async () => {
+    langdock.respond(modelJson({ reply: "Danke.", profile: { ...profile, vorhaben: "Neuer Titel" }, neueSuche: false, treffer: [] }));
+    const res = await chat(app.base, { action: "message", message: "Nenne es Neuer Titel.", profile });
+    assert.equal(res.status, 200);
+    assert.equal(langdock.requests.length, 1);
+    assert.equal("matches" in res.data, false);
+  });
+
+  test("a follow-up question includes the selected catalogue entry with its documents", async () => {
+    langdock.respond(modelJson({ reply: "Über ELAN.", profile, neueSuche: false, treffer: [] }));
+    const res = await chat(app.base, { action: "message", message: "Welche Unterlagen brauchen wir?", profile, selectedProgrammeId: ESF });
+    assert.equal(res.status, 200);
+    const { instructions } = langdock.requests[0].body;
+    assert.match(instructions, /hat das Programm "ESF-Fachkursförderung Baden-Württemberg"/);
+    assert.match(instructions, /Unterschrift und Bestätigungen/);
+  });
+
+  test("selectProgramme returns the checklist and the selected programme", async () => {
+    langdock.respond(modelJson({ reply: "Checkliste" }));
+    const res = await chat(app.base, { action: "selectProgramme", programmeId: ESF, profile });
+    assert.equal(res.status, 200);
+    assert.equal(res.data.reply, "Checkliste");
+    assert.deepEqual(res.data.profile, profile);
+    assert.deepEqual(res.data.selectedProgramme, { id: ESF, titel: catalog.find((p) => p.id === ESF).titel });
+    assert.match(langdock.requests[0].body.instructions, /Antragscheckliste/);
+  });
+
+  test("selectProgramme with an unknown ID returns 404 without calling Langdock", async () => {
+    langdock.respond(modelJson({ reply: "darf nicht kommen" }));
+    const res = await chat(app.base, { action: "selectProgramme", programmeId: "gibt-es-nicht" });
+    assert.equal(res.status, 404);
+    assert.match(res.data.error, /nicht im Katalog/);
+    assert.equal(langdock.requests.length, 0);
+  });
+
+  test("invalid requests return 400 without calling Langdock", async () => {
+    langdock.respond(modelJson({ reply: "darf nicht kommen" }));
+    const invalid = [
+      ["kein JSON", "{kaputt", true],
+      ["unbekannte Aktion", { action: "loeschen" }],
+      ["leere Nachricht", { action: "message", message: "   " }],
+      ["zu lange Nachricht", { action: "message", message: "x".repeat(4001) }],
+      ["Start im falschen Format", { action: "message", message: "Hallo", profile: { ...profile, start: "März 2027" } }],
+      ["Eigenanteil über 100 %", { action: "message", message: "Hallo", profile: { ...profile, eigenanteil: 150 } }],
+      ["unbekanntes Profilfeld", { action: "message", message: "Hallo", profile: { ...profile, foo: 1 } }],
+    ];
+    for (const [name, body, raw] of invalid) {
+      const res = await chat(app.base, body, raw);
+      assert.equal(res.status, 400, name);
+      assert.equal(typeof res.data.error, "string", name);
+    }
+    assert.equal(langdock.requests.length, 0);
+  });
+
+  describe("AI outage returns 503 with the catalogue", () => {
+    const cases = [
+      ["Langdock rejects the key (401)", [{ status: 401 }]],
+      ["Langdock server error (500)", [{ status: 500 }]],
+      ["connection dropped", [{ drop: true }]],
+      ["model returns invalid JSON", [{ status: 200, text: "kein json" }]],
+      ["model returns an invalid profile", [modelJson({ reply: "x", profile: { ...profile, eigenanteil: 150 }, neueSuche: false, treffer: [] })]],
+    ];
+    for (const [name, replies] of cases) {
+      test(name, async () => {
+        langdock.respond(...replies);
+        assertUnavailable(await chat(app.base, { action: "message", message: "Hallo", profile }), profile);
+      });
+    }
+
+    test("also for selectProgramme", async () => {
+      langdock.respond({ status: 500 });
+      assertUnavailable(await chat(app.base, { action: "selectProgramme", programmeId: ESF, profile }), profile);
+    });
+  });
+});
+
+describe("POST /api/chat without an API key", { timeout: 180_000 }, () => {
+  const langdock = fakeLangdock();
+  let app;
+
+  before(async () => {
+    const port = await langdock.listen();
+    // Leerer Schlüssel überschreibt einen Wert aus .env.local
+    app = await startApp({ LANGDOCK_API_KEY: "", LANGDOCK_BASE_URL: `http://127.0.0.1:${port}` });
+  });
+  after(async () => {
+    await app?.stop();
+    await langdock.close();
+  });
+
+  test("returns 503 with the catalogue and never calls Langdock", async () => {
+    langdock.respond(modelJson({ reply: "darf nicht kommen" }));
+    assertUnavailable(await chat(app.base, { action: "message", message: "Hallo" }));
+    assert.equal(langdock.requests.length, 0);
+  });
+});

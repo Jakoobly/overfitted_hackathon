@@ -1,0 +1,97 @@
+// Live-Prüfung des Demo-Ablaufs gegen eine laufende App mit echtem Langdock-Schlüssel.
+//
+//   npm run dev            (in einem zweiten Terminal)
+//   npm run smoke:chat     (optional: SMOKE_URL=https://… npm run smoke:chat)
+//
+// Verbraucht Langdock-Tokens und läuft deshalb nicht in der CI. Modellantworten schwanken;
+// bei einem Fehlschlag die ausgegebenen Antworten lesen und den Lauf ggf. wiederholen.
+import { readFileSync } from "node:fs";
+
+const BASE = (process.env.SMOKE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+const catalog = JSON.parse(readFileSync(new URL("../data/json/foerderprogramme.json", import.meta.url), "utf8")).programme;
+const ESF = "esf-fachkursfoerderung-baden-wuerttemberg";
+const bwOnly = new Set(catalog.filter((p) => p.foerdergebiet === "Baden-Württemberg").map((p) => p.id));
+
+const failures = [];
+const check = (ok, text) => {
+  console.log(`  ${ok ? "✔" : "✖"} ${text}`);
+  if (!ok) failures.push(text);
+  return ok;
+};
+
+let history = [];
+let profile;
+let selectedProgrammeId = null;
+
+async function send(title, request, userText) {
+  console.log(`\n▶ ${title}`);
+  const started = Date.now();
+  let response, data;
+  try {
+    response = await fetch(`${BASE}/api/chat`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...request, history, ...(profile ? { profile } : {}) }),
+    });
+    data = await response.json();
+  } catch (error) {
+    console.error(`\nApp unter ${BASE} nicht erreichbar (${error.message}). Läuft npm run dev?`);
+    process.exit(2);
+  }
+  const seconds = ((Date.now() - started) / 1000).toFixed(1);
+  if (response.status === 503) {
+    console.error(`\n503 ${data.code}: Langdock nicht erreichbar. LANGDOCK_API_KEY und Server-Log prüfen.`);
+    process.exit(2);
+  }
+  check(response.status === 200, `HTTP ${response.status} in ${seconds} s`);
+  if (response.status !== 200) {
+    console.log(`  ${JSON.stringify(data)}`);
+    return data;
+  }
+  console.log(`  Antwort: ${data.reply.replace(/\n/g, "\n           ")}`);
+  if (data.matches) console.log(`  Treffer: ${data.matches.map((m) => `${m.titel} (${m.status})`).join("; ") || "keine"}`);
+  history = [...history, { role: "user", text: userText }, { role: "assistant", text: data.reply }];
+  profile = data.profile;
+  return data;
+}
+
+console.log(`Förderfinder-Smoke-Test gegen ${BASE}`);
+
+// 1. Freie Projektbeschreibung -> Treffer und gezielte Rückfrage
+const description = "Wir sind eine kleine VHS in Heilbronn, ein eingetragener Verein, und planen einen Kurs zur digitalen Grundbildung für Erwachsene: Smartphone, Online-Banking, sichere Passwörter. Budget rund 15.000 Euro.";
+const first = await send("Projektbeschreibung", { action: "message", message: description }, description);
+check(first.profile?.bundesland === "Baden-Württemberg", `Bundesland erkannt (${first.profile?.bundesland})`);
+check(first.profile?.budget === 15000, `Budget erkannt (${first.profile?.budget})`);
+check(Array.isArray(first.matches) && first.matches.length > 0, `Treffer geliefert (${first.matches?.length ?? 0})`);
+check(first.matches?.every((m) => catalog.some((p) => p.id === m.programmeId)) ?? false, "alle Treffer stammen aus dem Katalog");
+check(/\?/.test(first.reply ?? ""), "Antwort enthält eine Rückfrage");
+
+// 2. Antrag vorbereiten (ESF-Fachkurse, falls getroffen, sonst erster Treffer)
+const chosen = first.matches?.find((m) => m.programmeId === ESF) ?? first.matches?.[0];
+if (chosen) {
+  const selection = await send(`Antrag vorbereiten: ${chosen.titel}`, { action: "selectProgramme", programmeId: chosen.programmeId }, `Ich möchte den Antrag für „${chosen.titel}“ vorbereiten.`);
+  check(selection.selectedProgramme?.id === chosen.programmeId, "Programm ausgewählt");
+  check((selection.reply ?? "").includes(chosen.titel.split(" ")[0]), "Checkliste nennt das Programm");
+  selectedProgrammeId = selection.selectedProgramme?.id ?? null;
+
+  // 3. Freie Frage nach den Unterlagen
+  const question = "Welche Unterlagen brauchen wir für den Antrag?";
+  const docs = await send("Frage nach den Unterlagen", { action: "message", message: question, selectedProgrammeId }, question);
+  if (selectedProgrammeId === ESF) {
+    const markers = ["ELAN", "Anlage 1", "Unterschrift und Bestätigungen", "Identifikation des Antragstellers", "Kursbeschreibung"];
+    const found = markers.filter((m) => (docs.reply ?? "").includes(m));
+    check(found.length >= 2, `nennt belegte Antragsunterlagen aus dem Katalog (${found.join(", ") || "keine"})`);
+  } else {
+    check(/Förderstelle/.test(docs.reply ?? ""), "verweist mangels Katalogangaben an die Förderstelle");
+  }
+}
+
+// 4. Frei formulierte Korrektur ändert die Bewertung
+const correction = "Korrektur: Unsere VHS liegt in Bayern, nicht in Baden-Württemberg.";
+const corrected = await send("Korrektur des Standorts", { action: "message", message: correction, selectedProgrammeId }, correction);
+check(corrected.profile?.bundesland === "Bayern", `Bundesland korrigiert (${corrected.profile?.bundesland})`);
+check(Array.isArray(corrected.matches), "neue Suche ausgelöst");
+check(!(corrected.matches ?? []).some((m) => bwOnly.has(m.programmeId)), "keine reinen Baden-Württemberg-Programme mehr");
+
+console.log(failures.length ? `\n✖ ${failures.length} Prüfung(en) fehlgeschlagen` : "\n✔ Demo-Ablauf vollständig");
+process.exit(failures.length ? 1 : 0);
