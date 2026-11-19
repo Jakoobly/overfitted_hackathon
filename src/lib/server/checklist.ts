@@ -2,7 +2,7 @@
 // gegen das Projektprofil und setzt Unterlagen, Frist, Link und Quelle aus dem Katalog ein.
 import { z } from "zod";
 import type { Profile } from "@/lib/chat/contract";
-import type { Programme } from "./catalog";
+import { availability, type Programme } from "./catalog";
 
 const PROFILE_FIELDS = [
   "themen",
@@ -81,10 +81,12 @@ function formatDate(iso: string) {
   return d && m && y ? `${d}.${m}.${y}` : iso;
 }
 
-function fristText(frist: Programme["frist"]) {
+function fristText(programme: Programme) {
+  const { frist } = programme;
   switch (frist.status) {
     case "datum":
-      return frist.datum ? `Antragsfrist ${formatDate(frist.datum)}` : "bei der Förderstelle prüfen";
+      if (!frist.datum) return "bei der Förderstelle prüfen";
+      return `Antragsfrist ${formatDate(frist.datum)}${availability(programme).verfuegbar ? "" : " (abgelaufen)"}`;
     case "laufend":
       return "laufende Antragstellung";
     case "kein_aufruf":
@@ -101,7 +103,10 @@ export function renderChecklist(programme: Programme, profile: Profile, output: 
   const unbacked = output.erfuellt.filter((e) => !backed.includes(e)).map((e) => e.voraussetzung);
   const offen = [...output.offen, ...unbacked];
 
-  const parts = [`Gewähltes Programm: ${programme.titel}`, output.einleitung];
+  const parts = [`Gewähltes Programm: ${programme.titel}`];
+  const { verfuegbar, grund } = availability(programme);
+  if (!verfuegbar) parts.push(`Achtung: Laut Katalog ist eine Bewerbung derzeit nicht möglich (${grund}). Bitte bei der Förderstelle nach dem nächsten Aufruf fragen.`);
+  parts.push(output.einleitung);
 
   // Dieselbe Voraussetzung mit mehreren Belegen nur einmal aufführen
   const evidence = new Map<string, string[]>();
@@ -128,7 +133,7 @@ export function renderChecklist(programme: Programme, profile: Profile, output: 
   } else {
     parts.push("Unterlagen: im Katalog nicht hinterlegt, bitte bei der Förderstelle prüfen.");
   }
-  parts.push(`Frist: ${fristText(programme.frist)}`);
+  parts.push(`Frist: ${fristText(programme)}`);
   parts.push(`Nächster Schritt: ${output.naechsterSchritt}`);
 
   const sources = [

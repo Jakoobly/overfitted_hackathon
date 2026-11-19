@@ -306,7 +306,7 @@ export function FundingWorkspace() {
                   </label>
                   <label>
                     Projektstart
-                    <input name="start" type="month" placeholder="JJJJ-MM" defaultValue={profile?.start ?? ""} />
+                    <input name="start" type="month" placeholder="JJJJ-MM" min={new Date().toISOString().slice(0, 7)} defaultValue={profile?.start ?? ""} />
                   </label>
                 </fieldset>
                 {profileError && <p className="chat-error profile-error" role="alert">{profileError}</p>}

@@ -6,6 +6,10 @@ Im Repo-Ordner `npm ci` ausführen, den Langdock-Zugang in `.env.local` einricht
 
 Im Chat sendet **Enter** die Nachricht. **Umschalt+Enter** fügt einen Zeilenumbruch ein. Die Nachricht erscheint sofort im Verlauf. Darunter steht „Der Förderfinder antwortet …“, bis die Antwort eintrifft. Schlägt der Versand fehl, steht der Text wieder im Eingabefeld.
 
+### Nur offene Programme und künftige Projekte
+
+Der Förderfinder sucht nur Programme, für die man sich laut Katalog jetzt noch bewerben kann. Programme mit `frist.status = "kein_aufruf"` oder einer Frist vor dem heutigen Datum zeigt der Server nie als Treffer an, auch wenn das Modell sie vorschlägt (Stand 19. November 2026: „Gemeinsam engagiert in BW V“, Frist 01.10.2026, und „Wandel der Arbeit“, kein Aufruf). Programme mit unbekannter Frist gelten als offen. Liegt der genannte Projektbeginn vor dem aktuellen Monat, z. B. „letztes Jahr“, verwirft der Server den Start, zeigt keine Treffer und fragt nach einem künftigen Starttermin. Die Eckdaten-Ansicht lässt nur Monate ab dem aktuellen Monat zu.
+
 ### Automatische Prüfungen
 
 - `npm test` prüft ohne Langdock-Schlüssel die Chat-Route gegen ein simuliertes Langdock: Antwortformat, Treffer nur aus dem Katalog, Anfrage an Langdock (`gpt-5.1`, `store: false`), Fehler 400/404, den Ersatzweg mit HTTP 503 und Katalogliste sowie die Neubewertung nach einer Korrektur. Außerdem prüft es, dass der Katalog dem Import entspricht. Läuft auch in der CI.

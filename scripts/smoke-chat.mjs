@@ -10,6 +10,8 @@ import { readFileSync } from "node:fs";
 const BASE = (process.env.SMOKE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const catalog = JSON.parse(readFileSync(new URL("../data/json/foerderprogramme.json", import.meta.url), "utf8")).programme;
 const ESF = "esf-fachkursfoerderung-baden-wuerttemberg";
+const todayIso = new Date().toISOString().slice(0, 10);
+const closed = new Set(catalog.filter((p) => p.frist.status === "kein_aufruf" || (p.frist.status === "datum" && p.frist.datum < todayIso)).map((p) => p.id));
 const bwOnly = new Set(catalog.filter((p) => p.foerdergebiet === "Baden-Württemberg").map((p) => p.id));
 
 const failures = [];
@@ -49,7 +51,10 @@ async function send(title, request, userText) {
     return data;
   }
   console.log(`  Antwort: ${data.reply.replace(/\n/g, "\n           ")}`);
-  if (data.matches) console.log(`  Treffer: ${data.matches.map((m) => `${m.titel} (${m.status})`).join("; ") || "keine"}`);
+  if (data.matches) {
+    console.log(`  Treffer: ${data.matches.map((m) => `${m.titel} (${m.status})`).join("; ") || "keine"}`);
+    check(!data.matches.some((m) => closed.has(m.programmeId)), "keine Programme mit abgelaufener Frist oder ohne Aufruf");
+  }
   history = [...history, { role: "user", text: userText }, { role: "assistant", text: data.reply }];
   profile = data.profile;
   return data;
@@ -96,6 +101,13 @@ const corrected = await send("Korrektur des Standorts", { action: "message", mes
 check(corrected.profile?.bundesland === "Bayern", `Bundesland korrigiert (${corrected.profile?.bundesland})`);
 check(Array.isArray(corrected.matches), "neue Suche ausgelöst");
 check(!(corrected.matches ?? []).some((m) => bwOnly.has(m.programmeId)), "keine reinen Baden-Württemberg-Programme mehr");
+
+// 5. Projektbeginn in der Vergangenheit wird nicht akzeptiert
+const past = "Der Kurs ist übrigens schon letztes Jahr im März gestartet.";
+const pastReply = await send("Projektbeginn in der Vergangenheit", { action: "message", message: past, selectedProgrammeId }, past);
+check(/Vergangenheit/.test(pastReply.reply ?? ""), "weist auf den vergangenen Projektbeginn hin");
+check(!pastReply.profile?.start || pastReply.profile.start >= todayIso.slice(0, 7), `kein vergangener Start im Profil (${pastReply.profile?.start})`);
+check(pastReply.matches === undefined, "keine Treffer für ein bereits begonnenes Projekt");
 
 console.log(failures.length ? `\n✖ ${failures.length} Prüfung(en) fehlgeschlagen` : "\n✔ Demo-Ablauf vollständig");
 process.exit(failures.length ? 1 : 0);

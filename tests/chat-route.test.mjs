@@ -224,6 +224,45 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
     assert.deepEqual(res.data.matches.map((m) => m.programmeId), ["esf-bundesprogramm"]);
   });
 
+  test("a project start in the past is rejected with a question for a new start", async () => {
+    langdock.respond(modelJson({
+      reply: "Passt alles.",
+      profile: { ...profile, start: "2025-03" },
+      neueSuche: true,
+      treffer: [{ programmeId: ESF, status: "passend", begruendung: "Passt.", offenePunkte: [], anpassung: null }],
+    }));
+    const res = await chat(app.base, { action: "message", message: "Der Kurs ist letztes Jahr im März gestartet.", profile });
+    assert.equal(res.status, 200);
+    assert.match(res.data.reply, /Projektbeginn \(März 2025\) liegt in der Vergangenheit/);
+    assert.match(res.data.reply, /Wann soll das Projekt .* frühestens starten/);
+    assert.doesNotMatch(res.data.reply, /Passt alles/);
+    assert.equal(res.data.profile.start, null);
+    assert.equal("matches" in res.data, false);
+  });
+
+  test("a start in the current month or later is accepted", async () => {
+    const nextYear = `${new Date().getUTCFullYear() + 1}-03`;
+    langdock.respond(modelJson({ reply: "Gut.", profile: { ...profile, start: nextYear }, neueSuche: true, treffer: [] }));
+    const res = await chat(app.base, { action: "message", message: "Start nächsten März.", profile });
+    assert.equal(res.data.reply, "Gut.");
+    assert.equal(res.data.profile.start, nextYear);
+  });
+
+  test("programmes without an open call are never returned as matches", async () => {
+    const closed = catalog.filter((p) => p.frist.status === "kein_aufruf" || (p.frist.status === "datum" && p.frist.datum < new Date().toISOString().slice(0, 10)));
+    assert.ok(closed.length > 0, "catalogue has closed programmes");
+    langdock.respond(modelJson({
+      reply: "Treffer.",
+      profile,
+      neueSuche: true,
+      treffer: [...closed, { id: "esf-bundesprogramm" }].map((p) => ({ programmeId: p.id, status: "passend", begruendung: "x", offenePunkte: [], anpassung: null })),
+    }));
+    const res = await chat(app.base, { action: "message", message: "Suche.", profile });
+    assert.deepEqual(res.data.matches.map((m) => m.programmeId), ["esf-bundesprogramm"]);
+    const sentCatalogue = langdock.requests[0].body.instructions;
+    assert.match(sentCatalogue, /"verfuegbarkeit":\{"verfuegbar":false,"grund":"derzeit kein Förderaufruf"\}/);
+  });
+
   test("an irrelevant profile change does not trigger a second call", async () => {
     langdock.respond(modelJson({ reply: "Danke.", profile: { ...profile, vorhaben: "Neuer Titel" }, neueSuche: false, treffer: [] }));
     const res = await chat(app.base, { action: "message", message: "Nenne es Neuer Titel.", profile });
