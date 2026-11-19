@@ -13,7 +13,7 @@ This repository is our shared workspace for the **KI-Hackathon für Weiterbildun
 
 ## Challenge
 
-The VHS-Förderfinder helps adult education centres find funding programmes for project ideas and prepare the next steps. The [hackathon specification](docs/vhs-foerderfinder.md) defines the MVP, Excel data flow and demo acceptance criteria.
+The VHS-Förderfinder helps adult education centres describe a project in chat and find relevant funding programmes. After choosing a programme, they receive a checklist of requirements, documents and next steps in the same chat. The [hackathon specification](docs/vhs-foerderfinder.md) defines the MVP, Excel data flow and demo acceptance criteria.
 
 ## Tech stack
 
