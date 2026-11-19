@@ -29,6 +29,11 @@
     forschung: ['Forschung', /forschung|studie|evaluation/],
     personal: ['Personalentwicklung', /kursleit|job-shadowing|hospitation|fortbildung für/],
   };
+  // Themenfeld-Farben laut DVV-Styleguide (Sekundärfarbe B)
+  const THEMEN_FARBE = {
+    sprachen: '--vhs-gelb-b', kultur: '--vhs-violett', beruf: '--vhs-rot-b', gesundheit: '--vhs-hellblau-b',
+    politik: '--vhs-gruen-b', demokratie: '--vhs-gruen-b', nachhaltigkeit: '--vhs-gruen-b',
+  };
   const ZIELGRUPPEN = {
     erwachsene: ['Erwachsene', /erwachsen|senior|ältere/],
     jugendliche: ['Jugendliche', /jugendlich|junge menschen|junge erwachsene|schüler/],
@@ -296,8 +301,21 @@
   // ---------- Darstellung: Chat ----------
   function addMsg(role, text) {
     const div = document.createElement('div');
-    div.className = 'msg ' + role;
-    div.textContent = text;
+    const bubble = document.createElement('p');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    if (role === 'system') {
+      div.className = 'message message-system';
+      div.textContent = text;
+    } else if (role === 'user') {
+      div.className = 'message message-user';
+      div.innerHTML = '<p class="speaker">Sie</p>';
+      div.appendChild(bubble);
+    } else {
+      div.className = 'message message-assistant';
+      div.innerHTML = '<span class="avatar" aria-hidden="true">vhs</span><div><p class="speaker">Förderfinder</p></div>';
+      div.lastChild.appendChild(bubble);
+    }
     $('#messages').appendChild(div);
     $('#messages').scrollTop = $('#messages').scrollHeight;
   }
@@ -425,13 +443,14 @@
   function card(e) {
     const p = e.prog;
     const st = STATUS[e.status];
-    const reason = `Fachlicher Bezug: ${e.themen.map((k) => THEMEN[k][0]).join(', ')}` + (e.zg.length ? `; Zielgruppe: ${e.zg.map((k) => ZIELGRUPPEN[k][0]).join(', ')}` : '') + '.';
+    const themeHtml = (k) => (THEMEN_FARBE[k] ? `<span class="theme-dot" style="background:var(${THEMEN_FARBE[k]})" aria-hidden="true"></span>` : ' ') + esc(THEMEN[k][0]);
+    const reason = `Fachlicher Bezug:${e.themen.map(themeHtml).join(',')}` + (e.zg.length ? `; Zielgruppe: ${esc(e.zg.map((k) => ZIELGRUPPEN[k][0]).join(', '))}` : '') + '.';
     const frist = p.regeln.frist ? fmtDate(p.regeln.frist) : p.regeln.noCall ? 'kein offener Aufruf' : 'nicht im Katalog';
     const crit = e.checks.map((c) => `<li class="${c.state}"><span class="ico" aria-label="${c.state}">${ICONS[c.state]}</span><span>${esc(c.text)}</span></li>`).join('');
     const adjusts = e.checks.filter((c) => c.adjust).map((c) => {
       const done = state.accepted.has(c.adjust.key);
       return `<div class="adjust ${done ? 'accepted' : ''}"><p><b>Mögliche Anpassung:</b> ${esc(c.adjust.text)}</p>
-        ${done ? '<p>Übernommen.</p>' : `<button type="button" class="btn accent small" data-adjust="${esc(c.adjust.key)}">${esc(c.adjust.label)}</button>`}</div>`;
+        ${done ? '<p>Übernommen.</p>' : `<button type="button" class="send" data-adjust="${esc(c.adjust.key)}">${esc(c.adjust.label)}</button>`}</div>`;
     }).join('');
     const offen = e.checks.filter((c) => c.state === 'offen' || c.state === 'abweichend');
     const steps = [
@@ -450,7 +469,7 @@
         <span><b>Förderung:</b> ${esc(clip(p.budget || 'nicht im Katalog', 90))}</span>
         <span><b>Frist:</b> ${esc(frist)}</span>
       </div>
-      <p class="reason">${esc(reason)}</p>
+      <p class="reason">${reason}</p>
       <ul class="criteria">${crit}</ul>
       ${adjusts}
       ${p.anmerkung ? `<p class="desc"><b>Hinweis aus dem Katalog:</b> ${esc(p.anmerkung)}</p>` : ''}
@@ -460,8 +479,8 @@
         <p class="desc"><b>Projektbudget:</b> ${esc(p.budget || 'nicht im Katalog')}<br><b>Art der Förderung:</b> ${esc(p.art || 'nicht im Katalog')}<br><b>Fachbereich:</b> ${esc(p.fachbereich || 'k. A.')}<br><b>Quelle:</b> <code>${esc(p.quelle)}</code></p>
       </details>
       <div class="links">
-        ${p.url ? `<a class="btn primary small" href="${esc(p.url)}" target="_blank" rel="noopener">Programmseite</a>` : ''}
-        ${p.beispiele ? `<a class="btn ghost small" href="${esc(p.beispiele)}" target="_blank" rel="noopener">Projektbeispiele</a>` : ''}
+        ${p.url ? `<a class="link-primary" href="${esc(p.url)}" target="_blank" rel="noopener">Programmseite ↗</a>` : ''}
+        ${p.beispiele ? `<a class="link-secondary" href="${esc(p.beispiele)}" target="_blank" rel="noopener">Projektbeispiele</a>` : ''}
       </div>
     </article>`;
   }

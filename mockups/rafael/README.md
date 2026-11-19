@@ -11,7 +11,8 @@ Klickbarer Frontend-Entwurf in reinem HTML, CSS und JavaScript, ohne Build und o
 | Datei | Zweck |
 | --- | --- |
 | `index.html` | Seitenaufbau: Chat oder Formular, erkannte Eckdaten, Ergebniskarten |
-| `styles.css` | Gestaltung nach DVV-Styleguide: vhs Blau `#002855`, vhs Gelb `#FAB90F`, Arial. Das Logo ist ein Platzhalter. |
+| `styles.css` | Gestaltung nach DVV-Styleguide als CSS-Variablen: vhs Blau `#00285A` mit fünf Abstufungen, sieben Sekundärfarben A/B mit Themenfeldern, Arial, Kreiselement in 15-%-Schritten. Die Trefferstatus vermeiden Rot-Grün-Kombinationen. Layout und Komponenten folgen `mockups/Jakob`. |
+| `vhs-logo.png` | Positives vhs-Logo, übernommen aus `mockups/Jakob` |
 | `app.js` | Simulierte KI-Extraktion über Schlüsselwörter, Rückfragen, Förderprüfung und Darstellung |
 | `catalog.js` | 24 Programme aus den Dokumenten in `raw/`. Die Felder `themen`, `zielgruppen` und `regeln` wurden für das Mockup manuell strukturiert. |
 

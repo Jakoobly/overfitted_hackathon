@@ -7,75 +7,115 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo" aria-label="Logo-Platzhalter">vhs</span>
-      <div>
-        <strong>Förderfinder</strong>
-        <span class="brand-sub">Volkshochschulverband Baden-Württemberg</span>
+  <a class="skip-link" href="#beratung">Zum Förderfinder</a>
+
+  <!-- Logo positiv auf weißem Grund mit Schutzzone (DVV-Styleguide, S. 3) -->
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <div class="brand">
+        <img src="vhs-logo.png" alt="vhs" width="105" height="37">
+        <span>Volkshochschulverband<br>Baden-Württemberg</span>
       </div>
-    </div>
-    <div class="mode-switch" role="tablist" aria-label="Eingabemodus">
-      <button role="tab" aria-selected="true" data-mode="chat">Chat</button>
-      <button role="tab" aria-selected="false" data-mode="form">Formular</button>
+      <a class="site-link" href="https://www.vhs-bw.de/">Zur Verbandswebsite <span aria-hidden="true">↗</span></a>
     </div>
   </header>
 
-  <p class="mock-banner">
-    Mockup: regelbasierte Simulation ohne KI. Katalog aus <code>raw/</code>, Stand 19.11.2026.
-    Ergebnisse dienen zur Orientierung und ersetzen nicht die Prüfung bei der Förderstelle.
-  </p>
-
-  <main class="layout">
-    <!-- Linke Spalte: Chat oder Formular -->
-    <section class="panel input-panel" aria-label="Projekteingabe">
-      <div id="chatView">
-        <div id="messages" class="messages" aria-live="polite"></div>
-        <div id="quickReplies" class="quick-replies"></div>
-        <form id="chatForm" class="chat-form">
-          <textarea id="chatInput" rows="3" placeholder="Beschreiben Sie Ihre Projektidee: Vorhaben, Zielgruppe, Standort, Budget, geplanter Start …"></textarea>
-          <button type="submit" class="btn primary">Senden</button>
-        </form>
-        <div class="examples">
-          <span>Beispiele:</span>
-          <button type="button" class="chip" data-example="0">Digitale Grundbildung (BW)</button>
-          <button type="button" class="chip" data-example="1">Elterncafé an Schule</button>
-          <button type="button" class="chip" data-example="2">Gesundheitskurs in Bayern</button>
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Service für Volkshochschulen</p>
+          <h1 id="page-title">Förderfinder</h1>
+          <p>Beschreiben Sie Ihr Vorhaben und finden Sie passende Förderprogramme aus dem Katalog des vhs-Verbands.</p>
         </div>
+        <!-- Kreiselement: Verkleinerung in 15-%-Schritten, Überlagerung bis zur Hälfte -->
+        <div class="hero-art" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
       </div>
-
-      <form id="formView" class="form-view" hidden>
-        <p class="hint">Formularmodus für den Fall eines KI-Ausfalls. Die Förderprüfung ist dieselbe wie im Chat.</p>
-        <div id="formFields"></div>
-        <button type="submit" class="btn primary">Förderprogramme suchen</button>
-      </form>
     </section>
 
-    <!-- Rechte Spalte: Profil und Ergebnisse -->
-    <section class="results-col">
-      <div class="panel profile-panel">
-        <div class="panel-head">
-          <h2>Erkannte Eckdaten</h2>
-          <button type="button" id="editProfile" class="btn ghost small">Bearbeiten</button>
-        </div>
-        <dl id="profileList" class="profile-list"></dl>
-        <form id="profileEdit" class="profile-edit" hidden>
-          <div id="profileFields"></div>
-          <div class="row-actions">
-            <button type="submit" class="btn primary small">Übernehmen und erneut prüfen</button>
-            <button type="button" id="cancelEdit" class="btn ghost small">Abbrechen</button>
+    <div class="workspace">
+      <div class="wrap">
+        <div class="demo-bar">
+          <p><span class="demo-dot" aria-hidden="true"></span> Mockup ohne KI · Katalog aus <code>raw/</code>, Stand 19.11.2026 · Orientierung, keine Förderzusage</p>
+          <div class="mode-switch" role="tablist" aria-label="Eingabemodus">
+            <button type="button" role="tab" aria-selected="true" data-mode="chat">Chat</button>
+            <button type="button" role="tab" aria-selected="false" data-mode="form">Formular</button>
           </div>
-        </form>
-      </div>
+        </div>
 
-      <div id="results" class="results" aria-live="polite">
-        <div class="empty-state">
-          <h2>Noch keine Suche</h2>
-          <p>Beschreiben Sie links Ihr Vorhaben. Der Förderfinder zeigt bis zu drei passende Programme aus dem Katalog und erklärt die Übereinstimmung.</p>
+        <div class="columns">
+          <!-- Linke Spalte: Chat oder Formular -->
+          <section class="panel input-panel" id="beratung" aria-labelledby="chat-title">
+            <header class="panel-heading">
+              <div>
+                <h2 id="chat-title">Ihr Projekt</h2>
+                <p>Vorhaben, Zielgruppe, Standort, Budget und geplanter Start</p>
+              </div>
+            </header>
+
+            <div id="chatView" class="chat">
+              <div id="messages" class="conversation" role="log" aria-label="Chatverlauf" aria-live="polite"></div>
+              <form id="chatForm" class="composer">
+                <div id="quickReplies" class="quick-actions" aria-label="Antwortvorschläge"></div>
+                <label class="visually-hidden" for="chatInput">Ihre Nachricht</label>
+                <div class="input-row">
+                  <textarea id="chatInput" rows="2" placeholder="Beschreiben Sie Ihre Projektidee …"></textarea>
+                  <button type="submit" class="send">Senden <span aria-hidden="true">↑</span></button>
+                </div>
+                <div class="examples">
+                  <span>Beispiele:</span>
+                  <button type="button" class="chip" data-example="0">Digitale Grundbildung (BW)</button>
+                  <button type="button" class="chip" data-example="1">Elterncafé an Schule</button>
+                  <button type="button" class="chip" data-example="2">Gesundheitskurs in Bayern</button>
+                </div>
+              </form>
+            </div>
+
+            <form id="formView" class="form-view" hidden>
+              <p class="hint">Formularmodus für den Fall eines KI-Ausfalls. Die Förderprüfung ist dieselbe wie im Chat.</p>
+              <div id="formFields"></div>
+              <button type="submit" class="send">Förderprogramme suchen</button>
+            </form>
+          </section>
+
+          <!-- Rechte Spalte: Profil und Ergebnisse -->
+          <section class="results-col" aria-label="Ergebnisse">
+            <div class="panel">
+              <header class="panel-heading">
+                <div>
+                  <h2>Erkannte Eckdaten</h2>
+                  <p>Prüfen und bei Bedarf korrigieren</p>
+                </div>
+                <button type="button" id="editProfile" class="text-button">Bearbeiten</button>
+              </header>
+              <div class="panel-body">
+                <dl id="profileList" class="profile-list"></dl>
+                <form id="profileEdit" class="profile-edit" hidden>
+                  <div id="profileFields"></div>
+                  <div class="row-actions">
+                    <button type="submit" class="send">Übernehmen und erneut prüfen</button>
+                    <button type="button" id="cancelEdit" class="text-button">Abbrechen</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div id="results" class="results" aria-live="polite">
+              <div class="empty-state">
+                <h2>Noch keine Suche</h2>
+                <p>Beschreiben Sie links Ihr Vorhaben. Der Förderfinder zeigt bis zu drei passende Programme aus dem Katalog und erklärt die Übereinstimmung.</p>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
-    </section>
+    </div>
   </main>
+
+  <footer class="wrap footer">
+    <p>Hackathon-Mockup · Rafael</p>
+    <p>Programmdaten aus den Unterlagen des vhs-Verbands, Regeln für die Demo vereinfacht.</p>
+  </footer>
 
   <script src="catalog.js"></script>
   <script src="app.js"></script>
