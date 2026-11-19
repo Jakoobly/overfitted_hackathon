@@ -8,7 +8,9 @@ Im Repo-Ordner `npm ci` und `npm run dev` ausführen. Unter `http://localhost:30
 
 **Der Demo-Schlüssel ist nur für den Hackathon am 19. November 2026 vorgesehen. Er läuft am 20. November 2026 ab.** Für weitere Tests und den Betrieb stellt die zuständige Person im VHS-Langdock-Workspace einen neuen Workspace-Schlüssel mit Berechtigung für die Completion API bereit.
 
-Am 19. November 2026 hat der Langdock-EU-Endpunkt mit `gpt-5.1` auf eine fiktive Testnachricht mit `Langdock OK` geantwortet. Damit sind Schlüssel, Endpunkt und Modellzugriff für den Demo-Schlüssel geprüft. Die strukturierte Ausgabe für das Projektprofil und der vollständige Ablauf im Förderfinder stehen noch zur Abnahme aus.
+Am 19. November 2026 hat der Langdock-EU-Endpunkt mit `gpt-5.1` auf eine fiktive Testnachricht mit `Langdock OK` geantwortet. Damit sind Schlüssel, Endpunkt und Modellzugriff für den Demo-Schlüssel geprüft. Ebenfalls am 19. November 2026 lieferte `POST /api/chat` lokal mit `gpt-5.1` die strukturierte Ausgabe für Projektprofil und Treffer. Geprüft: Eine freie Projektbeschreibung einer VHS in Heilbronn führte zu Treffern und einer gezielten Rückfrage. Nach „Antrag vorbereiten“ kam die Checkliste, und die Frage nach den Unterlagen wurde aus dem Katalogeintrag beantwortet. Weil der Katalog noch keine Unterlagen enthält, verweist der Chat dafür an die Förderstelle. Schnittstelle und Beispiele: [docs/api-chat.md](api-chat.md). Der Ablauf über die Oberfläche steht noch zur Abnahme aus.
+
+Treffer und Checkliste erzeugt das Sprachmodell aus dem Katalog. Ohne erreichbaren KI-Zugang zeigt der Förderfinder deshalb keine Treffer (siehe [Entscheidungen](decisions.md)).
 
 ### Schlüssel ersetzen
 
