@@ -104,7 +104,7 @@ a { color: var(--navy); }
   align-content: start;
   gap: .8rem;
   min-height: 20rem;
-  max-height: clamp(42rem, 85svh, 52rem);
+  max-height: clamp(37rem, 75svh, 45rem);
   overflow: auto;
   padding: 1.25rem;
 }
