@@ -105,10 +105,13 @@ async function startApp(env) {
   };
 }
 
-async function chat(base, body, raw = false) {
+let ipCounter = 0;
+/** Jede Anfrage bekommt eine eigene IP, damit das Rate-Limit nur im eigenen Test greift. */
+async function chat(base, body, raw = false, headers = {}) {
+  ipCounter += 1;
   const response = await fetch(`${base}/api/chat`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", "x-forwarded-for": `10.0.${ipCounter >> 8}.${ipCounter & 255}`, ...headers },
     body: raw ? body : JSON.stringify(body),
   });
   return { status: response.status, headers: response.headers, data: await response.json() };
@@ -136,6 +139,7 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
       LANGDOCK_API_KEY: "test-key",
       LANGDOCK_BASE_URL: `http://127.0.0.1:${port}`,
       LANGDOCK_MODEL: "gpt-5.1",
+      CHAT_ALLOWED_ORIGINS: "https://www.vhs-bw.de",
     });
   });
   after(async () => {
@@ -494,6 +498,53 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
       assert.equal(typeof res.data.error, "string", name);
     }
     assert.equal(langdock.requests.length, 0);
+  });
+
+  describe("abuse protection", () => {
+    test("oversized history, answers and bodies are rejected without calling Langdock", async () => {
+      langdock.respond(modelJson({ reply: "ok", profile, neueSuche: false, treffer: [] }));
+      const entry = (text) => ({ role: "user", text });
+      const cases = [
+        ["Verlaufseintrag über 2.000 Zeichen", { action: "message", message: "Hallo", history: [entry("x".repeat(2001))] }, 400],
+        ["mehr als 20 Verlaufseinträge", { action: "message", message: "Hallo", history: Array.from({ length: 21 }, () => entry("x")) }, 400],
+        ["mehr als 30 Antworten im Interview", {
+          action: "message",
+          message: "Hallo",
+          application: { programmeId: ESF, schritt: 0, gesamt: 14, antworten: Object.fromEntries(Array.from({ length: 31 }, (_, i) => [`f${i}`, "x"])) },
+        }, 400],
+        ["Anfrage über 100 KB", { action: "message", message: "Hallo", profile: { ...profile, vorhaben: "x".repeat(100_001) } }, 413],
+      ];
+      for (const [name, body, status] of cases) {
+        const res = await chat(app.base, body);
+        assert.equal(res.status, status, name);
+      }
+      const atLimit = await chat(app.base, { action: "message", message: "Hallo", history: Array.from({ length: 20 }, () => entry("y".repeat(2000))), profile });
+      assert.equal(atLimit.status, 200, "20 entries with 2,000 characters are allowed");
+      assert.equal(langdock.requests.length, 1);
+    });
+
+    test("requests from foreign websites are rejected, own and allowed origins pass", async () => {
+      langdock.respond(modelJson({ reply: "ok", profile, neueSuche: false, treffer: [] }));
+      const body = { action: "message", message: "Hallo", profile };
+      const foreign = await chat(app.base, body, false, { origin: "https://evil.example" });
+      assert.equal(foreign.status, 403);
+      assert.match(foreign.data.error, /nur über den Förderfinder/);
+      assert.equal(langdock.requests.length, 0);
+      assert.equal((await chat(app.base, body, false, { origin: app.base })).status, 200);
+      assert.equal((await chat(app.base, body, false, { origin: "https://www.vhs-bw.de" })).status, 200);
+    });
+
+    test("more than 20 requests per minute from one IP get 429", async () => {
+      const ip = { "x-forwarded-for": "198.51.100.20" };
+      for (let i = 1; i <= 20; i++) {
+        assert.equal((await chat(app.base, { action: "kaputt" }, false, ip)).status, 400, `request ${i}`);
+      }
+      const limited = await chat(app.base, { action: "kaputt" }, false, ip);
+      assert.equal(limited.status, 429);
+      assert.ok(Number(limited.headers.get("retry-after")) > 0);
+      assert.match(limited.data.error, /Zu viele Anfragen/);
+      assert.equal((await chat(app.base, { action: "kaputt" })).status, 400, "other IPs are not affected");
+    });
   });
 
   describe("AI outage returns 503 with the catalogue", () => {

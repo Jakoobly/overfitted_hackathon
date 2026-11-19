@@ -14,6 +14,10 @@ Der Förderfinder sucht nur Programme, für die man sich laut Katalog jetzt noch
 
 Nach „Antrag vorbereiten“ fragt der Chat über „Angaben für den Antrag erfassen“ die Antragsangaben Frage für Frage ab. Für die ESF-Fachkursförderung stammen die 14 Fragen aus dem Antragsvordruck (Stand November 2026), mit Prüfung von 8 bis 160 Unterrichtseinheiten, höchstens 6.000 Euro Kursgebühr und Kursbeginn in der Förderrunde 01.09.2026 bis 31.08.2027. Am Ende berechnet der Chat den Zuschuss (45 %) und warnt unter 10.000 Euro. Für alle anderen Programme gibt es 10 allgemeine Fragen. Falsche Formate fragt der Server mit Beispiel erneut ab. Die Angaben werden nur im Browser gehalten und nicht gespeichert. Chatantworten sind auf etwa 60 Wörter begrenzt, ausführlicher nur auf Nachfrage.
 
+### Schutz vor Missbrauch
+
+`POST /api/chat` nimmt nur Anfragen von der eigenen Seite an (403 sonst). Weitere Seiten, etwa bei einer Einbettung, trägt man in `CHAT_ALLOWED_ORIGINS` ein. Pro IP sind 20 Anfragen pro Minute erlaubt, danach kommt 429 mit Wartezeit, die der Chat anzeigt. Anfragen über 100 KB, mehr als 20 Verlaufseinträge oder Einträge über 2.000 Zeichen werden abgelehnt, die Oberfläche kürzt den Verlauf vorher. Einschränkungen: Das Limit zählt im Arbeitsspeicher je Serverinstanz und ist auf Vercel mit mehreren Instanzen nur ungefähr. Skripte können den Origin-Header fälschen, für sie greift nur das Limit pro IP. Für einen dauerhaften öffentlichen Betrieb zusätzlich ein Ausgabenlimit für den Schlüssel im Langdock-Workspace setzen.
+
 ### Automatische Prüfungen
 
 - `npm test` prüft ohne Langdock-Schlüssel die Chat-Route gegen ein simuliertes Langdock: Antwortformat, Treffer nur aus dem Katalog, Anfrage an Langdock (`gpt-5.1`, `store: false`), Fehler 400/404, den Ersatzweg mit HTTP 503 und Katalogliste sowie die Neubewertung nach einer Korrektur. Außerdem prüft es, dass der Katalog dem Import entspricht. Läuft auch in der CI.

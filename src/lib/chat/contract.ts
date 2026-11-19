@@ -62,18 +62,25 @@ export type Match = {
 
 export type ApplicationValue = string | number | null;
 
+/** Grenzen gegen übergroße Anfragen. Der Browser kürzt den Verlauf entsprechend. */
+export const MAX_HISTORY_ENTRIES = 20;
+export const MAX_HISTORY_TEXT = 2000;
+const MAX_ANSWERS = 30;
+
 /** Stand des Antragsinterviews. Der Browser hält ihn und schickt ihn mit jeder Nachricht zurück. */
 export const applicationStateSchema = z.strictObject({
   programmeId: z.string().min(1),
   schritt: z.number().int().min(0),
   gesamt: z.number().int().min(1),
-  antworten: z.record(z.string(), z.union([z.string().max(1000), z.number(), z.null()])),
+  antworten: z
+    .record(z.string().max(40), z.union([z.string().max(1000), z.number(), z.null()]))
+    .refine((a) => Object.keys(a).length <= MAX_ANSWERS, `Höchstens ${MAX_ANSWERS} Antworten.`),
 });
 export type ApplicationState = z.infer<typeof applicationStateSchema>;
 
 const historyEntry = z.strictObject({
   role: z.enum(["user", "assistant"]),
-  text: z.string().max(8000),
+  text: z.string().max(MAX_HISTORY_TEXT),
 });
 export type HistoryEntry = z.infer<typeof historyEntry>;
 
@@ -81,7 +88,7 @@ export const chatRequestSchema = z.discriminatedUnion("action", [
   z.strictObject({
     action: z.literal("message"),
     message: z.string().trim().min(1).max(4000),
-    history: z.array(historyEntry).max(60).default([]),
+    history: z.array(historyEntry).max(MAX_HISTORY_ENTRIES).default([]),
     profile: profileSchema.default(emptyProfile),
     selectedProgrammeId: z.string().nullable().default(null),
     /** Gesetzt, solange das Antragsinterview läuft. */
@@ -90,13 +97,13 @@ export const chatRequestSchema = z.discriminatedUnion("action", [
   z.strictObject({
     action: z.literal("startApplication"),
     programmeId: z.string().min(1),
-    history: z.array(historyEntry).max(60).default([]),
+    history: z.array(historyEntry).max(MAX_HISTORY_ENTRIES).default([]),
     profile: profileSchema.default(emptyProfile),
   }),
   z.strictObject({
     action: z.literal("selectProgramme"),
     programmeId: z.string().min(1),
-    history: z.array(historyEntry).max(60).default([]),
+    history: z.array(historyEntry).max(MAX_HISTORY_ENTRIES).default([]),
     profile: profileSchema.default(emptyProfile),
   }),
 ]);

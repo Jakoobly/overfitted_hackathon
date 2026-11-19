@@ -106,8 +106,11 @@ Antwort `{ "error": "<kurze Meldung auf Deutsch>" }`, direkt anzeigbar.
 
 | Status | Fall |
 | --- | --- |
-| 400 | Ungültiges JSON oder Anfrage passt nicht zum Vertrag |
+| 400 | Ungültiges JSON oder Anfrage passt nicht zum Vertrag, z. B. mehr als 20 Verlaufseinträge, ein Eintrag über 2.000 Zeichen oder mehr als 30 Interview-Antworten. Die Oberfläche kürzt den Verlauf vor dem Senden. |
+| 403 | `Origin` gehört nicht zur eigenen Seite und steht nicht in `CHAT_ALLOWED_ORIGINS` |
 | 404 | `programmeId` nicht im Katalog |
+| 413 | Anfrage größer als 100 KB |
+| 429 | Mehr als 20 Anfragen pro Minute von derselben IP, mit `Retry-After` in Sekunden |
 | 503 | KI-Anbindung gestört, siehe unten |
 
 ## KI nicht erreichbar (503)

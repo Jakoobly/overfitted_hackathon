@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import {
   emptyProfile,
+  MAX_HISTORY_ENTRIES,
+  MAX_HISTORY_TEXT,
   matchStatusLabel,
   profileSchema,
   type ApplicationState,
@@ -87,7 +89,7 @@ export function FundingWorkspace() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...request,
-          history: messages.slice(-60),
+          history: messages.slice(-MAX_HISTORY_ENTRIES).map((m) => ({ ...m, text: m.text.slice(0, MAX_HISTORY_TEXT) })),
           profile: recheck ?? profile,
         } satisfies ChatRequest),
       });

@@ -9,6 +9,7 @@ import {
 import { catalogEntries } from "@/lib/server/catalog";
 import { answerStep, currentQuestion, isQuestion, startApplication, UnknownApplicationError } from "@/lib/server/application";
 import { handleMessage, handleSelectProgramme, UnknownProgrammeError } from "@/lib/server/chat";
+import { clientIp, MAX_BODY_BYTES, originAllowed, rateLimit } from "@/lib/server/request-guard";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -35,9 +36,23 @@ function aiUnavailable(profile: Profile) {
 }
 
 export async function POST(request: Request) {
+  if (!originAllowed(request)) return fail(403, "Anfragen sind nur über den Förderfinder selbst möglich.");
+
+  const retryAfter = rateLimit(clientIp(request));
+  if (retryAfter) {
+    return NextResponse.json<ChatError>(
+      { error: `Zu viele Anfragen in kurzer Zeit. Bitte warten Sie ${retryAfter} Sekunden und versuchen Sie es dann erneut.` },
+      { status: 429, headers: { "Retry-After": String(retryAfter) } },
+    );
+  }
+
+  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) return fail(413, "Die Anfrage ist zu groß.");
+  const raw = await request.text();
+  if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) return fail(413, "Die Anfrage ist zu groß.");
+
   let body: unknown;
   try {
-    body = await request.json();
+    body = JSON.parse(raw);
   } catch {
     return fail(400, "Die Anfrage ist kein gültiges JSON.");
   }

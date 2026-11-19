@@ -36,7 +36,7 @@ async function send(title, request, userText) {
     response = await fetch(`${BASE}/api/chat`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ ...request, history, ...(profile ? { profile } : {}) }),
+      body: JSON.stringify({ ...request, history: history.slice(-20).map((m) => ({ ...m, text: m.text.slice(0, 2000) })), ...(profile ? { profile } : {}) }),
     });
     data = await response.json();
   } catch (error) {
