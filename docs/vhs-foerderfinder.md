@@ -18,6 +18,8 @@ Die Anwendung berücksichtigt Unterschiede zwischen VHS über konkrete Eckdaten 
 
 Der MVP verwendet einen vorbereiteten Katalog und einen Chat im Browser. Live-Recherche, Nutzerkonten, gespeicherte Verläufe, Antragserstellung und Antragseinreichung kommen für den Hackathon in den späteren Umfang.
 
+Rafael stellt die Styleguides, Logos und weiteren Gestaltungsmaterialien auf GitHub bereit. Sobald sie vorliegen, richtet das Team die Gestaltung von Chat und Ergebniskarten daran aus. Bis dahin kann die Oberfläche mit Platzhaltern gebaut werden.
+
 ## Excel-Import und Datenmodell
 
 Die Excel-Datei der Praxispartner ist die Grundlage. Tabellenblatt, Spaltennamen und Werte prüfen wir nach Erhalt. Der Import liest das vereinbarte Blatt lokal aus `data/raw/`, prüft Pflichtfelder und doppelte IDs, normalisiert Datums- und Zahlenwerte und meldet fehlerhafte Zeilen mit Zeilennummer. Der Demo-Server liest den erzeugten JSON-Katalog. Für den Start vor Dateilieferung dient ein klar gekennzeichneter, fiktiver Katalog mit demselben Schema. Originaldaten und Ableitungen kommen nur bei entsprechender Freigabe ins Repository.
