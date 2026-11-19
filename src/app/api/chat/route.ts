@@ -7,6 +7,7 @@ import {
   type Profile,
 } from "@/lib/chat/contract";
 import { catalogEntries } from "@/lib/server/catalog";
+import { answerStep, currentQuestion, isQuestion, startApplication, UnknownApplicationError } from "@/lib/server/application";
 import { handleMessage, handleSelectProgramme, UnknownProgrammeError } from "@/lib/server/chat";
 
 export const runtime = "nodejs";
@@ -46,13 +47,23 @@ export async function POST(request: Request) {
   const req = parsed.data;
 
   try {
-    const result =
-      req.action === "selectProgramme"
-        ? await handleSelectProgramme(req)
-        : await handleMessage(req);
-    return NextResponse.json<ChatResponse>(result);
+    if (req.action === "startApplication") return NextResponse.json<ChatResponse>(startApplication(req.programmeId, req.profile));
+    if (req.action === "selectProgramme") return NextResponse.json<ChatResponse>(await handleSelectProgramme(req));
+
+    const { application, ...message } = req;
+    if (!application) return NextResponse.json<ChatResponse>(await handleMessage(message));
+    if (!isQuestion(req.message)) return NextResponse.json<ChatResponse>(answerStep(application, req.message, req.profile));
+
+    // Zwischenfrage während der Erfassung: beantworten, dann die offene Frage wiederholen
+    const answer = await handleMessage({ ...message, selectedProgrammeId: application.programmeId });
+    return NextResponse.json<ChatResponse>({
+      ...answer,
+      reply: `${answer.reply}\n\nZurück zur Erfassung – ${currentQuestion(application, answer.profile)}`,
+    });
   } catch (error) {
-    if (error instanceof UnknownProgrammeError) return fail(404, "Dieses Förderprogramm ist nicht im Katalog.");
+    if (error instanceof UnknownProgrammeError || error instanceof UnknownApplicationError) {
+      return fail(404, "Dieses Förderprogramm ist nicht im Katalog.");
+    }
     // Fehlender Schlüssel, Netzwerk, Zeitüberschreitung, Langdock-Fehler oder ungültige Modellausgabe
     console.error("chat route: KI nicht erreichbar", error);
     return aiUnavailable(req.profile);

@@ -60,6 +60,17 @@ export type Match = {
   url: string | null;
 };
 
+export type ApplicationValue = string | number | null;
+
+/** Stand des Antragsinterviews. Der Browser hält ihn und schickt ihn mit jeder Nachricht zurück. */
+export const applicationStateSchema = z.strictObject({
+  programmeId: z.string().min(1),
+  schritt: z.number().int().min(0),
+  gesamt: z.number().int().min(1),
+  antworten: z.record(z.string(), z.union([z.string().max(1000), z.number(), z.null()])),
+});
+export type ApplicationState = z.infer<typeof applicationStateSchema>;
+
 const historyEntry = z.strictObject({
   role: z.enum(["user", "assistant"]),
   text: z.string().max(8000),
@@ -73,6 +84,14 @@ export const chatRequestSchema = z.discriminatedUnion("action", [
     history: z.array(historyEntry).max(60).default([]),
     profile: profileSchema.default(emptyProfile),
     selectedProgrammeId: z.string().nullable().default(null),
+    /** Gesetzt, solange das Antragsinterview läuft. */
+    application: applicationStateSchema.nullable().default(null),
+  }),
+  z.strictObject({
+    action: z.literal("startApplication"),
+    programmeId: z.string().min(1),
+    history: z.array(historyEntry).max(60).default([]),
+    profile: profileSchema.default(emptyProfile),
   }),
   z.strictObject({
     action: z.literal("selectProgramme"),
@@ -90,6 +109,8 @@ export type ChatResponse = {
   matches?: Match[];
   /** Nur bei selectProgramme gesetzt. */
   selectedProgramme?: { id: string; titel: string };
+  /** Antragsinterview: neuer Stand, null = beendet. Fehlt das Feld, bleibt der Stand unverändert. */
+  application?: ApplicationState | null;
 };
 
 export type ChatError = { error: string };

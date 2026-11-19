@@ -25,6 +25,9 @@ let history = [];
 let profile;
 let selectedProgrammeId = null;
 
+const words = (text) => text.split(/\s+/).filter(Boolean).length;
+const short = (data) => check(words(data.reply ?? "") <= 90, `Antwort kurz (${words(data.reply ?? "")} Wörter, Ziel ≤ 60)`);
+
 async function send(title, request, userText) {
   console.log(`\n▶ ${title}`);
   const started = Date.now();
@@ -70,6 +73,7 @@ check(first.profile?.budget === 15000, `Budget erkannt (${first.profile?.budget}
 check(Array.isArray(first.matches) && first.matches.length > 0, `Treffer geliefert (${first.matches?.length ?? 0})`);
 check(first.matches?.every((m) => catalog.some((p) => p.id === m.programmeId)) ?? false, "alle Treffer stammen aus dem Katalog");
 check(/\?/.test(first.reply ?? ""), "Antwort enthält eine Rückfrage");
+short(first);
 
 // 2. Antrag vorbereiten (ESF-Fachkurse, falls getroffen, sonst erster Treffer)
 const chosen = first.matches?.find((m) => m.programmeId === ESF) ?? first.matches?.[0];
@@ -81,6 +85,7 @@ if (chosen) {
   check(met !== "", "Checkliste trennt erfüllte von offenen Voraussetzungen");
   check(!/erwerbs/i.test(met), "Erwerbsstatus nicht als erfüllt gewertet (steht nicht im Profil)");
   if (chosen.programmeId === ESF) check(/ELAN/.test(selection.reply ?? ""), "Checkliste enthält die Einreichung über ELAN aus dem Katalog");
+  check(words(selection.reply ?? "") <= 220, `Checkliste kompakt (${words(selection.reply ?? "")} Wörter)`);
   selectedProgrammeId = selection.selectedProgramme?.id ?? null;
 
   // 3. Freie Frage nach den Unterlagen
@@ -93,6 +98,24 @@ if (chosen) {
   } else {
     check(/Förderstelle/.test(docs.reply ?? ""), "verweist mangels Katalogangaben an die Förderstelle");
   }
+}
+
+// 3b. Antragsinterview: Frage, falsches Format, Zwischenfrage, Abbruch
+if (selectedProgrammeId) {
+  const started = await send("Antragsangaben erfassen", { action: "startApplication", programmeId: selectedProgrammeId }, "Angaben für den Antrag erfassen");
+  check(started.application?.schritt === 0 && /Frage 1\//.test(started.reply ?? ""), "Interview startet mit Frage 1");
+  let application = started.application;
+  const reply1 = await send("Antwort auf Frage 1", { action: "message", message: "Volkshochschule Heilbronn e. V.", selectedProgrammeId, application }, "Volkshochschule Heilbronn e. V.");
+  check(reply1.application?.schritt === 1, "Antwort übernommen, Frage 2 folgt");
+  application = reply1.application;
+  const wrongAnswer = selectedProgrammeId === ESF ? "Kirchbrunnenstraße" : "Maria";
+  const wrong = await send("Antwort im falschen Format", { action: "message", message: wrongAnswer, selectedProgrammeId, application }, wrongAnswer);
+  check(wrong.application?.schritt === 1 && /Das passt noch nicht/.test(wrong.reply ?? ""), "falsches Format wird mit Hinweis erneut abgefragt");
+  const aside = "Wofür brauchen Sie diese Angabe?";
+  const asideReply = await send("Zwischenfrage während der Erfassung", { action: "message", message: aside, selectedProgrammeId, application }, aside);
+  check(/Zurück zur Erfassung – Frage 2\//.test(asideReply.reply ?? ""), "Zwischenfrage beantwortet, Frage 2 wiederholt");
+  const cancelled = await send("Erfassung abbrechen", { action: "message", message: "abbrechen", selectedProgrammeId, application }, "abbrechen");
+  check(cancelled.application === null, "Erfassung abgebrochen");
 }
 
 // 4. Frei formulierte Korrektur ändert die Bewertung

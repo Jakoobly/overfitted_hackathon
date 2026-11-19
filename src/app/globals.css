@@ -226,3 +226,9 @@ a { color: var(--navy); }
 @media (max-width: 390px) {
   .masthead-inner { flex-wrap: wrap; gap: .4rem; padding-block: .7rem; }
 }
+
+.chat-context { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem 1rem; }
+.chat-context p { margin: 0; }
+.application-progress { display: flex; flex-wrap: wrap; gap: .2rem 1rem; color: var(--navy); font-size: .875rem; font-weight: 600; }
+.link-button { padding: 0; border: 0; background: none; color: var(--navy); font: inherit; font-weight: 400; text-decoration: underline; cursor: pointer; }
+.link-button:disabled { color: var(--muted); cursor: default; }

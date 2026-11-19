@@ -85,6 +85,21 @@ Freie Nachricht. `history` enthält die bisherigen Nachrichten ohne die aktuelle
 
 Danach jede weitere `message` mit `"selectedProgrammeId": "esf-fachkursfoerderung-baden-wuerttemberg"` senden, damit der Chat Fragen wie „Welche Unterlagen fehlen uns?“ aus diesem Katalogeintrag beantwortet. `reply` enthält Zeilenumbrüche und `- `-Listen, im Chat mit `white-space: pre-line` darstellen.
 
+## Antragsinterview (`startApplication`)
+
+Nach „Antrag vorbereiten“ startet der Button „Angaben für den Antrag erfassen“ das Interview. Fragen und Formatprüfung liegen fest im Server (`src/lib/server/application.ts`), ohne Modellaufruf: 14 Fragen für die ESF-Fachkursförderung aus dem Antragsvordruck, 10 allgemeine Fragen für alle anderen Programme.
+
+```json
+{ "action": "startApplication", "programmeId": "esf-fachkursfoerderung-baden-wuerttemberg", "profile": { "…": "…" } }
+```
+
+Antwort: `reply` mit Frage 1 und `application` = `{ "programmeId": "…", "schritt": 0, "gesamt": 14, "antworten": {} }`. Diesen Stand schickt der Browser bei jeder folgenden `message` als `application` mit und ersetzt ihn durch den zurückgegebenen Wert.
+
+- Passt das Format nicht, bleibt `schritt` gleich und `reply` nennt Fehler, Beispiel und die Frage erneut.
+- „überspringen“, „zurück“ und „abbrechen“ steuern den Ablauf. Bei Vorschlägen aus den Eckdaten übernimmt „ja“ den Wert.
+- Endet die Nachricht mit „?“, beantwortet das Modell die Zwischenfrage und wiederholt die offene Frage. `application` fehlt dann in der Antwort, der Stand bleibt also unverändert.
+- Nach der letzten Frage oder bei „abbrechen“ ist `application: null`, und `reply` enthält die Zusammenfassung.
+
 ## Fehler
 
 Antwort `{ "error": "<kurze Meldung auf Deutsch>" }`, direkt anzeigbar.

@@ -263,6 +263,18 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
     assert.match(sentCatalogue, /"verfuegbarkeit":\{"verfuegbar":false,"grund":"derzeit kein Förderaufruf"\}/);
   });
 
+  test("regional programmes are dropped for a different federal state", async () => {
+    const bayern = { ...profile, bundesland: "Bayern" };
+    langdock.respond(modelJson({
+      reply: "Treffer.",
+      profile: bayern,
+      neueSuche: true,
+      treffer: [ESF, IDEE, "esf-bundesprogramm"].map((id) => ({ programmeId: id, status: "pruefen", begruendung: "x", offenePunkte: [], anpassung: null })),
+    }));
+    const res = await chat(app.base, { action: "message", message: "Wir sind in Bayern.", profile: bayern });
+    assert.deepEqual(res.data.matches.map((m) => m.programmeId), ["esf-bundesprogramm"]);
+  });
+
   test("an irrelevant profile change does not trigger a second call", async () => {
     langdock.respond(modelJson({ reply: "Danke.", profile: { ...profile, vorhaben: "Neuer Titel" }, neueSuche: false, treffer: [] }));
     const res = await chat(app.base, { action: "message", message: "Nenne es Neuer Titel.", profile });
@@ -315,9 +327,11 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
     assert.match(met, /Budget im Förderrahmen/);
     for (const unbacked of ["erwerbstätig", "Projektbeginn", "AZAV", "Eigenanteil"]) {
       assert.doesNotMatch(met, new RegExp(unbacked), `${unbacked} must not count as met`);
-      assert.match(open, new RegExp(unbacked), `${unbacked} must be open`);
     }
+    // 5 offene Punkte: Kursumfang + 4 unbelegte, gezeigt werden 3
     assert.match(open, /Kursumfang/);
+    assert.match(open, /erwerbstätig/);
+    assert.match(open, /und 2 weitere – fragen Sie nach Details/);
   });
 
   test("a requirement backed by several profile fields is listed once", async () => {
@@ -334,18 +348,125 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
     langdock.respond(checklist([]));
     const { data } = await chat(app.base, { action: "selectProgramme", programmeId: ESF, profile });
     const esf = catalog.find((p) => p.id === ESF);
-    assert.ok(data.reply.includes(`Einreichung: ${esf.unterlagen.einreichung}`));
-    for (const item of esf.unterlagen.antrag) assert.ok(data.reply.includes(`- ${item}`), item);
+    assert.match(data.reply, /Unterlagen:\n- Ausgefüllter Antragsvordruck\n- Tabellenblatt „Unterschrift und Bestätigungen“\n/);
+    assert.ok(data.reply.includes("Antrag rechtzeitig vor Kursbeginn über das Antragsportal ELAN (https://elan.esf-bw.de) bei der L-Bank einreichen."));
+    assert.ok(!data.reply.includes(esf.unterlagen.antrag[0]), "long form only on request");
     assert.match(data.reply, /Frist: bei der Förderstelle prüfen/);
-    assert.ok(data.reply.includes(`Programmwebsite: ${esf.links.programmwebsite}`));
-    assert.match(data.reply, /Quelle: Merkblatt Förderprogramm Fachkurse.*\(Stand September 2026\)/);
+    assert.ok(data.reply.includes(`Programmseite: ${esf.links.programmwebsite}`));
+    assert.match(data.reply, /Quellen: .*Merkblatt Förderprogramm Fachkurse \(Stand September 2026\)/);
+    assert.match(data.reply, /Angaben für den Antrag erfassen/);
   });
 
   test("without catalogue documents the checklist points to the funding body", async () => {
     langdock.respond(checklist([]));
     const { data } = await chat(app.base, { action: "selectProgramme", programmeId: IDEE, profile });
     assert.match(data.reply, /Unterlagen: im Katalog nicht hinterlegt, bitte bei der Förderstelle prüfen\./);
-    assert.doesNotMatch(data.reply, /Einreichung:|Quelle:/);
+    assert.doesNotMatch(data.reply, /ELAN|Quellen:/);
+  });
+
+  describe("application interview", () => {
+    const start = (programmeId = ESF, p = profile) => chat(app.base, { action: "startApplication", programmeId, profile: p });
+    const answer = (application, message, p = profile) => chat(app.base, { action: "message", message, profile: p, application });
+
+    test("starts with question 1 without calling Langdock", async () => {
+      langdock.respond(modelJson({ reply: "darf nicht kommen" }));
+      const res = await start();
+      assert.equal(res.status, 200);
+      assert.deepEqual(res.data.application, { programmeId: ESF, schritt: 0, gesamt: 14, antworten: {} });
+      assert.match(res.data.reply, /Frage 1\/14: Wie lautet der Name des Antragstellers/);
+      assert.equal(langdock.requests.length, 0);
+    });
+
+    test("walks through all ESF questions, re-asks on wrong formats and sums up", async () => {
+      langdock.respond(modelJson({ reply: "darf nicht kommen" }));
+      let state = (await start()).data.application;
+      const steps = [
+        ["Volkshochschule Heilbronn e. V.", "Frage 2/14"],
+        ["Kirchbrunnenstraße", "fünfstellige PLZ"],
+        ["Kirchbrunnenstraße 12, 74072 Heilbronn", "Frage 3/14"],
+        ["weiß ich nicht genau", "„öffentlich“ oder „privat“"],
+        ["Wir sind ein eingetragener Verein", "Frage 4/14"],
+        ["seit 30 Jahren", "Frage 5/14"],
+        ["Maria", "Vor- und Nachnamen"],
+        ["Maria Muster", "Frage 6/14"],
+        ["0713l-abc", "Telefonnummer"],
+        ["07131 123456", "Frage 7/14"],
+        ["maria.muster(at)vhs.de", "keine gültige E-Mail"],
+        ["maria.muster@vhs-heilbronn.de", "Frage 8/14"],
+        ["Digitale Kompetenzen im Büroalltag", "Frage 9/14"],
+        ["vier", "ganze Zahl"],
+        ["4", "Frage 10/14"],
+        ["200", "8 bis 160 Unterrichtseinheiten"],
+        ["24 UE", "Frage 11/14"],
+        ["48", "Frage 12/14"],
+        ["7.000 €", "höchstens 6.000 Euro"],
+        ["450 Euro", "Frage 13/14"],
+        ["01.01.2026", "Vergangenheit"],
+        ["31.02.2027", "gültiges Datum"],
+        ["01.09.2027", "01.09.2026 bis 31.08.2027"],
+        ["11.01.2027", "Frage 14/14"],
+        ["01.01.2027", "nicht vor dem ersten"],
+      ];
+      for (const [message, expected] of steps) {
+        const res = await answer(state, message);
+        assert.equal(res.status, 200, message);
+        assert.ok(res.data.reply.includes(expected), `${message} -> ${res.data.reply}`);
+        state = res.data.application;
+      }
+      const done = await answer(state, "30.06.2027");
+      assert.equal(done.data.application, null);
+      const summary = done.data.reply;
+      for (const line of ["- Anschrift: Kirchbrunnenstraße 12, 74072 Heilbronn", "- Rechtsform: privates Recht", "- Unterrichtseinheiten je Kurs: 24", "- Teilnahmegebühr je Kurs: 450,00 €", "- Erster Kurstag: 11.01.2027", "- Letzter Kurstag: 30.06.2027"]) {
+        assert.ok(summary.includes(line), line);
+      }
+      assert.match(summary, /202,50 € je Teilnahme, insgesamt 9\.720,00 €/);
+      assert.match(summary, /unter 10\.000,00 € werden grundsätzlich nicht bewilligt/);
+      assert.equal(langdock.requests.length, 0, "answers are checked without the model");
+    });
+
+    test("supports skip, back and cancel", async () => {
+      let state = (await start()).data.application;
+      let res = await answer(state, "überspringen");
+      assert.match(res.data.reply, /Übersprungen.*Frage 2\/14/s);
+      assert.equal(res.data.application.antworten.traeger, null);
+      res = await answer(res.data.application, "zurück");
+      assert.match(res.data.reply, /Frage 1\/14/);
+      res = await answer(res.data.application, "abbrechen");
+      assert.equal(res.data.application, null);
+      assert.match(res.data.reply, /abgebrochen/);
+    });
+
+    test("generic programmes use profile suggestions that can be accepted with yes", async () => {
+      const nextYear = `${new Date().getUTCFullYear() + 1}-03`;
+      const withStart = { ...profile, start: nextYear };
+      let res = await start(IDEE, withStart);
+      assert.equal(res.data.application.gesamt, 10);
+      let state = res.data.application;
+      for (const a of ["Volkshochschule Heilbronn e. V.", "Maria Muster", "07131 123456", "maria@vhs.de", "Digital fit im Alltag"]) {
+        state = (await answer(state, a, withStart)).data.application;
+      }
+      res = await answer(state, "ja", withStart);
+      assert.equal(res.data.application.antworten.projektbeginn, nextYear);
+      assert.match(res.data.reply, /Frage 7\/10/);
+      res = await answer(res.data.application, "Februar " + (new Date().getUTCFullYear() + 1), withStart);
+      assert.match(res.data.reply, /nicht vor dem Projektbeginn/);
+    });
+
+    test("a question during the interview is answered by the model and the open question repeated", async () => {
+      langdock.respond(modelJson({ reply: "Eine UE dauert mindestens 45 Minuten.", profile, neueSuche: false, treffer: [] }));
+      const state = { programmeId: ESF, schritt: 9, gesamt: 14, antworten: {} };
+      const res = await answer(state, "Was ist eine Unterrichtseinheit?");
+      assert.equal(res.status, 200);
+      assert.equal(langdock.requests.length, 1);
+      assert.match(langdock.requests[0].body.instructions, /hat das Programm "ESF-Fachkursförderung/);
+      assert.match(res.data.reply, /^Eine UE dauert mindestens 45 Minuten\.\n\nZurück zur Erfassung – Frage 10\/14/);
+      assert.equal("application" in res.data, false, "state stays unchanged in the browser");
+    });
+
+    test("an unknown programme cannot be started", async () => {
+      const res = await start("gibt-es-nicht");
+      assert.equal(res.status, 404);
+    });
   });
 
   test("selectProgramme with an unknown ID returns 404 without calling Langdock", async () => {

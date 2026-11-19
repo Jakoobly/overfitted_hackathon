@@ -5,6 +5,7 @@ import {
   emptyProfile,
   matchStatusLabel,
   profileSchema,
+  type ApplicationState,
   type ChatError,
   type ChatRequest,
   type CatalogEntry,
@@ -49,6 +50,8 @@ export function FundingWorkspace() {
   const [profileError, setProfileError] = useState("");
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [selectedProgramme, setSelectedProgramme] = useState<ChatResponse["selectedProgramme"]>();
+  /** Laufendes Antragsinterview, null = keins. */
+  const [application, setApplication] = useState<ApplicationState | null>(null);
   const [pendingTurn, setPendingTurn] = useState<{ message: HistoryEntry; recheck: boolean } | null>(null);
   const [error, setError] = useState("");
   /** Katalog ohne Bewertung, solange die KI-Anbindung gestört ist. */
@@ -118,6 +121,8 @@ export function FundingWorkspace() {
       ]);
       setProfile(recheck ?? data.profile);
       setCatalog(null);
+      if (data.application !== undefined) setApplication(data.application);
+      else if (recheck || data.selectedProgramme) setApplication(null);
       if (data.matches !== undefined) setMatches(data.matches);
       if (recheck) setSelectedProgramme(undefined);
       else if (data.selectedProgramme) setSelectedProgramme(data.selectedProgramme);
@@ -180,6 +185,7 @@ export function FundingWorkspace() {
       action: "message",
       message: text,
       selectedProgrammeId: selectedProgramme?.id ?? null,
+      application,
     }, text);
     if (!sent) setDraft(draft);
   }
@@ -188,6 +194,19 @@ export function FundingWorkspace() {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
     event.preventDefault();
     if (!event.repeat && !pending && draft.trim()) event.currentTarget.form?.requestSubmit();
+  }
+
+  function startApplication() {
+    if (!selectedProgramme) return;
+    void runTurn(
+      { action: "startApplication", programmeId: selectedProgramme.id },
+      "Angaben für den Antrag erfassen",
+    );
+  }
+
+  function cancelApplication() {
+    if (!application) return;
+    void runTurn({ action: "message", message: "abbrechen", selectedProgrammeId: selectedProgramme?.id ?? null, application }, "abbrechen");
   }
 
   function selectProgramme(match: Match) {
@@ -209,7 +228,19 @@ export function FundingWorkspace() {
             <h2 id="chat-title">Ihr Projekt</h2>
           </header>
           {selectedProgramme && (
-            <p className="chat-context">Im Chat ausgewählt <strong>{selectedProgramme.titel}</strong></p>
+            <div className="chat-context">
+              <p>Im Chat ausgewählt <strong>{selectedProgramme.titel}</strong></p>
+              {application ? (
+                <p className="application-progress">
+                  <span role="status">Antragsangaben: Frage {Math.min(application.schritt + 1, application.gesamt)} von {application.gesamt}</span>
+                  <button className="link-button" type="button" onClick={cancelApplication} disabled={pending}>Erfassung abbrechen</button>
+                </p>
+              ) : (
+                <button className="programme-action" type="button" onClick={startApplication} disabled={pending}>
+                  Angaben für den Antrag erfassen
+                </button>
+              )}
+            </div>
           )}
           <div className="conversation" ref={conversation} role="log" aria-label="Chatverlauf">
             {visibleMessages.map(({ role, text }, index) => (
@@ -231,7 +262,7 @@ export function FundingWorkspace() {
               onKeyDown={handleComposerKeyDown}
               rows={2}
               maxLength={4000}
-              placeholder={selectedProgramme ? "Zum ausgewählten Förderprogramm fragen …" : "Beschreiben Sie Ihre Projektidee …"}
+              placeholder={application ? "Ihre Antwort … (oder eine Frage mit „?“)" : selectedProgramme ? "Zum ausgewählten Förderprogramm fragen …" : "Beschreiben Sie Ihre Projektidee …"}
               readOnly={pending}
               required
             />

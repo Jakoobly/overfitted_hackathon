@@ -31,7 +31,7 @@ const messageOutputSchema = z.strictObject({
 
 const baseRules = () => `Du bist der VHS-Förderfinder des Volkshochschulverbands Baden-Württemberg.
 Du hilfst Mitarbeitenden einer Volkshochschule (VHS), Förderprogramme für ihr Projekt zu finden und den Antrag vorzubereiten.
-Antworte auf Deutsch, in der Sie-Form, sachlich und knapp (höchstens etwa 120 Wörter, Aufzählungen erlaubt, kein Markdown außer "- " für Listen).
+Antworte auf Deutsch, in der Sie-Form, sachlich und kurz: höchstens etwa 60 Wörter, höchstens 3 Listenpunkte, kein Markdown außer "- " für Listen. Nur wenn die VHS ausdrücklich nach Details, einer Erklärung oder einer vollständigen Liste fragt, darfst du ausführlicher antworten (bis etwa 200 Wörter).
 Fakten zu Programmen (Fristen, Unterlagen, Beträge, Förderquoten, URLs, Bedingungen) stammen ausschließlich aus dem Katalog unten. Erfinde nichts.
 Fehlt eine Angabe im Katalog (z. B. "unterlagen": null), schreibe "bei der Förderstelle prüfen" und nenne, falls vorhanden, die Programmwebsite. Liste dann KEINE vermuteten oder üblichen Unterlagen, Formulare oder Fristen auf.
 Eine Voraussetzung gilt nur als erfüllt, wenn das Projektprofil sie ausdrücklich belegt. Alles andere ist "noch zu klären".
@@ -56,12 +56,14 @@ Förderprüfung (nur Programme aus dem Katalog):
 Gesprächsführung:
 - Setze neueSuche = true bei einer neuen Projektbeschreibung oder wenn sich eine Angabe ändert, die die Bewertung beeinflusst (Thema, Zielgruppe, Bundesland, Träger, Budget, Eigenanteil, Projektbeginn, Partner). Das gilt auch, wenn bereits ein Programm ausgewählt ist. Sonst neueSuche = false und treffer = [].
 - Fehlt eine Angabe, die die Bewertung eines Top-Treffers ändert (z. B. Bundesland, Projektbeginn, Budget, Eigenanteil, Partner), stelle am Ende genau EINE gezielte Rückfrage und begründe sie kurz mit dem betroffenen Programm.
+- Nenne Treffer in der Antwort höchstens mit ihrem Titel. Status, Begründung und offene Punkte stehen bereits auf den Trefferkarten; schreibe nie interne Werte wie "pruefen" oder "aehnlich".
 - Fasse die erkannten Eckdaten in einem kurzen Satz zur Kontrolle zusammen, wenn sich das Profil geändert hat.`;
 
 function selectedRules(programme: Programme) {
   return `
 Die VHS hat das Programm "${programme.titel}" (id: ${programme.id}) ausgewählt, um den Antrag vorzubereiten.
 Beantworte Fragen zu Voraussetzungen, Unterlagen, Fristen und nächsten Schritten anhand dieses Katalogeintrags.
+Möchte die VHS die Angaben für den Antrag erfassen, verweise auf den Button „Angaben für den Antrag erfassen“; frage die Antragsfelder nicht selbst ab.
 Korrigiert oder ergänzt die VHS dabei Eckdaten, übernimm sie ins Profil und führe eine neue Suche durch. Passt das ausgewählte Programm danach nicht mehr, sage das deutlich.
 ${JSON.stringify(programme)}`;
 }
@@ -92,12 +94,19 @@ function historyInput(history: HistoryEntry[]) {
   return history.slice(-MAX_HISTORY).map(({ role, text }) => ({ role, content: text }));
 }
 
-function toMatches(treffer: z.infer<typeof messageOutputSchema>["treffer"]): Match[] {
+/** Programme mit regionaler Förderung passen nicht zu einem anderen bekannten Bundesland. */
+function regionMatches(programme: Programme, profile: Profile) {
+  const gebiet = programme.foerdergebiet;
+  const regional = gebiet && !["Europäische Union", "Deutschland"].includes(gebiet);
+  return !regional || !profile.bundesland || profile.bundesland === gebiet;
+}
+
+function toMatches(treffer: z.infer<typeof messageOutputSchema>["treffer"], profile: Profile): Match[] {
   const seen = new Set<string>();
   const matches: Match[] = [];
   for (const t of treffer) {
     const programme = getProgramme(t.programmeId);
-    if (!programme || seen.has(programme.id) || !availability(programme).verfuegbar) continue;
+    if (!programme || seen.has(programme.id) || !availability(programme).verfuegbar || !regionMatches(programme, profile)) continue;
     seen.add(programme.id);
     matches.push({
       programmeId: programme.id,
@@ -154,7 +163,7 @@ export async function handleMessage(input: {
   return {
     reply: output.reply,
     profile: output.profile,
-    ...(output.neueSuche ? { matches: toMatches(output.treffer) } : {}),
+    ...(output.neueSuche ? { matches: toMatches(output.treffer, output.profile) } : {}),
   };
 }
 

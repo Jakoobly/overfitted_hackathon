@@ -10,6 +10,10 @@ Im Chat sendet **Enter** die Nachricht. **Umschalt+Enter** fügt einen Zeilenumb
 
 Der Förderfinder sucht nur Programme, für die man sich laut Katalog jetzt noch bewerben kann. Programme mit `frist.status = "kein_aufruf"` oder einer Frist vor dem heutigen Datum zeigt der Server nie als Treffer an, auch wenn das Modell sie vorschlägt (Stand 19. November 2026: „Gemeinsam engagiert in BW V“, Frist 01.10.2026, und „Wandel der Arbeit“, kein Aufruf). Programme mit unbekannter Frist gelten als offen. Liegt der genannte Projektbeginn vor dem aktuellen Monat, z. B. „letztes Jahr“, verwirft der Server den Start, zeigt keine Treffer und fragt nach einem künftigen Starttermin. Die Eckdaten-Ansicht lässt nur Monate ab dem aktuellen Monat zu.
 
+### Antragsangaben erfassen
+
+Nach „Antrag vorbereiten“ fragt der Chat über „Angaben für den Antrag erfassen“ die Antragsangaben Frage für Frage ab. Für die ESF-Fachkursförderung stammen die 14 Fragen aus dem Antragsvordruck (Stand November 2026), mit Prüfung von 8 bis 160 Unterrichtseinheiten, höchstens 6.000 Euro Kursgebühr und Kursbeginn in der Förderrunde 01.09.2026 bis 31.08.2027. Am Ende berechnet der Chat den Zuschuss (45 %) und warnt unter 10.000 Euro. Für alle anderen Programme gibt es 10 allgemeine Fragen. Falsche Formate fragt der Server mit Beispiel erneut ab. Die Angaben werden nur im Browser gehalten und nicht gespeichert. Chatantworten sind auf etwa 60 Wörter begrenzt, ausführlicher nur auf Nachfrage.
+
 ### Automatische Prüfungen
 
 - `npm test` prüft ohne Langdock-Schlüssel die Chat-Route gegen ein simuliertes Langdock: Antwortformat, Treffer nur aus dem Katalog, Anfrage an Langdock (`gpt-5.1`, `store: false`), Fehler 400/404, den Ersatzweg mit HTTP 503 und Katalogliste sowie die Neubewertung nach einer Korrektur. Außerdem prüft es, dass der Katalog dem Import entspricht. Läuft auch in der CI.

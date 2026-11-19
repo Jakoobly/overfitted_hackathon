@@ -38,7 +38,7 @@ const FIELD_LABEL: Record<ProfileField, string> = {
 };
 
 export const checklistOutputSchema = z.strictObject({
-  einleitung: z.string().describe("Ein Satz, wofür das Programm zum Vorhaben passt"),
+  einleitung: z.string().describe("Ein kurzer Satz, wofür das Programm zum Vorhaben passt (wird derzeit nicht angezeigt)"),
   erfuellt: z
     .array(
       z.strictObject({
@@ -56,7 +56,7 @@ export type ChecklistOutput = z.infer<typeof checklistOutputSchema>;
 export const CHECKLIST_TASK = `
 Erstelle jetzt die Antragscheckliste als strukturierte Daten:
 - "erfuellt": nur Voraussetzungen aus dem Katalogeintrag, die sich unmittelbar aus einem gesetzten Wert im Projektprofil ergeben. Gib das Profilfeld und den Wert genau so an, wie er im Profil steht. Beispiel: bundesland "Baden-Württemberg" belegt "Förderregion Baden-Württemberg". Gegenbeispiele: zielgruppen "erwachsene" belegt NICHT "erwerbstätige Teilnehmende"; bundesland ist der Standort der VHS und belegt NICHT den Wohn- oder Arbeitsort der Teilnehmenden.
-- "offen": alle übrigen Voraussetzungen aus dem Katalogeintrag, als kurze Prüffrage oder Aufgabe.
+- "offen": die übrigen Voraussetzungen aus dem Katalogeintrag, wichtigste zuerst, jeweils als kurze Prüffrage mit höchstens 12 Wörtern.
 - Unterlagen, Frist und Programmwebsite fügt der Server aus dem Katalog an. Nenne sie nicht.`;
 
 const norm = (value: string) => value.toLocaleLowerCase("de").replace(/\s+/g, " ").trim();
@@ -98,6 +98,16 @@ function fristText(programme: Programme) {
 
 const list = (items: string[]) => items.map((item) => `- ${item}`).join("\n");
 
+const MAX_OPEN = 3;
+
+/** Kurzform eines Katalogpunkts: alles vor der ersten Erläuterung. */
+export function shortItem(item: string) {
+  const cut = [" (", ", ", " – ", " mit ", " zur "].map((sep) => item.indexOf(sep)).filter((i) => i > 0);
+  return cut.length ? item.slice(0, Math.min(...cut)) : item;
+}
+
+const firstSentence = (text: string) => text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
+
 export function renderChecklist(programme: Programme, profile: Profile, output: ChecklistOutput): string {
   const backed = output.erfuellt.filter((e) => isBacked(profile, e.profilfeld, e.profilwert));
   const unbacked = output.erfuellt.filter((e) => !backed.includes(e)).map((e) => e.voraussetzung);
@@ -105,8 +115,7 @@ export function renderChecklist(programme: Programme, profile: Profile, output: 
 
   const parts = [`Gewähltes Programm: ${programme.titel}`];
   const { verfuegbar, grund } = availability(programme);
-  if (!verfuegbar) parts.push(`Achtung: Laut Katalog ist eine Bewerbung derzeit nicht möglich (${grund}). Bitte bei der Förderstelle nach dem nächsten Aufruf fragen.`);
-  parts.push(output.einleitung);
+  if (!verfuegbar) parts.push(`Achtung: Bewerbung laut Katalog derzeit nicht möglich (${grund}).`);
 
   // Dieselbe Voraussetzung mit mehreren Belegen nur einmal aufführen
   const evidence = new Map<string, string[]>();
@@ -120,29 +129,29 @@ export function renderChecklist(programme: Programme, profile: Profile, output: 
         ? list([...evidence].map(([requirement, proofs]) => `${requirement} (${proofs.join("; ")})`))
         : "- noch keine Voraussetzung durch das Profil belegt"),
   );
-  if (offen.length) parts.push(`Noch zu klären:\n${list(offen)}`);
+  if (offen.length) {
+    const more = offen.length > MAX_OPEN ? `\n- und ${offen.length - MAX_OPEN} weitere – fragen Sie nach Details` : "";
+    parts.push(`Noch zu klären:\n${list(offen.slice(0, MAX_OPEN))}${more}`);
+  }
 
   const u = programme.unterlagen;
-  if (u) {
-    parts.push(`Einreichung: ${u.einreichung}`);
-    parts.push(`Unterlagen für den Antrag:\n${list(u.antrag)}`);
-    if (u.bereithalten.length) parts.push(`Bereithalten:\n${list(u.bereithalten)}`);
-    if (u.nachBewilligung.length) {
-      parts.push(`Nach der Bewilligung folgen ${u.nachBewilligung.length} weitere Pflichten. Fragen Sie bei Bedarf im Chat danach.`);
-    }
-  } else {
-    parts.push("Unterlagen: im Katalog nicht hinterlegt, bitte bei der Förderstelle prüfen.");
-  }
-  parts.push(`Frist: ${fristText(programme)}`);
-  parts.push(`Nächster Schritt: ${output.naechsterSchritt}`);
+  parts.push(
+    u
+      ? `Unterlagen:\n${list(u.antrag.map(shortItem))}\n${firstSentence(u.einreichung)}`
+      : "Unterlagen: im Katalog nicht hinterlegt, bitte bei der Förderstelle prüfen.",
+  );
+  parts.push(`Frist: ${fristText(programme)}\nNächster Schritt: ${output.naechsterSchritt}`);
 
-  const sources = [
-    programme.links.programmwebsite ? `Programmwebsite: ${programme.links.programmwebsite}` : null,
-    ...(programme.quellen as { typ: string; titel?: string; stand?: string }[])
-      .filter((q) => q.typ === "web" && q.titel && q.stand && !q.stand.startsWith("abgerufen"))
-      .map((q) => `Quelle: ${q.titel} (Stand ${q.stand})`),
-  ].filter(Boolean);
-  if (sources.length) parts.push(sources.join("\n"));
+  const sources = (programme.quellen as { typ: string; titel?: string; stand?: string }[])
+    .filter((q) => q.typ === "web" && q.titel && q.stand && !q.stand.startsWith("abgerufen"))
+    .map((q) => `${q.titel!.split(",")[0]} (Stand ${q.stand})`);
+  parts.push(
+    [
+      programme.links.programmwebsite ? `Programmseite: ${programme.links.programmwebsite}` : null,
+      sources.length ? `Quellen: ${sources.join("; ")}` : null,
+      "Mit „Angaben für den Antrag erfassen“ gehen wir den Antrag Frage für Frage durch.",
+    ].filter(Boolean).join("\n"),
+  );
 
   return parts.join("\n\n");
 }
