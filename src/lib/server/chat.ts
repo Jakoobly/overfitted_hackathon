@@ -8,6 +8,7 @@ import {
   type Profile,
 } from "@/lib/chat/contract";
 import { catalogForSearch, getProgramme, type Programme } from "./catalog";
+import { CHECKLIST_TASK, checklistOutputSchema, renderChecklist } from "./checklist";
 import { generateStructured } from "./langdock";
 
 const MAX_MATCHES = 3;
@@ -26,10 +27,6 @@ const messageOutputSchema = z.strictObject({
       anpassung: z.string().nullable().describe("Planbare Projektänderung bei Status aehnlich, sonst null"),
     }),
   ),
-});
-
-const checklistOutputSchema = z.strictObject({
-  reply: z.string().describe("Antragscheckliste für das ausgewählte Programm"),
 });
 
 const BASE_RULES = `Du bist der VHS-Förderfinder des Volkshochschulverbands Baden-Württemberg.
@@ -153,12 +150,7 @@ export async function handleSelectProgramme(input: {
     BASE_RULES,
     selectedRules(programme),
     `\nBestätigtes Projektprofil:\n${JSON.stringify(input.profile)}`,
-    `
-Erstelle jetzt die Antragscheckliste (höchstens etwa 180 Wörter):
-- Nenne zuerst das gewählte Programm.
-- Voraussetzungen: was das Profil bereits erfüllt und was noch zu klären ist.
-- Benötigte Unterlagen und Antragsfrist laut Katalog, sonst "bei der Förderstelle prüfen".
-- Genau einen konkreten nächsten Schritt und die Programmwebsite, falls bekannt.`,
+    CHECKLIST_TASK,
   ].join("\n");
 
   const output = await generateStructured({
@@ -172,7 +164,7 @@ Erstelle jetzt die Antragscheckliste (höchstens etwa 180 Wörter):
   });
 
   return {
-    reply: output.reply,
+    reply: renderChecklist(programme, input.profile, output),
     profile: input.profile,
     selectedProgramme: { id: programme.id, titel: programme.titel },
   };

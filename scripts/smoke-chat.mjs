@@ -72,6 +72,10 @@ if (chosen) {
   const selection = await send(`Antrag vorbereiten: ${chosen.titel}`, { action: "selectProgramme", programmeId: chosen.programmeId }, `Ich möchte den Antrag für „${chosen.titel}“ vorbereiten.`);
   check(selection.selectedProgramme?.id === chosen.programmeId, "Programm ausgewählt");
   check((selection.reply ?? "").includes(chosen.titel.split(" ")[0]), "Checkliste nennt das Programm");
+  const met = (selection.reply ?? "").match(/Laut Ihrem Projektprofil erfüllt:\n([\s\S]*?)(\n\n|$)/)?.[1] ?? "";
+  check(met !== "", "Checkliste trennt erfüllte von offenen Voraussetzungen");
+  check(!/erwerbs/i.test(met), "Erwerbsstatus nicht als erfüllt gewertet (steht nicht im Profil)");
+  if (chosen.programmeId === ESF) check(/ELAN/.test(selection.reply ?? ""), "Checkliste enthält die Einreichung über ELAN aus dem Katalog");
   selectedProgrammeId = selection.selectedProgramme?.id ?? null;
 
   // 3. Freie Frage nach den Unterlagen

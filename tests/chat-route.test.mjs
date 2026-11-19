@@ -241,14 +241,72 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
     assert.match(instructions, /Unterschrift und Bestätigungen/);
   });
 
+  const checklist = (erfuellt, offen = ["Kursumfang 8 bis 160 Unterrichtseinheiten?"]) => modelJson({
+    einleitung: "Das Programm bezuschusst berufliche Fachkurse.",
+    erfuellt,
+    offen,
+    naechsterSchritt: "Antragsvordruck herunterladen.",
+  });
+
   test("selectProgramme returns the checklist and the selected programme", async () => {
-    langdock.respond(modelJson({ reply: "Checkliste" }));
+    langdock.respond(checklist([]));
     const res = await chat(app.base, { action: "selectProgramme", programmeId: ESF, profile });
     assert.equal(res.status, 200);
-    assert.equal(res.data.reply, "Checkliste");
     assert.deepEqual(res.data.profile, profile);
     assert.deepEqual(res.data.selectedProgramme, { id: ESF, titel: catalog.find((p) => p.id === ESF).titel });
     assert.match(langdock.requests[0].body.instructions, /Antragscheckliste/);
+    assert.match(res.data.reply, /^Gewähltes Programm: ESF-Fachkursförderung Baden-Württemberg/);
+    assert.match(res.data.reply, /Nächster Schritt: Antragsvordruck herunterladen\./);
+  });
+
+  test("the checklist keeps only requirements backed by the profile", async () => {
+    langdock.respond(checklist([
+      { voraussetzung: "Förderregion Baden-Württemberg", profilfeld: "bundesland", profilwert: "Baden-Württemberg" },
+      { voraussetzung: "Antrag durch einen Verein", profilfeld: "traeger", profilwert: "verein" },
+      { voraussetzung: "Budget im Förderrahmen", profilfeld: "budget", profilwert: "15.000 €" },
+      { voraussetzung: "Teilnehmende sind erwerbstätig", profilfeld: "zielgruppen", profilwert: "erwerbstätige" },
+      { voraussetzung: "Projektbeginn ab September 2026", profilfeld: "start", profilwert: "2026-09" },
+      { voraussetzung: "AZAV-zertifiziert", profilfeld: "partner.azav", profilwert: "ja" },
+      { voraussetzung: "Eigenanteil von 10 %", profilfeld: "eigenanteil", profilwert: "10" },
+    ]));
+    const { data } = await chat(app.base, { action: "selectProgramme", programmeId: ESF, profile });
+    const [, met, open] = data.reply.match(/Laut Ihrem Projektprofil erfüllt:\n([\s\S]*?)\n\nNoch zu klären:\n([\s\S]*?)\n\n/);
+    assert.match(met, /Förderregion Baden-Württemberg \(Bundesland: Baden-Württemberg\)/);
+    assert.match(met, /Antrag durch einen Verein/);
+    assert.match(met, /Budget im Förderrahmen/);
+    for (const unbacked of ["erwerbstätig", "Projektbeginn", "AZAV", "Eigenanteil"]) {
+      assert.doesNotMatch(met, new RegExp(unbacked), `${unbacked} must not count as met`);
+      assert.match(open, new RegExp(unbacked), `${unbacked} must be open`);
+    }
+    assert.match(open, /Kursumfang/);
+  });
+
+  test("a requirement backed by several profile fields is listed once", async () => {
+    langdock.respond(checklist([
+      { voraussetzung: "Medienkompetenz in Baden-Württemberg.", profilfeld: "bundesland", profilwert: "Baden-Württemberg" },
+      { voraussetzung: "Medienkompetenz in Baden-Württemberg", profilfeld: "themen", profilwert: "digital" },
+    ]));
+    const { data } = await chat(app.base, { action: "selectProgramme", programmeId: IDEE, profile });
+    assert.equal(data.reply.match(/Medienkompetenz in Baden-Württemberg/g).length, 1);
+    assert.match(data.reply, /Medienkompetenz in Baden-Württemberg \(Bundesland: Baden-Württemberg; Thema: digital\)/);
+  });
+
+  test("the checklist takes documents, deadline and sources from the catalogue", async () => {
+    langdock.respond(checklist([]));
+    const { data } = await chat(app.base, { action: "selectProgramme", programmeId: ESF, profile });
+    const esf = catalog.find((p) => p.id === ESF);
+    assert.ok(data.reply.includes(`Einreichung: ${esf.unterlagen.einreichung}`));
+    for (const item of esf.unterlagen.antrag) assert.ok(data.reply.includes(`- ${item}`), item);
+    assert.match(data.reply, /Frist: bei der Förderstelle prüfen/);
+    assert.ok(data.reply.includes(`Programmwebsite: ${esf.links.programmwebsite}`));
+    assert.match(data.reply, /Quelle: Merkblatt Förderprogramm Fachkurse.*\(Stand September 2026\)/);
+  });
+
+  test("without catalogue documents the checklist points to the funding body", async () => {
+    langdock.respond(checklist([]));
+    const { data } = await chat(app.base, { action: "selectProgramme", programmeId: IDEE, profile });
+    assert.match(data.reply, /Unterlagen: im Katalog nicht hinterlegt, bitte bei der Förderstelle prüfen\./);
+    assert.doesNotMatch(data.reply, /Einreichung:|Quelle:/);
   });
 
   test("selectProgramme with an unknown ID returns 404 without calling Langdock", async () => {
