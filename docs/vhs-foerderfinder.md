@@ -88,7 +88,7 @@ Die Website `vhs-bw.de` läuft laut Projektabstimmung auf WordPress/PHP. Der Fö
 
 ## Übergabe an die VHS
 
-Zum Abschluss liefert das Team `docs/uebergabe-vhs.md` als Betriebs- und Einbindungsanleitung. Das Dokument enthält die tatsächlich geprüften Schritte und Zuständigkeiten für:
+Zum Abschluss liefert das Team die [Übergabe an die VHS](uebergabe-vhs.md) als Betriebs- und Einbindungsanleitung. Das Dokument enthält die tatsächlich geprüften Schritte und Zuständigkeiten für:
 
 - Lokalen Start und Bereitstellung mit Voraussetzungen, Befehlen, Konfigurationsnamen und einem kurzen Funktionstest von der Projektidee über die Programmauswahl bis zur Antragscheckliste im Chat.
 - Aktualisierung des Excel-Katalogs mit Tabellenblatt, Spaltenzuordnung, Beispieldatensatz, Importbefehl und Umgang mit Fehlern.
