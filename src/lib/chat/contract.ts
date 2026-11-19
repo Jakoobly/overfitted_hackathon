@@ -49,6 +49,14 @@ export const matchStatusLabel: Record<MatchStatus, string> = {
   aehnlich: "Ähnlich",
 };
 
+/** Stand der Programmseite laut Scraper-Datenbank (ISO-Zeitpunkte). */
+export type Seitenstand = {
+  /** Letzter erfolgreicher Abruf. */
+  geprueftAm: string;
+  /** Letzte erkannte Änderung nach dem ersten Abruf, sonst null. */
+  geaendertAm: string | null;
+};
+
 export type Match = {
   programmeId: string;
   titel: string;
@@ -58,6 +66,8 @@ export type Match = {
   /** Planbare Änderung bei Status „aehnlich“, sonst null. */
   anpassung: string | null;
   url: string | null;
+  /** null, wenn keine Scraper-Datenbank vorliegt oder die Seite nie abgerufen wurde. */
+  seitenstand: Seitenstand | null;
 };
 
 export type ApplicationValue = string | number | null;
@@ -133,6 +143,7 @@ export type CatalogEntry = {
   kurzbeschreibung: string | null;
   frist: { status: string; datum: string | null };
   url: string | null;
+  seitenstand: Seitenstand | null;
 };
 
 /**

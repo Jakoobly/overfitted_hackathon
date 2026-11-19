@@ -44,6 +44,19 @@ function formatFrist({ status, datum }: CatalogEntry["frist"]) {
   return fristLabel[status] ?? fristLabel.unbekannt;
 }
 
+const dayFormat = new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" });
+
+/** „Programmseite geprüft am …“ aus der Scraper-Datenbank, leer ohne Datenbank. */
+function SeitenstandHint({ stand }: { stand: Match["seitenstand"] }) {
+  if (!stand) return null;
+  return (
+    <p className="programme-freshness">
+      Programmseite geprüft am {dayFormat.format(new Date(stand.geprueftAm))}
+      {stand.geaendertAm && <> · <strong>geändert am {dayFormat.format(new Date(stand.geaendertAm))}</strong></>}
+    </p>
+  );
+}
+
 export function FundingWorkspace() {
   const [messages, setMessages] = useState<HistoryEntry[]>([]);
   const [draft, setDraft] = useState("");
@@ -378,6 +391,7 @@ export function FundingWorkspace() {
                         <p>{entry.kurzbeschreibung}</p>
                       </details>
                     )}
+                    <SeitenstandHint stand={entry.seitenstand} />
                     <div className="programme-actions">
                       <span className="programme-description">{formatFrist(entry.frist)}</span>
                       {entry.url && /^https?:\/\//i.test(entry.url) && (
@@ -409,6 +423,7 @@ export function FundingWorkspace() {
                           <ul>{match.offenePunkte.map((point, index) => <li key={index}>{point}</li>)}</ul>
                         </details>
                       )}
+                      <SeitenstandHint stand={match.seitenstand} />
                       <div className="programme-actions">
                         <button
                           className="programme-action"

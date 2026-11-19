@@ -37,6 +37,17 @@ Am 19. November 2026 in Chrome geprüft. Mit dem Demo-Beispiel und Langdock vers
 
 Am 19. November 2026 wurde `gpt-5.1` mit dem Demo-Schlüssel geprüft. Im lokalen Browser-Test führten eine freie Projektbeschreibung und das damalige Demo-Beispiel zu Katalogtreffern und einer gezielten Rückfrage. Nach „Antrag vorbereiten“ erschienen Checklisten im Chat. Die freie Unterlagenfrage bezog sich vor und nach dem Programmwechsel auf den jeweils ausgewählten Treffer. Bei fehlenden Katalogangaben verwies der Chat an die Förderstelle oder die Programmwebsite. Für die ESF-Fachkursförderung Baden-Württemberg nannte er nach der Ergänzung die belegten Antragsunterlagen. [API-Vertrag und Beispiele](api-chat.md)
 
+## Programmseiten aktuell halten (Scraper-Datenbank)
+
+`npm run scrape` ruft die offiziellen Programmseiten ab und legt beim ersten Lauf selbst `data/database.sqlite` an (Git ignoriert die Datei). Der Server liest diese Datei live, höchstens eine Minute verzögert, ohne Neustart:
+
+- Jede Programmkarte zeigt „Programmseite geprüft am …“, nach einer erkannten Änderung zusätzlich „geändert am …“.
+- Nur Extraktionen, die ein Mensch freigegeben hat und deren Zitate wörtlich im Seitentext stehen, fließen in die Suche ein. Sie können ein Programm schließen (kein offener Aufruf, Frist abgelaufen), aber nie öffnen. Ablauf: `npm run scrape -- --extract` (braucht den Langdock-Schlüssel, verbraucht Tokens), dann `npm run scrape -- --report --details` lesen, dann `npm run review -- <ID> geprueft` oder `npm run review -- <ID> verworfen`. `npm run review` ohne Argumente listet offene Extraktionen.
+- Ohne Datei (z. B. auf Vercel, wo sie nicht mit ausgeliefert wird) zeigt die App keine Hinweise und nutzt nur den Katalog. Für einen anderen Ort `FOERDER_DB_FILE` setzen (relativ zum App-Ordner oder absolut).
+- `SCRAPER_CONTACT` in `.env.local` mit einer Team- oder VHS-Adresse setzen, damit Seitenbetreiber das Team erreichen.
+
+Stand 19. November 2026, erster Lauf: 34 von 37 Seiten gespeichert. Gesperrt: beide CERV-Seiten auf kontaktstelle-cerv.de (robots.txt antwortet mit HTTP 500). Fehler: die Wegweiserkurs-Seite auf vhs-bw.de lieferte eine Fehlerseite. Noch keine Extraktion ausgeführt oder freigegeben. Im Browser lokal geprüft (23 von 24 Karten mit Prüfstand). Nicht geprüft: Betrieb auf Vercel mit Datenbank.
+
 ## Antragsunterlagen ergänzen
 
 Die Programmdokumente in `raw/` nennen keine Antragsunterlagen. Belegte Unterlagen stehen deshalb je Programm-ID in `data/ergaenzungen/unterlagen.json`, gegliedert nach Einreichung, Antrag, Bereithalten und Pflichten nach der Bewilligung, jeweils mit Quellen-URL und Stand. `npm run import:catalog` übernimmt sie in `data/json/foerderprogramme.json`. Eine unbekannte ID bricht den Import mit Fehlermeldung ab. Aktuell gepflegt: ESF-Fachkursförderung Baden-Württemberg (Antragsvordruck Stand November 2026, Merkblatt Stand September 2026). Vor jeder neuen Förderrunde mit den Vordrucken auf esf-bw.de abgleichen.

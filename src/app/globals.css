@@ -259,3 +259,5 @@ dl.project-details-grid > div:nth-child(5) { text-align: right; }
 .edit-button::before { content: "✎"; font-size: 1rem; line-height: 1; }
 .edit-button:hover:not(:disabled) { border-color: var(--navy); background: #e3f1fb; }
 .edit-button:disabled { color: var(--muted); opacity: .7; }
+.programme-freshness { margin-top: .5rem; color: var(--muted); font-size: .75rem; }
+.programme-freshness strong { color: #744f00; }

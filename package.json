@@ -14,7 +14,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "import:catalog": "node scripts/import-catalog.mjs",
     "smoke:chat": "node scripts/smoke-chat.mjs",
-    "scrape": "node scripts/scrape-sources.mjs"
+    "scrape": "node scripts/scrape-sources.mjs",
+    "review": "node scripts/review-extraction.mjs"
   },
   "dependencies": {
     "next": "^16.4.6",

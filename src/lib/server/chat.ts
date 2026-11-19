@@ -7,7 +7,7 @@ import {
   type Match,
   type Profile,
 } from "@/lib/chat/contract";
-import { availability, catalogForSearch, getProgramme, today, type Programme } from "./catalog";
+import { availability, catalogForSearch, getProgramme, seitenstand, today, type Programme } from "./catalog";
 import { CHECKLIST_TASK, checklistOutputSchema, renderChecklist } from "./checklist";
 import { generateStructured } from "./langdock";
 
@@ -116,6 +116,7 @@ function toMatches(treffer: z.infer<typeof messageOutputSchema>["treffer"], prof
       offenePunkte: t.offenePunkte,
       anpassung: t.status === "aehnlich" ? t.anpassung : null,
       url: programme.links.programmwebsite ?? null,
+      seitenstand: seitenstand(programme.id),
     });
   }
   return matches.slice(0, MAX_MATCHES);

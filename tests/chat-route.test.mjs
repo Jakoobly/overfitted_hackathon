@@ -1,8 +1,11 @@
 // Prüft POST /api/chat gegen einen simulierten Langdock-Server. Läuft ohne echten Schlüssel.
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { createServer } from "node:http";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { after, before, describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 
@@ -73,6 +76,45 @@ function responseBody(text) {
 
 const modelJson = (value) => ({ status: 200, text: JSON.stringify(value) });
 
+// ---------- Scraper-Datenbank als Testdaten ----------
+
+const FIXTURE_DIR = mkdtempSync(join(tmpdir(), "foerderfinder-db-"));
+const FIXTURE_DB = join(FIXTURE_DIR, "database.sqlite");
+const CLOSED_BY_PAGE = "creative-europe";
+
+/** Kleine Datenbank im Schema von scripts/scrape-sources.mjs. */
+function writeFixtureDb() {
+  const db = new DatabaseSync(FIXTURE_DB);
+  db.exec(`
+    CREATE TABLE quellen (id INTEGER PRIMARY KEY, url TEXT NOT NULL UNIQUE, programm_id TEXT NOT NULL, typ TEXT NOT NULL, aktiv INTEGER NOT NULL DEFAULT 1);
+    CREATE TABLE abrufe (id INTEGER PRIMARY KEY, quelle_id INTEGER NOT NULL, zeitpunkt TEXT NOT NULL, ergebnis TEXT NOT NULL,
+      http_status INTEGER, content_type TEXT, etag TEXT, last_modified TEXT, text_hash TEXT, text TEXT, hinweis TEXT);
+    CREATE TABLE extraktionen (id INTEGER PRIMARY KEY, abruf_id INTEGER NOT NULL, programm_id TEXT NOT NULL, zeitpunkt TEXT NOT NULL,
+      modell TEXT NOT NULL, daten TEXT NOT NULL, belege_geprueft INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'neu');
+  `);
+  const source = db.prepare("INSERT INTO quellen (url, programm_id, typ) VALUES (?, ?, 'programmseite')");
+  const fetch = db.prepare("INSERT INTO abrufe (quelle_id, zeitpunkt, ergebnis) VALUES (?, ?, ?)");
+  const extraction = db.prepare("INSERT INTO extraktionen (abruf_id, programm_id, zeitpunkt, modell, daten, belege_geprueft, status) VALUES (?, ?, ?, 'test', ?, ?, ?)");
+  const facts = (frist, offen) => JSON.stringify({
+    frist: { status: frist, datum: null, beleg: "Zitat" },
+    aufruf: { offen, titel: null, beleg: "Zitat" },
+    foerderbetrag: { minEur: null, maxEur: 60000, beleg: "Zitat" },
+    unterlagen: { liste: ["Antragsformular"], beleg: "Zitat" },
+  });
+
+  source.run("https://example.org/esf", ESF); // 1
+  fetch.run(1, "2026-11-01T08:00:00.000Z", "neu");
+  fetch.run(1, "2026-11-18T08:00:00.000Z", "geaendert");
+  fetch.run(1, "2026-11-19T08:00:00.000Z", "fehler"); // zählt nicht als Prüfung
+  source.run("https://example.org/idee", IDEE); // 2
+  fetch.run(2, "2026-11-19T09:00:00.000Z", "neu"); // abruf 4
+  extraction.run(4, IDEE, "2026-11-19T09:01:00.000Z", facts("kein_aufruf", false), 1, "neu"); // ungeprüft: ignorieren
+  source.run("https://example.org/creative", CLOSED_BY_PAGE); // 3
+  fetch.run(3, "2026-11-19T10:00:00.000Z", "neu"); // abruf 5
+  extraction.run(5, CLOSED_BY_PAGE, "2026-11-19T10:01:00.000Z", facts("unbekannt", false), 1, "geprueft");
+  db.close();
+}
+
 // ---------- Next-Server ----------
 
 async function startApp(env) {
@@ -135,16 +177,39 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
 
   before(async () => {
     const port = await langdock.listen();
+    writeFixtureDb();
     app = await startApp({
       LANGDOCK_API_KEY: "test-key",
       LANGDOCK_BASE_URL: `http://127.0.0.1:${port}`,
       LANGDOCK_MODEL: "gpt-5.1",
       CHAT_ALLOWED_ORIGINS: "https://www.vhs-bw.de",
+      FOERDER_DB_FILE: FIXTURE_DB,
     });
   });
   after(async () => {
     await app?.stop();
     await langdock.close();
+    rmSync(FIXTURE_DIR, { recursive: true, force: true });
+  });
+
+  test("matches carry the page status from the scraper database", async () => {
+    langdock.respond(modelJson({
+      reply: "Treffer.",
+      profile,
+      neueSuche: true,
+      treffer: [ESF, IDEE, CLOSED_BY_PAGE].map((id) => ({ programmeId: id, status: "pruefen", begruendung: "x", offenePunkte: [], anpassung: null })),
+    }));
+    const res = await chat(app.base, { action: "message", message: "Suche.", profile });
+    assert.equal(res.status, 200);
+    assert.deepEqual(res.data.matches.map((m) => m.programmeId), [ESF, IDEE], "reviewed page closes the programme");
+    const [esf, idee] = res.data.matches;
+    assert.deepEqual(esf.seitenstand, { geprueftAm: "2026-11-18T08:00:00.000Z", geaendertAm: "2026-11-18T08:00:00.000Z" });
+    assert.deepEqual(idee.seitenstand, { geprueftAm: "2026-11-19T09:00:00.000Z", geaendertAm: null });
+
+    const instructions = langdock.requests[0].body.instructions;
+    assert.match(instructions, /"verfuegbarkeit":\{"verfuegbar":false,"grund":"laut Programmseite derzeit kein offener Aufruf"\}/);
+    assert.match(instructions, /"programmseite":\{"abgerufenAm":"2026-11-19".*"maxEur":60000/);
+    assert.equal(instructions.match(/"programmseite":/g).length, 1, "unreviewed extractions stay out");
   });
 
   test("a message returns reply, profile and enriched matches", async () => {
@@ -576,7 +641,8 @@ describe("POST /api/chat without an API key", { timeout: 180_000 }, () => {
   before(async () => {
     const port = await langdock.listen();
     // Leerer Schlüssel überschreibt einen Wert aus .env.local
-    app = await startApp({ LANGDOCK_API_KEY: "", LANGDOCK_BASE_URL: `http://127.0.0.1:${port}` });
+    // Ohne Datenbankdatei (wie auf Vercel) gilt nur der Katalog.
+    app = await startApp({ LANGDOCK_API_KEY: "", LANGDOCK_BASE_URL: `http://127.0.0.1:${port}`, FOERDER_DB_FILE: "data/gibt-es-nicht.sqlite" });
   });
   after(async () => {
     await app?.stop();
@@ -585,7 +651,9 @@ describe("POST /api/chat without an API key", { timeout: 180_000 }, () => {
 
   test("returns 503 with the catalogue and never calls Langdock", async () => {
     langdock.respond(modelJson({ reply: "darf nicht kommen" }));
-    assertUnavailable(await chat(app.base, { action: "message", message: "Hallo" }));
+    const res = await chat(app.base, { action: "message", message: "Hallo" });
+    assertUnavailable(res);
+    assert.ok(res.data.catalog.every((e) => e.seitenstand === null), "no page status without database");
     assert.equal(langdock.requests.length, 0);
   });
 });

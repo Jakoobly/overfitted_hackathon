@@ -43,7 +43,8 @@ Freie Nachricht. `history` enthält die bisherigen Nachrichten ohne die aktuelle
       "begruendung": "Digitale Grundbildung mit Berufsbezug kann als überbetrieblicher Fachkurs in BW gefördert werden.",
       "offenePunkte": ["Erwerbsstatus der Teilnehmenden", "aktuelle Ausschreibung und Antragsfristen"],
       "anpassung": null,
-      "url": "https://www.esf-bw.de/projekte-und-programme-umsetzen/foerderbereich-wirtschaft/foerderprogramm-fachkurse"
+      "url": "https://www.esf-bw.de/projekte-und-programme-umsetzen/foerderbereich-wirtschaft/foerderprogramm-fachkurse",
+      "seitenstand": { "geprueftAm": "2026-11-19T14:20:31.512Z", "geaendertAm": null }
     },
     {
       "programmeId": "idee-bw",
@@ -52,7 +53,8 @@ Freie Nachricht. `history` enthält die bisherigen Nachrichten ohne die aktuelle
       "begruendung": "Stärkung der Medienkompetenz in Baden-Württemberg ist Kernziel.",
       "offenePunkte": ["aktuelle Ausschreibungsrunde und Fristen"],
       "anpassung": null,
-      "url": "https://www.medienfokus-bw.de/angebot/idee-bw/"
+      "url": "https://www.medienfokus-bw.de/angebot/idee-bw/",
+      "seitenstand": null
     }
   ]
 }
@@ -133,10 +135,13 @@ Fehlt der Schlüssel, ist Langdock nicht erreichbar, läuft der Aufruf in eine Z
       "fachbereiche": ["Arbeit – Beruf"],
       "kurzbeschreibung": "…",
       "frist": { "status": "unbekannt", "datum": null },
-      "url": "https://www.esf-bw.de/…"
+      "url": "https://www.esf-bw.de/…",
+      "seitenstand": { "geprueftAm": "2026-11-19T14:20:31.512Z", "geaendertAm": null }
     }
   ]
 }
 ```
+
+`seitenstand` (Treffer und Katalog) stammt aus der Scraper-Datenbank `data/database.sqlite`: letzter erfolgreicher Abruf der Programmseite und letzte erkannte Änderung, beides ISO-Zeitpunkte. `null`, wenn keine Datenbank vorliegt oder die Seite nie abgerufen wurde.
 
 Oberfläche: Bei `code === "KI_NICHT_ERREICHBAR"` `reply` als Chatnachricht anzeigen und `catalog` statt der Trefferkarten listen, ohne Status-Badge, weil nichts bewertet wurde. Die Nachricht der VHS bleibt im Verlauf, damit sie sie später erneut senden kann.
