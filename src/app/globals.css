@@ -234,7 +234,15 @@ a { color: var(--navy); }
 .link-button:disabled { color: var(--muted); cursor: default; }
 
 /* Projekteckdaten: kurze Angaben nebeneinander, Bearbeiten als kleiner Button */
-dl.project-details-grid { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+dl.project-details-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* Bundesland links, Budget mittig, Projektstart rechtsbündig unter „Bearbeiten“ */
+dl.project-details-grid > div:nth-child(4) { text-align: center; }
+dl.project-details-grid > div:nth-child(5) { text-align: right; }
+@media (max-width: 420px) {
+  dl.project-details-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  dl.project-details-grid > div:nth-child(4) { text-align: right; }
+  dl.project-details-grid > div:nth-child(5) { grid-column: 1 / -1; text-align: left; }
+}
 .edit-button {
   display: inline-flex;
   align-items: center;
