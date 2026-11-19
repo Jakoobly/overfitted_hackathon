@@ -20,7 +20,7 @@ Nach „Antrag vorbereiten“ fragt der Chat über den Button „Antrag erfassen
 
 ### Automatische Prüfungen
 
-- `npm test` prüft ohne Langdock-Schlüssel die Chat-Route gegen ein simuliertes Langdock: Antwortformat, Treffer nur aus dem Katalog, Anfrage an Langdock (`gpt-5.1`, `store: false`), Fehler 400/404, den Ersatzweg mit HTTP 503 und Katalogliste sowie die Neubewertung nach einer Korrektur. Außerdem prüft es, dass der Katalog dem Import entspricht. Läuft auch in der CI.
+- `npm test` prüft ohne Langdock-Schlüssel die Chat-Route gegen ein simuliertes Langdock: Antwortformat, Treffer nur aus dem Katalog, Anfrage an Langdock (`gpt-5.1`, `store: false`), Fehler 400/403/404/413/429, den Ersatzweg mit HTTP 503 und Katalogliste, die Neubewertung nach einer Korrektur sowie Prüfstand und freigegebene Angaben aus einer Test-Scraper-Datenbank. Außerdem prüft es, dass der Katalog dem Import entspricht, und die Abläufe der statischen Mockups in `mockups/`. Läuft auch in der CI, zusammen mit `npm run build`. Am 19. November 2026 lokal bestanden (39 Tests, alle grün; `npm run build` ebenfalls erfolgreich). Hinweis: Die Tests starten einen eigenen `next dev` und laufen nicht, solange im selben Ordner schon `npm run dev` läuft.
 - `npm run smoke:chat` spielt bei laufender App (`npm run dev`, oder `SMOKE_URL=<App-URL>`) den Demo-Ablauf live mit dem echten Schlüssel durch: Projektbeschreibung mit Rückfrage, „Antrag vorbereiten“, Frage nach den Unterlagen und Korrektur des Standorts auf Bayern. Verbraucht Tokens, deshalb nur vor Demo oder Übergabe ausführen. Am 19. November 2026 zweimal vollständig bestanden. Die Treffer schwanken zwischen den Läufen (z. B. nach der Korrektur auf Bayern einmal keine, einmal drei bundesweite Programme). Bei einem Fehlschlag die ausgegebenen Antworten lesen und den Lauf wiederholen.
 
 ## Projekteckdaten korrigieren
@@ -46,7 +46,19 @@ Am 19. November 2026 wurde `gpt-5.1` mit dem Demo-Schlüssel geprüft. Im lokale
 - Ohne Datei (z. B. wenn sie beim Deployment nicht mit ausgeliefert wird) zeigt die App keine Hinweise und nutzt nur den Katalog. Für einen anderen Ort `FOERDER_DB_FILE` setzen (relativ zum App-Ordner oder absolut).
 - `SCRAPER_CONTACT` in `.env.local` mit einer Team- oder VHS-Adresse setzen, damit Seitenbetreiber das Team erreichen.
 
-Stand 19. November 2026, erster Lauf: 34 von 37 Seiten gespeichert. Gesperrt: beide CERV-Seiten auf kontaktstelle-cerv.de (robots.txt antwortet mit HTTP 500). Fehler: die Wegweiserkurs-Seite auf vhs-bw.de lieferte eine Fehlerseite. Noch keine Extraktion ausgeführt oder freigegeben. Im Browser lokal geprüft (23 von 24 Karten mit Prüfstand). Nicht geprüft: Betrieb auf Vercel mit Datenbank.
+Stand der Datenbank im Repository (19. November 2026, letzter Lauf gegen 15:14 Uhr): 37 Seiten für alle 24 Programme. Gesperrt: beide CERV-Seiten auf kontaktstelle-cerv.de (robots.txt antwortet mit HTTP 500). Fehler: eine der beiden Wegweiserkurs-Seiten auf vhs-bw.de lieferte eine Fehlerseite. Extraktionen sind gelaufen, **aber noch keine ist freigegeben**: 48 warten auf Prüfung (bei 11 steht mindestens ein Zitat nicht wörtlich im Seitentext), 7 sind verworfen. Bis zur ersten Freigabe zeigt die App nur den Prüfstand, die Suche nutzt nur den Katalog. Im Browser lokal geprüft: 23 von 24 Karten mit Prüfstand (CERV ohne, weil gesperrt), Trefferansicht mit echtem Langdock.
+
+Nicht geprüft: Betrieb mit Datenbank auf einem Hosting. Der Server liest die Datei zur Laufzeit über das Dateisystem und nicht per `import`. Auf Vercel muss sie deshalb ausdrücklich mit ausgeliefert werden (z. B. über `outputFileTracingIncludes` in einer `next.config`), sonst greift der Ausweg „ohne Datei“.
+
+## Förderkatalog aus Excel aktualisieren
+
+Quelle ist `raw/AG Fördermittelguide_Basisbericht.xlsx`, erstes Tabellenblatt (derzeit `Sheet1`, 21 Datenzeilen), plus je Programm ein Word-Dokument in `raw/` (24 Dokumente). Die Dokumente sind die neueren Fassungen und haben Vorrang, Excel füllt Lücken.
+
+1. Die neue Excel-Datei unter demselben Namen in `raw/` ablegen. Diese Spaltenüberschriften müssen in Zeile 1 stehen, sonst bricht der Import mit „Excel: Spalten fehlen: …“ ab: `Name`, `E-Mail`, `Programm-/Fachbereich`, `Förderprogramm`, `Fördergeber`, `Zuordnung Fördergeb` (Land, Bund, Europa oder Andere), `Kurzbeschreibung des Programms (max. 1000 Zeichen):`, `Projektbudget für Antragsteller*innen:`, `Art der Förderung:`, `Link zu weiterführender Programmwebsite:`, `Link zu Projektbeispielen:`, `Sonstige Anmerkungen`.
+2. `npm run import:catalog` ausführen. Das schreibt `data/json/foerderprogramme.json` neu und gibt Warnungen zu leeren oder mehrdeutigen Werten aus. Leere Werte bleiben `null`, jede Angabe behält ihre Herkunft (Excel-Zeile oder Dokument).
+3. `npm test` ausführen (prüft, dass der Katalog dem Import entspricht), dann committen. Der Katalog wird beim Build fest eingebunden: `npm run dev` übernimmt ihn sofort, eine bereitgestellte App braucht eine neue Bereitstellung.
+
+Neue Programme bekommen ihre Programmseite automatisch aus `Link zu weiterführender Programmwebsite:` und werden beim nächsten `npm run scrape` mit abgerufen.
 
 ## Antragsunterlagen ergänzen
 
@@ -87,3 +99,33 @@ console.log("Langdock OK");
 ```
 
 [Langdock Responses API](https://docs.langdock.com/en/developer/completion-api/openai-responses)
+
+## Bereitstellung und Einbindung in vhs-bw.de
+
+**Stand 19. November 2026: Die App läuft nur lokal. Es gibt noch keine öffentliche App-URL und keinen Button auf vhs-bw.de.** Die Oberfläche ist an die Gestaltung von vhs-bw.de angelehnt (Navy, Gelb, Arial) und im Browser auf Desktop und Handybreite geprüft.
+
+Für eine Bereitstellung (z. B. Vercel) als Next.js-App: `npm run build` muss durchlaufen (läuft in der CI), serverseitig `LANGDOCK_API_KEY`, `LANGDOCK_BASE_URL` und `LANGDOCK_MODEL` setzen, optional `CHAT_ALLOWED_ORIGINS` und `FOERDER_DB_FILE` (alle Namen in `.env.example`). Zur Scraper-Datenbank auf dem Hosting siehe oben.
+
+Empfohlene Einbindung: Die Redaktion setzt auf der gewünschten WordPress-Seite einen Button „Förderfinder starten“, der im selben Tab auf die App-URL verlinkt. Die Kopfzeile der App verlinkt mit „Zur Verbandswebsite“ zurück auf vhs-bw.de. Offen und mit der VHS zu klären: finale App-URL (ggf. Subdomain wie `foerderfinder.vhs-bw.de`), Seite und Position des Buttons, wer den Link pflegt.
+
+Eine Einbettung per `iframe` ist nicht vorbereitet. Dafür müsste die App einen `Content-Security-Policy: frame-ancestors`-Header für vhs-bw.de senden (derzeit nicht gesetzt), und `https://www.vhs-bw.de` gehört in `CHAT_ALLOWED_ORIGINS`. Details zu den Optionen: [Spezifikation](vhs-foerderfinder.md#einbindung-in-vhs-bwde).
+
+## Zuständigkeiten im Hackathon-Team
+
+| Bereich | Person |
+| --- | --- |
+| Oberfläche, Chat-Integration, Gestaltung | Jakob |
+| Chat-Route, Langdock-Anbindung, Antragsinterview, Missbrauchsschutz | Robert |
+| Excel-Import, Katalog, Scraper und Scraper-Datenbank | Rafael |
+
+Für den Betrieb benennt die VHS noch Ansprechpersonen für Datenpflege (Katalog, Freigabe der Extraktionen), Hosting und den Langdock-Zugang.
+
+## Bekannte Einschränkungen
+
+- Der Demo-Schlüssel läuft am 20. November 2026 ab. Ohne neuen Schlüssel zeigt die App nur den Katalog ohne Bewertung (HTTP 503).
+- Bewertungen und Antworten kommen vom Sprachmodell und schwanken zwischen Läufen. Fördervoraussetzungen sind fachlich bei der Förderstelle zu bestätigen. Darauf weist die App bei den Treffern hin.
+- Belegte Antragsunterlagen sind bisher nur für die ESF-Fachkursförderung Baden-Württemberg gepflegt. Bei den anderen Programmen verweist die Checkliste auf die Förderstelle.
+- Angaben von den Programmseiten fließen erst nach menschlicher Freigabe ein. Bisher ist keine Extraktion freigegeben.
+- Gesprächsverlauf und Antragsangaben liegen nur im Browser und gehen beim Neuladen verloren.
+- Das Anfrage-Limit zählt je Serverinstanz im Arbeitsspeicher (siehe „Schutz vor Missbrauch“).
+- Die Scraper-Datenbank ist eine Binärdatei im Repository: parallele Änderungen lassen sich nicht zusammenführen.
