@@ -100,11 +100,11 @@ a { color: var(--navy); }
 
 .conversation {
   display: grid;
-  flex: 1;
+  flex: 1 1 auto;
   align-content: start;
   gap: .8rem;
-  min-height: 15rem;
-  max-height: 25rem;
+  min-height: 20rem;
+  max-height: clamp(42rem, 85svh, 52rem);
   overflow: auto;
   padding: 1.25rem;
 }
