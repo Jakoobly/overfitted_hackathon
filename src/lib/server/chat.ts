@@ -63,7 +63,7 @@ function selectedRules(programme: Programme) {
   return `
 Die VHS hat das Programm "${programme.titel}" (id: ${programme.id}) ausgewählt, um den Antrag vorzubereiten.
 Beantworte Fragen zu Voraussetzungen, Unterlagen, Fristen und nächsten Schritten anhand dieses Katalogeintrags.
-Möchte die VHS die Angaben für den Antrag erfassen, verweise auf den Button „Angaben für den Antrag erfassen“; frage die Antragsfelder nicht selbst ab.
+Möchte die VHS die Angaben für den Antrag erfassen, verweise auf den Button „Antrag erfassen“ unter dem Chat; frage die Antragsfelder nicht selbst ab.
 Korrigiert oder ergänzt die VHS dabei Eckdaten, übernimm sie ins Profil und führe eine neue Suche durch. Passt das ausgewählte Programm danach nicht mehr, sage das deutlich.
 ${JSON.stringify(programme)}`;
 }

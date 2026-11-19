@@ -149,7 +149,7 @@ export function renderChecklist(programme: Programme, profile: Profile, output: 
     [
       programme.links.programmwebsite ? `Programmseite: ${programme.links.programmwebsite}` : null,
       sources.length ? `Quellen: ${sources.join("; ")}` : null,
-      "Mit „Angaben für den Antrag erfassen“ gehen wir den Antrag Frage für Frage durch.",
+      "Mit „Antrag erfassen“ unter dem Chat gehen wir den Antrag Frage für Frage durch.",
     ].filter(Boolean).join("\n"),
   );
 

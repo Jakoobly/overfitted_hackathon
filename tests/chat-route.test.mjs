@@ -423,7 +423,7 @@ describe("POST /api/chat", { timeout: 180_000 }, () => {
     assert.match(data.reply, /Frist: bei der Förderstelle prüfen/);
     assert.ok(data.reply.includes(`Programmseite: ${esf.links.programmwebsite}`));
     assert.match(data.reply, /Quellen: .*Merkblatt Förderprogramm Fachkurse \(Stand September 2026\)/);
-    assert.match(data.reply, /Angaben für den Antrag erfassen/);
+    assert.match(data.reply, /Mit „Antrag erfassen“/);
   });
 
   test("without catalogue documents the checklist points to the funding body", async () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type MouseEvent } from "react";
 import {
   emptyProfile,
   MAX_HISTORY_ENTRIES,
@@ -211,17 +211,17 @@ export function FundingWorkspace() {
     if (!event.repeat && !pending && draft.trim()) event.currentTarget.form?.requestSubmit();
   }
 
+  /** Vorgefertigter Prompt: startet die Antragserfassung für das ausgewählte Programm. */
   function startApplication() {
-    if (!selectedProgramme) return;
-    void runTurn(
-      { action: "startApplication", programmeId: selectedProgramme.id },
-      "Angaben für den Antrag erfassen",
-    );
+    if (!selectedProgramme || pending) return;
+    void runTurn({ action: "startApplication", programmeId: selectedProgramme.id }, "Antrag erfassen");
   }
 
-  function cancelApplication() {
-    if (!application) return;
-    void runTurn({ action: "message", message: "abbrechen", selectedProgrammeId: selectedProgramme?.id ?? null, application }, "abbrechen");
+  /** Vorgefertigte Antwort während der Erfassung, z. B. „überspringen“. */
+  function sendQuickReply(event: MouseEvent<HTMLButtonElement>) {
+    const text = event.currentTarget.dataset.reply;
+    if (!text || !application || pending) return;
+    void runTurn({ action: "message", message: text, selectedProgrammeId: selectedProgramme?.id ?? null, application }, text);
   }
 
   function selectProgramme(match: Match) {
@@ -245,15 +245,10 @@ export function FundingWorkspace() {
           {selectedProgramme && (
             <div className="chat-context">
               <p>Im Chat ausgewählt <strong>{selectedProgramme.titel}</strong></p>
-              {application ? (
-                <p className="application-progress">
-                  <span role="status">Antragsangaben: Frage {Math.min(application.schritt + 1, application.gesamt)} von {application.gesamt}</span>
-                  <button className="link-button" type="button" onClick={cancelApplication} disabled={pending}>Erfassung abbrechen</button>
+              {application && (
+                <p className="application-progress" role="status">
+                  Antrag erfassen: Frage {Math.min(application.schritt + 1, application.gesamt)} von {application.gesamt}
                 </p>
-              ) : (
-                <button className="programme-action" type="button" onClick={startApplication} disabled={pending}>
-                  Angaben für den Antrag erfassen
-                </button>
               )}
             </div>
           )}
@@ -267,6 +262,21 @@ export function FundingWorkspace() {
             {pending && !pendingTurn.recheck && <p className="match-summary" role="status">Der Förderfinder antwortet …</p>}
           </div>
           {error && <p className="chat-error" role="alert">{error}</p>}
+          {selectedProgramme && (
+            <div className="quick-replies" aria-label="Vorschläge">
+              {application ? (
+                ["Überspringen", "Zurück", "Abbrechen"].map((label) => (
+                  <button className="quick-reply" type="button" key={label} data-reply={label} disabled={pending} onClick={sendQuickReply}>
+                    {label}
+                  </button>
+                ))
+              ) : (
+                <button className="quick-reply quick-reply--primary" type="button" disabled={pending} onClick={startApplication}>
+                  Antrag erfassen
+                </button>
+              )}
+            </div>
+          )}
           <form className="composer" onSubmit={sendMessage}>
             <label className="visually-hidden" htmlFor="project-message">Ihre Nachricht</label>
             <textarea

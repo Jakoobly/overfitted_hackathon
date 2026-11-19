@@ -89,7 +89,7 @@ Danach jede weitere `message` mit `"selectedProgrammeId": "esf-fachkursfoerderun
 
 ## Antragsinterview (`startApplication`)
 
-Nach „Antrag vorbereiten“ startet der Button „Angaben für den Antrag erfassen“ das Interview. Fragen und Formatprüfung liegen fest im Server (`src/lib/server/application.ts`), ohne Modellaufruf: 14 Fragen für die ESF-Fachkursförderung aus dem Antragsvordruck, 10 allgemeine Fragen für alle anderen Programme.
+Nach „Antrag vorbereiten“ startet der Button „Antrag erfassen“ über dem Eingabefeld das Interview. Während der Erfassung stehen dort „Überspringen“, „Zurück“ und „Abbrechen“ als fertige Antworten. Fragen und Formatprüfung liegen fest im Server (`src/lib/server/application.ts`), ohne Modellaufruf: 14 Fragen für die ESF-Fachkursförderung aus dem Antragsvordruck, 10 allgemeine Fragen für alle anderen Programme.
 
 ```json
 { "action": "startApplication", "programmeId": "esf-fachkursfoerderung-baden-wuerttemberg", "profile": { "…": "…" } }

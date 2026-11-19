@@ -12,7 +12,7 @@ Der Förderfinder sucht nur Programme, für die man sich laut Katalog jetzt noch
 
 ### Antragsangaben erfassen
 
-Nach „Antrag vorbereiten“ fragt der Chat über „Angaben für den Antrag erfassen“ die Antragsangaben Frage für Frage ab. Für die ESF-Fachkursförderung stammen die 14 Fragen aus dem Antragsvordruck (Stand November 2026), mit Prüfung von 8 bis 160 Unterrichtseinheiten, höchstens 6.000 Euro Kursgebühr und Kursbeginn in der Förderrunde 01.09.2026 bis 31.08.2027. Am Ende berechnet der Chat den Zuschuss (45 %) und warnt unter 10.000 Euro. Für alle anderen Programme gibt es 10 allgemeine Fragen. Falsche Formate fragt der Server mit Beispiel erneut ab. Die Angaben werden nur im Browser gehalten und nicht gespeichert. Chatantworten sind auf etwa 60 Wörter begrenzt, ausführlicher nur auf Nachfrage.
+Nach „Antrag vorbereiten“ fragt der Chat über den Button „Antrag erfassen“ über dem Eingabefeld die Antragsangaben Frage für Frage ab. Während der Erfassung stehen dort „Überspringen“, „Zurück“ und „Abbrechen“ als fertige Antworten bereit. Für die ESF-Fachkursförderung stammen die 14 Fragen aus dem Antragsvordruck (Stand November 2026), mit Prüfung von 8 bis 160 Unterrichtseinheiten, höchstens 6.000 Euro Kursgebühr und Kursbeginn in der Förderrunde 01.09.2026 bis 31.08.2027. Am Ende berechnet der Chat den Zuschuss (45 %) und warnt unter 10.000 Euro. Für alle anderen Programme gibt es 10 allgemeine Fragen. Falsche Formate fragt der Server mit Beispiel erneut ab. Die Angaben werden nur im Browser gehalten und nicht gespeichert. Chatantworten sind auf etwa 60 Wörter begrenzt, ausführlicher nur auf Nachfrage.
 
 ### Schutz vor Missbrauch
 
