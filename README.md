@@ -17,32 +17,38 @@ The VHS-Förderfinder helps adult education centres describe a project in chat a
 
 ## Tech stack
 
-The [technology proposal](docs/vhs-foerderfinder.md#technikvorschlag) uses Next.js, TypeScript, a JSON catalogue imported from Excel, and an AI wrapper for extracting project details from chat.
+The starter uses Next.js App Router, React and TypeScript. The OpenAI SDK and Zod are available for the chat API. SheetJS CE is a development dependency for the local Excel import. See the [technology proposal](docs/vhs-foerderfinder.md#technikvorschlag) for the planned data flow.
 
 ## Repository structure
 
 ```text
-.github/
-  ISSUE_TEMPLATE/           Task and bug templates
-  pull_request_template.md Pull request checklist
-docs/
-  architecture.md          Architecture outline
-  decisions.md             Technical decision log
-src/                       Application code (to be added)
-tests/                     Tests (to be added)
-.env.example               Environment variable template
-.gitignore                 Local files and secrets to exclude
-README.md                  Project overview and workflow
+src/app/                   Next.js pages and layout
+src/app/api/chat/          Location for the chat route
+src/components/            Chat and funding result UI
+src/lib/funding/           Funding types and matching logic
+src/lib/server/            Server-side OpenAI and catalogue access
+scripts/                   Local Excel import scripts
+raw/                       Existing source documents
+data/catalog/              Runtime JSON catalogue
+mockups/                   Static UI drafts
+docs/                      Specification and team schedule
+tests/                     Tests
 ```
 
 ## Setup
 
+Use Node.js 22.13+ (22.x) or 24.x and npm. From the repository root:
+
 ```sh
-git clone https://github.com/Jakoobly/overfitted_hackathon.git
-cd overfitted_hackathon
+npm ci
+npm run dev
 ```
 
-TBD: prerequisites, dependency installation, run commands, and test commands after choosing the stack. If environment variables are needed, copy `.env.example` to `.env` and fill in values locally. Document variable names in `.env.example`; never add real credentials to Git, issues, or Discord.
+Open [http://localhost:3000](http://localhost:3000) for the starter page. On Windows PowerShell, use `npm.cmd` if script execution is restricted.
+
+For chat development, copy `.env.example` to `.env.local` and set `OPENAI_API_KEY` and `OPENAI_MODEL` there. Keep credentials out of Git and use the OpenAI SDK from server-side code. The starter page can run before the chat route is implemented.
+
+Run `npm run lint` and `npm run typecheck` before committing. Use `npm run build` to check the production build and `npm start` to serve it locally.
 
 ## Collaboration
 
