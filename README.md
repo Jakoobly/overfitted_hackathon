@@ -17,7 +17,7 @@ The VHS-Förderfinder helps adult education centres describe a project in chat a
 
 ## Tech stack
 
-The starter uses Next.js App Router, React and TypeScript. The OpenAI SDK and Zod are available for the chat API. SheetJS CE is a development dependency for the local Excel import. See the [technology proposal](docs/vhs-foerderfinder.md#technikvorschlag) for the planned data flow.
+The starter uses Next.js App Router, React and TypeScript. The OpenAI SDK and Zod are available for the Langdock chat integration. SheetJS CE is a development dependency for the local Excel import. See the [technology proposal](docs/vhs-foerderfinder.md#technikvorschlag) for the planned data flow.
 
 ## Repository structure
 
@@ -46,7 +46,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) for the starter page. On Windows PowerShell, use `npm.cmd` if script execution is restricted.
 
-For chat development, copy `.env.example` to `.env.local` and set `OPENAI_API_KEY` and `OPENAI_MODEL` there. Keep credentials out of Git and use the OpenAI SDK from server-side code. The starter page can run before the chat route is implemented.
+For chat development, copy `.env.example` to `.env.local`. Set `LANGDOCK_API_KEY` to a VHS Langdock workspace key with Completion API access and `LANGDOCK_MODEL` to an available model ID. The template uses Langdock Cloud's EU base URL. For a dedicated Langdock deployment, set `LANGDOCK_BASE_URL` to the corresponding OpenAI-compatible endpoint root. Keep the key on the server and out of Git. The starter page runs without a key. [Langdock Responses API](https://docs.langdock.com/en/developer/completion-api/openai-responses)
 
 Run `npm run lint` and `npm run typecheck` before committing. Use `npm run build` to check the production build and `npm start` to serve it locally.
 
