@@ -39,11 +39,11 @@ Am 19. November 2026 wurde `gpt-5.1` mit dem Demo-Schlüssel geprüft. Im lokale
 
 ## Programmseiten aktuell halten (Scraper-Datenbank)
 
-`npm run scrape` ruft die offiziellen Programmseiten ab und legt beim ersten Lauf selbst `data/database.sqlite` an (Git ignoriert die Datei). Der Server liest diese Datei live, höchstens eine Minute verzögert, ohne Neustart:
+`npm run scrape` ruft die offiziellen Programmseiten ab und legt beim ersten Lauf selbst `data/database.sqlite` an. Die Datei liegt im Repository, damit das Team denselben Stand und dieselben Prüfentscheidungen teilt; die SQLite-Hilfsdateien (`-wal`, `-shm`) ignoriert Git. Vor einem Commit `npm run scrape` beenden, damit alle Änderungen in der Hauptdatei stehen. Da die Datei binär ist, lassen sich parallele Änderungen nicht zusammenführen: Scraper-Läufe und Prüfungen im Team absprechen. Der Server liest diese Datei live, höchstens eine Minute verzögert, ohne Neustart:
 
 - Jede Programmkarte zeigt „Programmseite geprüft am …“, nach einer erkannten Änderung zusätzlich „geändert am …“.
 - Nur Extraktionen, die ein Mensch freigegeben hat und deren Zitate wörtlich im Seitentext stehen, fließen in die Suche ein. Sie können ein Programm schließen (kein offener Aufruf, Frist abgelaufen), aber nie öffnen. Ablauf: `npm run scrape -- --extract` (braucht den Langdock-Schlüssel, verbraucht Tokens), dann `npm run scrape -- --report --details` lesen, dann `npm run review -- <ID> geprueft` oder `npm run review -- <ID> verworfen`. `npm run review` ohne Argumente listet offene Extraktionen.
-- Ohne Datei (z. B. auf Vercel, wo sie nicht mit ausgeliefert wird) zeigt die App keine Hinweise und nutzt nur den Katalog. Für einen anderen Ort `FOERDER_DB_FILE` setzen (relativ zum App-Ordner oder absolut).
+- Ohne Datei (z. B. wenn sie beim Deployment nicht mit ausgeliefert wird) zeigt die App keine Hinweise und nutzt nur den Katalog. Für einen anderen Ort `FOERDER_DB_FILE` setzen (relativ zum App-Ordner oder absolut).
 - `SCRAPER_CONTACT` in `.env.local` mit einer Team- oder VHS-Adresse setzen, damit Seitenbetreiber das Team erreichen.
 
 Stand 19. November 2026, erster Lauf: 34 von 37 Seiten gespeichert. Gesperrt: beide CERV-Seiten auf kontaktstelle-cerv.de (robots.txt antwortet mit HTTP 500). Fehler: die Wegweiserkurs-Seite auf vhs-bw.de lieferte eine Fehlerseite. Noch keine Extraktion ausgeführt oder freigegeben. Im Browser lokal geprüft (23 von 24 Karten mit Prüfstand). Nicht geprüft: Betrieb auf Vercel mit Datenbank.

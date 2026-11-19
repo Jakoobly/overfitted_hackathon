@@ -14,8 +14,10 @@ venv/
 __pycache__/
 *.py[cod]
 
-# Local database (scraper)
-data/database.sqlite*
+# SQLite helper files of the scraper database (the database itself is committed)
+data/database.sqlite-wal
+data/database.sqlite-shm
+data/database.sqlite-journal
 
 # Build output, caches, and test reports
 dist/

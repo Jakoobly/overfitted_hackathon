@@ -15,7 +15,7 @@
 // Domains laufen parallel, Seiten derselben Domain nacheinander. Bedingte Abrufe (ETag,
 // Last-Modified) vermeiden unnötige Übertragungen.
 //
-// Die Datenbank (data/database.sqlite) ist lokal und nicht im Repository. Extrahierte Angaben
+// Die Datenbank (data/database.sqlite) liegt im Repository und wird bei Bedarf neu angelegt. Extrahierte Angaben
 // landen als Vorschlag in der Tabelle extraktionen und werden nicht automatisch in den Katalog
 // übernommen. Ein Mensch prüft sie vorher anhand des Belegs.
 import fs from 'node:fs';
