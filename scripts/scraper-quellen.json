@@ -1,26 +1,130 @@
 {
-  "hinweis": "Ersetzt für den Scraper die Programmseite aus dem Katalog, wenn diese keine verwertbaren Angaben liefert. Der Katalog (Daten der Praxispartner) bleibt unverändert. Pro Programm sind mehrere URLs möglich.",
+  "hinweis": "Programmseiten, die der Scraper statt links.programmwebsite aus dem Katalog abruft. Ausgewählt sind die konkretesten offiziellen Seiten zu Antrag, Aufruf oder Förderbedingungen. Der Katalog (Daten der Praxispartner) bleibt unverändert. Geprüft am 19.11.2026.",
   "quellen": {
-    "wegweiserkurse-wwk": {
-      "urls": [
-        "https://www.bamf.de/DE/Themen/Integration/TraegerLehrFachkraefte/TraegerProjektfoerderung/Wegweiserkurse/Ueberblick/ueberblick-node.html",
-        "https://www.bamf.de/DE/Themen/Integration/TraegerLehrFachkraefte/TraegerProjektfoerderung/Wegweiserkurse/VorOrt/vor-ort-node.html"
-      ],
-      "grund": "Katalog-Link ist eine Navigationsseite mit rund 550 Zeichen. Überblick und „Vor Ort“ (Förderung über AMIF, Zentralstelle vhs-Verband BW) sind die Unterseiten mit Inhalt."
+    "asyl-migrations-und-integrationsfonds-amif": {
+      "urls": ["https://www.eu-migrationsfonds.de/DE/Foerderung/foerderung_node.html"],
+      "grund": "Seite „Förderung“ statt Startseite: Antragstellung, Aufrufe, Antragssystem ITSI."
     },
-    "talentcampus-ein-ferienbildungsprogramm-fuer-die-kulturelle-bildung": {
+    "bildungsgutscheine": {
       "urls": [
-        "https://www.volkshochschule.de/projekte/talentcampus/index.php",
-        "https://www.volkshochschule.de/medien/downloads/unsere-projekte/talentcampus/materialbox-talentcampus/Anlage-A-Foerderbekanntmachung_tC_III_Dez25.pdf"
+        "https://www.arbeitsagentur.de/karriere-und-weiterbildung/bildungsgutschein",
+        "https://www.arbeitsagentur.de/institutionen/bildungstraeger"
       ],
-      "grund": "Katalog-Link ist nur das PDF der Förderbekanntmachung (Text wird nicht ausgewertet). Die Projektseite des DVV liefert Text, das PDF wird weiter über die Prüfsumme überwacht."
+      "grund": "Katalog-Seite richtet sich an Teilnehmende. Für die vhs als Träger zusätzlich die Seite für Bildungsträger (Zulassung nach AZAV)."
+    },
+    "cerv-citizens-equality-rights-and-values": {
+      "urls": [
+        "https://www.kontaktstelle-cerv.de/aufrufe",
+        "https://www.kontaktstelle-cerv.de/foerderung-beantragen"
+      ],
+      "grund": "Aufrufe und Antragstellung statt Startseite. Derzeit gesperrt, solange robots.txt der Kontaktstelle HTTP 500 liefert."
+    },
+    "creative-europe": {
+      "urls": ["https://kultur.creative-europe-desk.de/foerderung/europaeische-kooperationsprojekte/"],
+      "grund": "Startseite des Desks ist weitgehend leer. Für vhs relevant sind die Kooperationsprojekte im Bereich KULTUR mit Fristen und Calls."
+    },
+    "erasmus-ka1-mobilitaet-erwachsenenbildung": {
+      "urls": [
+        "https://www.na-bibb.de/beantragen/kurzzeitprojekte",
+        "https://www.na-bibb.de/informieren/mobilitaet"
+      ],
+      "grund": "Antragsseite für Kurzzeitprojekte (Fristen, Antrag) zusätzlich zur Informationsseite mit den Grundlagendokumenten."
+    },
+    "erasmus-ka2-partnerschaftsprojekte-erwachsenenbildung": {
+      "urls": [
+        "https://www.na-bibb.de/beantragen/kleinere-partnerschaften",
+        "https://www.na-bibb.de/beantragen/kooperationspartnerschaften"
+      ],
+      "grund": "Antragsseiten der beiden Formate mit Fristen und Pauschalen statt der allgemeinen Informationsseite."
+    },
+    "erstorientierungskurse-eok": {
+      "urls": [
+        "https://www.vhs-bw.de/projekte/eok/",
+        "https://www.bamf.de/DE/Themen/Integration/TraegerLehrFachkraefte/TraegerProjektfoerderung/Erstorientierungskurse/erstorientierungskurse-node.html"
+      ],
+      "grund": "In Baden-Württemberg vergibt die EOK-Zentralstelle beim vhs-Verband die Mittel an die vhs. Dazu die Trägerseite des BAMF."
+    },
+    "esf-plus-baden-wuerttemberg": {
+      "urls": ["https://www.esf-bw.de/vom-esf-profitieren/regionale-foerderung/regionale-foerderung-durch-die-regionalen-arbeitskreise"],
+      "grund": "Für vhs ist laut Katalog die regionale Förderung über die Arbeitskreise der Stadt- und Landkreise relevant, nicht die Startseite."
+    },
+    "esf-bundesprogramm": {
+      "urls": ["https://www.esf.de/portal/DE/ESF-Plus-2021-2027/Aufrufe/inhalt.html"],
+      "grund": "Seite „Aufrufe und Ausschreibungen“ statt Übersicht der Förderperiode."
     },
     "gemeinsam-engagiert-in-bw-v": {
       "urls": [
         "https://sozialministerium.baden-wuerttemberg.de/fileadmin/redaktion/m-sm/intern/downloads/Foerderaufrufe/260730__F%C3%B6rderaufruf_GeiBW_V.pdf",
         "https://sozialministerium.baden-wuerttemberg.de/de/service/foerderaufrufe"
       ],
-      "grund": "Katalog-Link ist die allgemeine Übersicht der Förderaufrufe, in der das Programm nach Fristende nicht mehr steht. Der Förderaufruf V (PDF, 30.07.2026) ist die eigentliche Quelle. Die Übersicht bleibt, um einen Aufruf VI zu bemerken."
+      "grund": "Förderaufruf V (PDF, 30.07.2026) als eigentliche Quelle. Die Übersicht der Förderaufrufe bleibt, um einen Aufruf VI zu bemerken."
+    },
+    "gkv-buendnis-fuer-gesundheit": {
+      "urls": ["https://www.gkv-buendnis.de/gesunde_lebenswelten/kommune/foerderangebote/foerderangebote_1.html"],
+      "grund": "Seite „Kommunales Förderprogramm“ statt Startseite."
+    },
+    "globales-lernen-an-der-volkshochschule": {
+      "urls": ["https://www.dvv-international.de/vhs-kooperationen/globales-lernen/globales-lernenfoerderung"],
+      "grund": "Seite „Förderangebote Globales Lernen“ mit Antrag und Fristen statt der allgemeinen Programmseite."
+    },
+    "horizon-europe": {
+      "urls": ["https://www.horizont-europa.de/de/Antragsverfahren-1721.html"],
+      "grund": "Antragsverfahren statt Startseite. Konkrete Ausschreibungen stehen im EU-Portal und wechseln laufend."
+    },
+    "idee-bw": {
+      "urls": [
+        "https://www.medienfokus-bw.de/angebot/idee-bw/",
+        "https://www.medienfokus-bw.de/angebote/ideebw/idee-bw-der-einreichprozess/"
+      ],
+      "grund": "Programmseite plus Seite zum Einreichprozess."
+    },
+    "impulse-inklusion": {
+      "urls": [
+        "https://sozialministerium.baden-wuerttemberg.de/de/soziales/menschen-mit-behinderungen/foerderprogramme/projektfoerderung-impulse-inklusion",
+        "https://sozialministerium.baden-wuerttemberg.de/fileadmin/redaktion/m-sm/intern/downloads/Foerderaufrufe/Foerderaufruf_Impulse-Inklusion_2026.pdf"
+      ],
+      "grund": "Programmseite plus Förderaufruf 2026 als PDF, damit ein neuer Aufruf bemerkt wird."
+    },
+    "innovationsfonds-des-gemeinsamen-bundesausschusses-g-ba": {
+      "urls": [
+        "https://innovationsfonds.g-ba.de/foerderbekanntmachungen/foerderbekanntmachung-neue-versorgungsformen-zum-themenoffenen-bereich-einstufig-kurz-einreichung-laufend-im-jahr-moeglich.66",
+        "https://innovationsfonds.g-ba.de/foerderbekanntmachungen/termine-2027/"
+      ],
+      "grund": "Förderbekanntmachung aus dem Katalog plus Termine 2027 für die nächste Runde."
+    },
+    "interreg": {
+      "urls": [
+        "https://www.interreg-oberrhein.eu/",
+        "https://www.interreg.org/",
+        "https://interreg.eu/calls-for-projects/"
+      ],
+      "grund": "Laut Katalog zählen die regionalen Programme, zu denen eine Region Zugang hat. Für Baden-Württemberg: Interreg Oberrhein und Alpenrhein-Bodensee-Hochrhein, dazu die europaweite Übersicht der Calls."
+    },
+    "landesnetzwerk-weiterbildungsberatung-baden-wuerttemberg-ln-wbb": {
+      "urls": ["https://bildung-bringt-weiter.de/ueber-uns/fuer-bildungseinrichtungen/"],
+      "grund": "Seite für Bildungseinrichtungen (Mitgliedschaft und Förderung) statt Startseite für Ratsuchende."
+    },
+    "politische-jugendbildung-an-volkshochschulen-kjp": {
+      "urls": ["https://www.volkshochschule.de/projekte/politische-jugendbildung/antragstellung.php"],
+      "grund": "Seite zur Antragstellung mit Fristen und Fördersätzen statt Projektübersicht."
+    },
+    "talentcampus-ein-ferienbildungsprogramm-fuer-die-kulturelle-bildung": {
+      "urls": [
+        "https://www.volkshochschule.de/projekte/talentcampus/antrag.php",
+        "https://www.volkshochschule.de/meldungen/talentcampus-antragsfrist-2027.php"
+      ],
+      "grund": "Katalog-Link ist nur ein PDF. Antragsseite des DVV und Meldung zur Antragsfrist 2027 liefern Text mit Frist und Fördersätzen."
+    },
+    "wandel-der-arbeit": {
+      "urls": ["https://www.wandelderarbeit.de/forderaufrufe/"],
+      "grund": "Seite „Förderaufrufe“ statt Startseite."
+    },
+    "wegweiserkurse-wwk": {
+      "urls": [
+        "https://www.vhs-bw.de/projekte/wegweiserkurse-in-baden-wuerttemberg/",
+        "https://www.bamf.de/DE/Themen/Integration/TraegerLehrFachkraefte/TraegerProjektfoerderung/Wegweiserkurse/VorOrt/vor-ort-node.html"
+      ],
+      "grund": "In Baden-Württemberg ist die WWK-Zentralstelle beim vhs-Verband zuständig. Dazu die BAMF-Seite zur Förderung über AMIF. Die vhs-bw-Seite lieferte bei der Prüfung einen Serverfehler."
     }
   }
 }

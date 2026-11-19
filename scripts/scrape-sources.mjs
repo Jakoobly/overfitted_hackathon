@@ -7,6 +7,7 @@
 //   npm run scrape -- --only idee-bw   nur ein Programm (mehrfach angeben möglich)
 //   npm run scrape -- --extract --reextract   gespeicherten Text erneut auswerten (z. B. nach neuer Anweisung)
 //   npm run scrape -- --report         letzten Stand aus der Datenbank anzeigen, nichts abrufen
+//   npm run scrape -- --report --details   zusätzlich Zitate und vollständige Unterlagenlisten
 //
 // Regeln: robots.txt wird vor jedem Lauf gelesen (RFC 9309). Gesperrte Seiten werden übersprungen,
 // ist robots.txt wegen eines Serverfehlers nicht erreichbar, gilt die ganze Domain als gesperrt.
@@ -38,6 +39,7 @@ const opt = {
   extract: args.includes('--extract'),
   report: args.includes('--report'),
   reextract: args.includes('--reextract'),
+  details: args.includes('--details'),
   only: args.flatMap((a, i) => (a === '--only' && args[i + 1] ? [args[i + 1]] : [])),
 };
 
@@ -99,10 +101,50 @@ function report() {
   for (const r of rows) {
     console.log(`${r.programm_id.slice(0, 44).padEnd(45)} ${r.typ.padEnd(16)} ${r.ergebnis.padEnd(13)} ${String(r.http_status ?? '').padEnd(4)} geändert: ${(r.letzte_aenderung ?? '–').slice(0, 10)}${r.hinweis ? '  ' + r.hinweis : ''}`);
   }
-  const ex = db.prepare(`SELECT programm_id, zeitpunkt, belege_geprueft, status, daten FROM extraktionen WHERE status = 'neu' ORDER BY id`).all();
-  if (ex.length) {
-    console.log(`\nOffene Extraktionen zur Prüfung (${ex.length}):`);
-    for (const e of ex) console.log(`  ${e.programm_id} (${e.zeitpunkt.slice(0, 10)}, Belege ${e.belege_geprueft ? 'gefunden' : 'NICHT alle gefunden'}): ${e.daten}`);
+  const ex = db.prepare(`
+    SELECT e.id, e.programm_id, e.zeitpunkt, e.belege_geprueft, e.daten, q.url
+    FROM extraktionen e JOIN abrufe a ON a.id = e.abruf_id JOIN quellen q ON q.id = a.quelle_id
+    WHERE e.status = 'neu' AND q.aktiv = 1 ORDER BY e.programm_id, e.id`).all();
+  if (!ex.length) return;
+
+  const euro = (n) => (n == null ? null : n.toLocaleString('de-DE') + ' €');
+  const date = (iso) => iso.split('-').reverse().join('.');
+  const cut = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
+  const found = [], empty = [];
+  for (const e of ex) {
+    const d = JSON.parse(e.daten);
+    const frist = d.frist.status === 'datum' ? date(d.frist.datum) : d.frist.status === 'unbekannt' ? '' : d.frist.status.replace('_', ' ');
+    const offen = d.aufruf.offen == null ? '' : d.aufruf.offen ? 'ja' : 'nein';
+    const { minEur: min, maxEur: max } = d.foerderbetrag;
+    const betrag = min && max && min !== max ? `${euro(min)}–${euro(max)}` : max ? `bis ${euro(max)}` : min ? `ab ${euro(min)}` : '';
+    const unterlagen = d.unterlagen.liste.length ? `${d.unterlagen.liste.length}: ${d.unterlagen.liste[0]}` : '';
+    if (!frist && !offen && !betrag && !unterlagen) { empty.push(e.programm_id); continue; }
+    found.push({ e, d, cells: [String(e.id), cut(e.programm_id, 34), frist, offen, betrag, cut(unterlagen, 44), e.belege_geprueft ? 'ok' : 'PRÜFEN'] });
+  }
+
+  console.log(`\nOffene Extraktionen zur Prüfung: ${ex.length} (${found.length} mit Angaben, ${empty.length} ohne)`);
+  if (found.length) {
+    const head = ['ID', 'Programm', 'Frist', 'offen', 'Betrag', 'Unterlagen', 'Belege'];
+    const widths = head.map((h, i) => Math.max(h.length, ...found.map((r) => r.cells[i].length)));
+    const line = (cells) => '  ' + cells.map((c, i) => c.padEnd(widths[i])).join('  ');
+    console.log(line(head));
+    console.log('  ' + widths.map((w) => '─'.repeat(w)).join('  '));
+    for (const r of found) console.log(line(r.cells));
+  }
+  if (empty.length) console.log(`\n  Ohne Angaben: ${[...new Set(empty)].join(', ')}`);
+  console.log(`\n  Belege PRÜFEN = mindestens ein Zitat steht nicht wörtlich im Seitentext.`);
+
+  if (opt.details) {
+    for (const { e, d } of found) {
+      console.log(`\n[${e.id}] ${e.programm_id} · ${e.url}`);
+      const show = (label, value, beleg) => value && console.log(`  ${label}: ${value}${beleg ? `\n    „${beleg.replace(/\s*\n\s*/g, ' / ')}“` : ''}`);
+      show('Frist', d.frist.status === 'datum' ? date(d.frist.datum) : d.frist.status, d.frist.beleg);
+      show('Aufruf offen', d.aufruf.offen == null ? null : d.aufruf.offen ? 'ja' : 'nein', d.aufruf.beleg);
+      show('Betrag', [euro(d.foerderbetrag.minEur), euro(d.foerderbetrag.maxEur)].filter(Boolean).join(' – '), d.foerderbetrag.beleg);
+      if (d.unterlagen.liste.length) console.log(`  Unterlagen:\n${d.unterlagen.liste.map((u) => '    - ' + u).join('\n')}`);
+    }
+  } else if (found.length) {
+    console.log('  Zitate und vollständige Listen: npm run scrape -- --report --details');
   }
 }
 
@@ -256,6 +298,11 @@ async function fetchSource(source) {
     meta.hash = crypto.createHash('sha256').update(text).digest('hex');
   }
   if (res.redirected) hinweis = [hinweis, `umgeleitet auf ${res.url}`].filter(Boolean).join('; ');
+  // Manche Server liefern Fehlerseiten mit HTTP 200: kurze Seiten mit typischem Fehlertext nicht als Inhalt speichern
+  if (text != null && text.length < 400 && /interner Fehler|Seite nicht gefunden|page not found|nicht verfügbar|error occurred/i.test(text)) {
+    // ohne Prüfsumme und ETag speichern, damit der nächste Abruf nicht per HTTP 304 die Fehlerseite bestätigt
+    return { ergebnis: 'fehler', abrufId: save('fehler', { status: res.status, type: meta.type, hinweis: `Fehlerseite mit HTTP ${res.status}: ${text.slice(0, 80)}` }) };
+  }
   const ergebnis = !prev ? 'neu' : prev.text_hash === meta.hash ? 'unveraendert' : 'geaendert';
   const abrufId = save(ergebnis, { ...meta, text: ergebnis === 'unveraendert' ? null : text, hinweis });
   return { ergebnis, abrufId, text };
