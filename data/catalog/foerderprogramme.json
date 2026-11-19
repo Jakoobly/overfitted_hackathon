@@ -1,0 +1,1210 @@
+{
+  "schemaVersion": 1,
+  "erzeugt": "2026-11-19",
+  "quelle": {
+    "excel": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+    "blatt": "Sheet1",
+    "dokumente": 24,
+    "excelZeilen": 21
+  },
+  "hinweis": "Automatisch aus raw/ erzeugt (npm run import:catalog). Nicht von Hand bearbeiten. Dokumentwerte haben Vorrang vor Excel. null bedeutet: in den Quellen nicht eindeutig angegeben.",
+  "programme": [
+    {
+      "id": "asyl-migrations-und-integrationsfonds-amif",
+      "titel": "Asyl-, Migrations- und Integrationsfonds (AMIF)",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union. In Deutschland werden die national zur Verfügung stehenden Fördergelder durch das Bundesamt für Migration und Flüchtlinge (BAMF) verwaltet.",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Europa",
+        "Integration"
+      ],
+      "kurzbeschreibung": "Der Asyl-, Migrations- und Integrationsfonds (AMIF) ist ein Förderprogramm der Europäischen Union für den Zeitraum 2021–2027. Ziel ist die Unterstützung von Maßnahmen in den Bereichen Asyl, Migration, Integration und Rückkehr. Auf europäischer Ebene stehen rund 10,9 Milliarden Euro zur Verfügung. In Deutschland wird der AMIF durch das Bundesamt für Migration und Flüchtlinge (BAMF) umgesetzt; Deutschland erhält rund 1,5 Milliarden Euro für Projekte in den Bereichen Asyl, Migration, Integration, Bekämpfung irregulärer Migration, Rückkehr und europäische Solidarität. Gefördert werden nationale und transnationale Projekte öffentlicher und privater Träger, Kommunen, Verbände und NGOs. Zielgruppen sind insbesondere Asylsuchende, Schutzberechtigte, Migrantinnen und Migranten sowie aufnehmende Institutionen. Die Förderung erfolgt als Kofinanzierung mit in der Regel 75–90 % der förderfähigen Kosten.",
+      "foerderung": {
+        "projektbudget": "Die AMIF-Mindestfördersumme liegt aktuell bei 100.000 Euro.",
+        "minEur": 100000,
+        "maxEur": null,
+        "art": "Kofinanzierung mit EU-Kofinanzierung von 75 % bzw. 90 %. Die weiteren Kosten können durch Eigenmittel oder durch Mittel des Bundes, des Landes und weiterer privater und öffentlicher Fördergeber finanziert werden.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": "Die weiteren Kosten können durch Eigenmittel oder durch Mittel des Bundes, des Landes und weiterer privater und öffentlicher Fördergeber finanziert werden."
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.eu-migrationsfonds.de/DE/Startseite/startseite_node.html",
+        "projektbeispiele": "https://www.eu-migrationsfonds.de/DE/Projekte/projekte_node.html"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Der Volkshochschulverband Baden-Württemberg verwaltet mit den Projekten „Erstorientierungskurse (EOK) in Baden-Württemberg“ und „Wegweiserkurse (WWK) in Baden-Württemberg“ zwei große Initiativen, die durch den AMIF kofinanziert werden. Die beim Verband angesiedelten EOK- und WWK-Zentralstellen koordinieren auf Landesebene die EOK und WWK und vergeben Fördergelder für die Kursdurchführung unter anderem an die Volkshochschulen.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 14
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/AMIF.docx"
+        }
+      ]
+    },
+    {
+      "id": "bildungsgutscheine",
+      "titel": "Bildungsgutscheine",
+      "kurzname": null,
+      "foerdergeber": "Bundesagentur für Arbeit, Jobcenter",
+      "ebene": "Bund",
+      "foerdergebiet": "Deutschland",
+      "fachbereiche": [
+        "Arbeit – Beruf",
+        "Alphabetisierung und Grundbildung"
+      ],
+      "kurzbeschreibung": "Der Bildungsgutschein des Bundes ist eine schriftliche Förderzusage der Bundesagentur für Arbeit gemäß § 81 SGB III. Er dient dazu, die berufliche Weiterbildung oder Umschulung von Arbeitslosen, von Arbeitslosigkeit Bedrohten sowie Berufsrückkehrern zu finanzieren, um deren Chancen auf dem Arbeitsmarkt nachhaltig zu verbessern. Die Bewilligungskompetenz liegt auch für Leistungsbeziehende der Jobcenter zentral bei der Agentur für Arbeit. Der Gutschein ist eine Ermessensleistung ohne pauschalen Rechtsanspruch. Er ist zeitlich (meist 3 Monate) sowie regional befristet und kann ausschließlich für zertifizierte Maßnahmen bei zugelassenen Bildungsträgern (AZAV-Zertifizierung) eingelöst werden.",
+      "foerderung": {
+        "projektbudget": "Für die geförderten Privatpersonen fallen 0 Euro Eigenanteil an. Die Kostenübernahme erfolgt zu 100 Prozent direkt zwischen dem Bildungsträger und der Agentur für Arbeit. Es gibt kein festgelegtes, maximales Budget pro Kopf; übernommen werden alle notwendigen Lehrgangs- und Prüfungsgebühren, Lernmittel sowie arbeitsplatzbezogene Nebenkosten (Fahrtkosten, Kinderbetreuung und ggf. Unterkunft). Für die Weiterbildungsförderung der Bundesagentur für Arbeit steht ein Gesamtetat von rund 4,12 Milliarden Euro zur Verfügung.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Es handelt sich um einen nicht rückzahlbaren Zuschuss (Gutschein/Kostenübernahme). Ergänzend können für abschlussorientierte Maßnahmen ein monatliches Weiterbildungsgeld von 150 Euro sowie gesetzliche Weiterbildungsprämien von bis zu 2.500 Euro für bestandene Zwischen- und Abschlussprüfungen gezahlt werden.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": "Für die geförderten Privatpersonen fallen 0 Euro Eigenanteil an."
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.arbeitsagentur.de/karriere-und-weiterbildung/bildungsgutschein",
+        "projektbeispiele": "https://www.bmas.de/DE/Arbeit/Aus-und-Weiterbildung/Berufliche-Weiterbildung/berufliche-weiterbildung.html"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Um Teilnehmende mit Bildungsgutschein in Kursen aufnehmen zu können, müssen die Kurse und die Volkshochschule AZAV-zertifiziert sein, ggf. kann ein AZAV-zertifizierter Kooperationspartner eingebunden werden.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "dokument",
+          "datei": "raw/Bildungsgutscheine neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "cerv-citizens-equality-rights-and-values",
+      "titel": "CERV - Citizens, Equality, Rights and Values",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [],
+      "kurzbeschreibung": "Das EU-Programm CERV (Citizens, Equality, Rights and Values) läuft im Zeitraum 2021 bis 2027. Es fördert Projekte zur Stärkung demokratischer Gesellschaften, zum Schutz von Grundrechten und zur Förderung gemeinsamer europäischer Werte. Gefördert werden vor allem transnationale und nationale Projekte von öffentlichen Einrichtungen, Kommunen, Schulen, Hochschulen, Forschungsstellen, Nichtregierungsorganisationen und zivilgesellschaftlichen Organisationen. Die vier Förderschwerpunkte sind: (1) Unionswerte, Demokratie und Rechtsstaatlichkeit, (2) Bürgerbeteiligung und europäisches Geschichtsbewusstsein, (3) Gleichstellung, Rechte und Bekämpfung von Diskriminierung sowie (4) Daphne zur Prävention und Bekämpfung geschlechtsspezifischer Gewalt und Gewalt gegen Kinder. Projektgelder werden über themenbezogene Aufrufe vergeben.",
+      "foerderung": {
+        "projektbudget": "Unterschiedlich je nach Themenschwerpunkt.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Projektzuschuss, zunehmend auch Pauschalen.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.kontaktstelle-cerv.de/",
+        "projektbeispiele": "https://www.kontaktstelle-cerv.de/projektbeispiele"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Die offizielle Anlaufstelle in Deutschland für das EU-Förderprogramm „Citizens, Equality, Rights and Values“ (CERV) ist die Kontaktstelle CERV Deutschland. Sie berät und informiert zu Fördermöglichkeiten sowie Ausschreibungsverfahren und veröffentlicht auf ihrer Website aktuelle Projektaufrufe.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 19
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/CERV neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "creative-europe",
+      "titel": "Creative Europe",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Europa",
+        "Kultur – Gestalten"
+      ],
+      "kurzbeschreibung": "Creative Europe ist das EU-Förderprogramm zur Unterstützung der Kultur- und Kreativwirtschaft sowie der audiovisuellen Branche. Es läuft von 2021 bis 2027 und verfügt über ein Gesamtbudget von rund 2,44 Milliarden Euro. Ziel ist es, die kulturelle Vielfalt Europas zu stärken, die grenzüberschreitende Zusammenarbeit zu fördern und die Wettbewerbsfähigkeit sowie die Digitalisierung der Kultur- und Kreativsektoren zu unterstützen. Das Programm besteht aus drei Förderbereichen: KULTUR, MEDIA und bereichsübergreifende Maßnahmen (Cross-Sectoral). Gefördert werden beispielsweise europäische Kooperationsprojekte, Künstler- und Fachkräftemobilität, Kulturplattformen, Netzwerke, Festivals, Film- und Medienproduktionen, Medienkompetenzprojekte sowie innovative digitale Ansätze. Ausschreibungen werden zentral über das Förderportal der Europäischen Kommission veröffentlicht.",
+      "foerderung": {
+        "projektbudget": "Unterschiedlich je nach Förderaufruf.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Projektzuschüsse oder Pauschalen.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://creative-europe-desk.de/",
+        "projektbeispiele": "https://kultur.creative-europe-desk.de/projekte/"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "In Deutschland unterstützt das Netzwerk der Creative Europe Desks Antragstellende. Das Förderportal der Europäischen Kommission ist unter https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/home erreichbar.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 20
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Creative Europe neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "erasmus-ka1-mobilitaet-erwachsenenbildung",
+      "titel": "Erasmus+ KA1: Mobilität Erwachsenenbildung",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union, verwaltet in Deutschland über die Nationale Agentur beim Bundesinstitut für Berufsbildung",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Europa"
+      ],
+      "kurzbeschreibung": "Erasmus+ Mobilität in der Erwachsenenbildung fördert den internationalen Austausch von Lernenden und Personal aus Einrichtungen der Erwachsenenbildung. Die Projekte werden im Rahmen der Leitaktion 1 (KA1) durchgeführt und können als Kurzzeitprojekte mit einer Laufzeit von 6 bis 18 Monaten oder als akkreditierte Projekte mit langjähriger Förderung umgesetzt werden. Gefördert werden Lernaufenthalte, Gruppenmobilitäten, Job-Shadowing, Hospitationen, strukturierte Fortbildungen, Lehrtätigkeiten sowie der Austausch von Expertise zwischen europäischen Partnerorganisationen. Zielgruppen sind Erwachsenenbildnerinnen und Erwachsenenbildner, Kursleitende, Verwaltungspersonal sowie erwachsene Lernende, insbesondere Personen mit geringeren Bildungschancen. Ziel ist die Stärkung von Fach-, Sprach- und interkulturellen Kompetenzen sowie die Internationalisierung der beteiligten Einrichtungen.",
+      "foerderung": {
+        "projektbudget": "Sehr kleine Budgets für wenige Mobilitäten bis maximal ca. 1,2 Millionen Euro für Konsortialprojekte.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Pauschalsystem für die Förderung der Mobilitäten, Organisationspauschalen als Förderung für die durchführende Einrichtung.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.na-bibb.de/informieren/mobilitaet",
+        "projektbeispiele": "https://www.na-bibb.de/aus-der-praxis/projekte"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Der vhs-Verband ist für Erasmus+ Mobilität akkreditiert und kann Fördergelder für Volkshochschulen und ihre Mitarbeitenden zur Verfügung stellen (Infos: https://www.na-bibb.de/informieren/mobilitaet). Wir begrüßen jedoch ausdrücklich auch eigene Erasmus+-Mobilitätsprojekte von Volkshochschulen.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 12
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Erasmus+ KA1-Mobilität EB neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "erasmus-ka2-partnerschaftsprojekte-erwachsenenbildung",
+      "titel": "Erasmus+ KA2: Partnerschaftsprojekte Erwachsenenbildung",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union, Nationale Agentur des Landes, in dem der Projektkoordinator und Antragsteller seinen Sitz hat",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Europa"
+      ],
+      "kurzbeschreibung": "Erasmus+ KA2 (Leitaktion 2) fördert die europäische Zusammenarbeit und Innovation im Bildungsbereich. In der Erwachsenenbildung werden vor allem Kooperationspartnerschaften (Cooperation Partnerships) und kleinere Partnerschaften (Small-Scale Partnerships) gefördert. Die Projekte haben in der Regel eine Laufzeit von 12 bis 36 Monaten. Gefördert werden die Entwicklung innovativer Bildungsangebote, Methoden, Materialien und digitaler Lernformate, der Austausch bewährter Praxis sowie der Aufbau nachhaltiger europäischer Netzwerke. Zielgruppen sind Einrichtungen der Erwachsenenbildung, Volkshochschulen, NGOs, Kommunen, Sozialpartner und weitere Bildungsakteure. Die Projekte orientieren sich an den Prioritäten Inklusion, Digitalisierung, Nachhaltigkeit und demokratische Teilhabe. Ziel ist die Qualitätsentwicklung der beteiligten Organisationen und die Entwicklung übertragbarer Innovationen für die Erwachsenenbildung in Europa.",
+      "foerderung": {
+        "projektbudget": "30.000 Euro oder 60.000 Euro bei kleinen Partnerschaftsprojekten, 125.000 Euro, 250.000 Euro oder 400.000 Euro bei Kooperationspartnerschaften",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Gesamtpauschalen, die auf die beteiligten Projektpartner und die Arbeitspakete aufgeteilt werden.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.na-bibb.de/informieren/partnerschaften",
+        "projektbeispiele": "https://www.na-bibb.de/aus-der-praxis/projekte"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Die Projekte bieten die Möglichkeit, mithilfe internationaler Impulse Erwachsenenbildungsthemen weiterzuentwickeln, gerade auch Bereiche, die für Volkshochschulen von aktueller strategischer Bedeutung sind. Die Finanzierung mit Pauschalen reduziert den bürokratischen Aufwand erheblich.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 13
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Erasmus+ KA2-Partnerschaftsprojekte neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "erstorientierungskurse-eok",
+      "titel": "Erstorientierungskurse (EOK)",
+      "kurzname": null,
+      "foerdergeber": "AMIF und BMI",
+      "ebene": "Andere",
+      "foerdergebiet": null,
+      "fachbereiche": [
+        "Integration"
+      ],
+      "kurzbeschreibung": "Um Schutzsuchende und Zugewanderte dabei zu unterstützen, sich in Deutschland zurechtzufinden, fördert das BAMF Erstorientierungskurse (EOK), die auf dem Konzept „Erstorientierung und Deutsch lernen für Zugewanderte“ basieren. In diesen Kursen erhalten die Teilnehmenden wesentliche Informationen über das Leben hier und erwerben gleichzeitig erste Deutschkenntnisse.",
+      "foerderung": {
+        "projektbudget": null,
+        "minEur": null,
+        "maxEur": null,
+        "art": "Spitzabrechnung und Pauschalen",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.bamf.de/DE/Themen/Integration/TraegerLehrFachkraefte/TraegerProjektfoerderung/Erstorientierungskurse/EOK-Ueberblick/eok-ueberblick-node.html",
+        "projektbeispiele": null
+      },
+      "kontakt": {
+        "name": "Olga Grimm",
+        "email": "grimm@vhs-bw.de"
+      },
+      "anmerkungen": null,
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 6
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Erstorientierungskurse neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "esf-plus-baden-wuerttemberg",
+      "titel": "ESF Plus Baden-Württemberg",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union, in Baden-Württemberg werden die Programme von verschiedenen Ministerien und auf regionaler Ebene von den Stadt- und Landkreisen verwaltet.",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Europa"
+      ],
+      "kurzbeschreibung": "Der Europäische Sozialfonds Plus (ESF+) Baden-Württemberg ist das zentrale Förderinstrument der Europäischen Union zur Unterstützung von Beschäftigung, Qualifizierung, sozialer Teilhabe und Chancengleichheit im Land. Die aktuelle Förderperiode läuft von 2021 bis 2027. Für Baden-Württemberg stehen in diesem Zeitraum rund 218 Millionen Euro an EU-Mitteln zur Verfügung. Gefördert werden insbesondere Projekte zur Arbeitsmarktintegration, beruflichen Qualifizierung, Fachkräftesicherung, sozialen Inklusion und Armutsbekämpfung. Zielgruppen sind unter anderem Arbeitslose, junge Menschen, Menschen mit Migrationsgeschichte, Beschäftigte sowie Unternehmen, Bildungsträger, Kommunen und gemeinnützige Organisationen. Die Förderung erfolgt überwiegend über landesweite und regionale Projektaufrufe. Querschnittsthemen wie Gleichstellung, Nichtdiskriminierung und Nachhaltigkeit sind in allen Projekten zu berücksichtigen.",
+      "foerderung": {
+        "projektbudget": "Unterschiedlich je nach Programm.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Unterschiedlich je nach Aufruf oder Programm.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.esf-bw.de/",
+        "projektbeispiele": "https://www.esf-bw.de/esf-plus-in-bw/zahlen-und-fakten/liste-der-vorhaben"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Für Volkshochschulen ist der Regionale ESF Baden-Württemberg. Ausschreibungen auf Landkreisebene sind jeweils im Frühjahr besonders relevant.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 16
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/ESF Plus BW neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "esf-fachkursfoerderung-baden-wuerttemberg",
+      "titel": "ESF-Fachkursförderung Baden-Württemberg",
+      "kurzname": null,
+      "foerdergeber": "ESF Plus Baden-Württemberg, verwaltet durch das Ministerium für Wirtschaft, Handwerk und Tourismus",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Arbeit – Beruf",
+        "Europa"
+      ],
+      "kurzbeschreibung": "Das ESF-Plus-Fachkursprogramm Baden-Württemberg ist eine Förderlinie des Europäischen Sozialfonds Plus (ESF+) im Förderzeitraum 2021–2027. Ziel ist die Stärkung der beruflichen Weiterbildung, die Fachkräftesicherung sowie die Anpassung der Kompetenzen an die Anforderungen einer digitalisierten Arbeitswelt. Gefördert werden überbetriebliche Fachkurse der beruflichen Anpassungsfortbildung mit einem Umfang von 8 bis 160 Unterrichtseinheiten. Zielgruppen sind Erwerbstätige, Beschäftigte, Unternehmerinnen und Unternehmer, Freiberufliche, Gründungsinteressierte sowie weitere erwerbsfähige Personen mit Wohn- oder Beschäftigungsort in Baden-Württemberg. Die Förderung erfolgt als Zuschuss zu den Teilnahmegebühren. Seit September 2026 beträgt der Fördersatz einheitlich 45 % der Kursgebühr. Antragsberechtigt sind erfahrene Weiterbildungsträger, die die Förderung über reduzierte Teilnahmegebühren weitergeben.",
+      "foerderung": {
+        "projektbudget": "Mindestfördersumme pro Weiterbildungsträger 10.000 Euro, maximale Fördersumme 250.000 Euro.",
+        "minEur": 10000,
+        "maxEur": 250000,
+        "art": "Reduzierung Kursgebühren, Weiterbildungsträger erhalten den Reduktionsbetrag",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.esf-bw.de/projekte-und-programme-umsetzen/foerderbereich-wirtschaft/foerderprogramm-fachkurse",
+        "projektbeispiele": null
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Damit auch kleine Volkshochschulen bei Nichterreichen der Mindestförderung ihren Teilnehmenden die Fachkursförderung anbieten können, hat der vhs-Verband in der Vergangenheit einen Sammelantrag gestellt. Dies ist nicht mehr möglich.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 17
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/ESF-FachkurseBW neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "esf-bundesprogramm",
+      "titel": "ESF+-Bundesprogramm",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union, in Deutschland verwaltet von verschiedenen Ministerien und Organisationen",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Europa"
+      ],
+      "kurzbeschreibung": "Der Europäische Sozialfonds Plus (ESF+) auf Bundesebene ist das wichtigste Förderinstrument der EU zur Unterstützung von Beschäftigung, Qualifizierung, sozialer Inklusion und Chancengleichheit in Deutschland. Die aktuelle Förderperiode läuft von 2021 bis 2027. Das ESF+-Bundesprogramm wird federführend vom Bundesministerium für Arbeit und Soziales (BMAS) umgesetzt und durch weitere Bundesministerien ergänzt. Gefördert werden vor allem Modellprojekte, Qualifizierungs- und Weiterbildungsmaßnahmen, Integrationsprojekte, Programme zur Fachkräftesicherung sowie Vorhaben zur sozialen Teilhabe und Armutsbekämpfung. Zielgruppen sind unter anderem Beschäftigte, Arbeitslose, junge Erwachsene, Migrantinnen und Migranten sowie Bildungseinrichtungen, Unternehmen und gemeinnützige Organisationen. Die Förderung erfolgt über verschiedene Programme und Förderaufrufe (Calls).",
+      "foerderung": {
+        "projektbudget": "Hängt vom jeweiligen ESF+-Programm ab.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Verschiedene Förderarten, abhängig vom ESF+-Programm.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "laufend",
+        "datum": null,
+        "beleg": "Die Ausschreibungen werden laufend auf dem ESF+-Portal des Bundes veröffentlicht."
+      },
+      "links": {
+        "programmwebsite": "https://www.esf.de/portal/DE/ESF-Plus-2021-2027/inhalt.html",
+        "projektbeispiele": "https://www.esf.de/portal/DE/ESF-Plus-2021-2027/Liste-der-Vorhaben/inhalt.html"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "ESF+-Bundesprogramme können Förderaufrufe mit Relevanz für alle Fachbereiche enthalten. Die Ausschreibungen werden laufend auf dem ESF+-Portal des Bundes veröffentlicht.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 15
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/ESF+ neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "gemeinsam-engagiert-in-bw-v",
+      "titel": "Gemeinsam engagiert in BW V",
+      "kurzname": null,
+      "foerdergeber": "Ministerium für Soziales Arbeit und Gesundheit",
+      "ebene": "Land",
+      "foerdergebiet": "Baden-Württemberg",
+      "fachbereiche": [
+        "Gesundheit"
+      ],
+      "kurzbeschreibung": "Das Ministerium für Soziales, Arbeit und Gesundheit fördert mit dem Programm „Gemeinsam engagiert in BW V“ innovative Projekte von Kommunen, Einrichtungen und Vereinen, die das Bürgerschaftliche Engagement und das Ehrenamt vor Ort stärken. Der diesjährige Förderaufruf setzt Schwerpunkte auf folgende Themen: Zugänge und Engagementmöglichkeiten für unterrepräsentierte Gruppen verbessern sowie gesellschaftliche Resilienz und Zusammenhalt stärken. Beantragt werden kann ein Zuschuss in Höhe von 10.000 Euro pro Projekt. Anträge können bis zum 1. Oktober 2026 per E-Mail an antraegeBE@sm.bwl.de eingereicht werden.",
+      "foerderung": {
+        "projektbudget": "10.000 €",
+        "minEur": 10000,
+        "maxEur": 10000,
+        "art": "Pauschale",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "datum",
+        "datum": "2026-10-01",
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://sozialministerium.baden-wuerttemberg.de/de/service/foerderaufrufe",
+        "projektbeispiele": "https://sozialministerium.baden-wuerttemberg.de/fileadmin/redaktion/m-sm/intern/downloads/Foerderaufrufe/260730__F%C3%B6rderaufruf_GeiBW_V.pdf"
+      },
+      "kontakt": {
+        "name": "Markus Haas",
+        "email": "haas@vhs-bw.de"
+      },
+      "anmerkungen": null,
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 11
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Gemeinsam engagiert in BW V neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "gkv-buendnis-fuer-gesundheit",
+      "titel": "GKV-Bündnis für Gesundheit",
+      "kurzname": null,
+      "foerdergeber": "BMG/GKV Spitzenverband",
+      "ebene": "Bund",
+      "foerdergebiet": "Deutschland",
+      "fachbereiche": [
+        "Gesundheit"
+      ],
+      "kurzbeschreibung": "Das GKV-Bündnis für Gesundheit ist eine gemeinsame Initiative der gesetzlichen Krankenkassen zur Umsetzung des Präventionsgesetzes (§ 20a SGB V). Im Mittelpunkt steht die Förderung von Projekten, die gesundheitliche Chancengleichheit verbessern und insbesondere vulnerable Zielgruppen erreichen. Antragsberechtigt sind vor allem Kommunen, kommunale Netzwerke, gemeinnützige Organisationen in Kooperation mit Kommunen, Wohlfahrtsverbände, Bildungseinrichtungen und Volkshochschulen (meist als Projektpartner) sowie Sozial- und Gesundheitseinrichtungen. Gefördert werden Maßnahmen der Gesundheitsförderung und Primärprävention, insbesondere in den Bereichen Bewegung, Ernährung, Stressbewältigung, Psychische Gesundheit, Gesundheitskompetenz und Aufbau kommunaler Gesundheitsnetzwerke. In Baden-Württemberg werden kommunale Projekte derzeit mit bis zu 30.000 € jährlich über drei Jahre gefördert. Für Mikroprojekte stehen bis zu 10.000 € pro Jahr (über zwei Jahre) zur Verfügung.",
+      "foerderung": {
+        "projektbudget": "10.000 € - 30.000 €",
+        "minEur": 10000,
+        "maxEur": 30000,
+        "art": "Pauschale",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.gkv-buendnis.de/",
+        "projektbeispiele": null
+      },
+      "kontakt": {
+        "name": "Markus Haas",
+        "email": "haas@vhs-bw.de"
+      },
+      "anmerkungen": null,
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 10
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/GKV-Buendnis neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "globales-lernen-an-der-volkshochschule",
+      "titel": "Globales Lernen an der Volkshochschule",
+      "kurzname": null,
+      "foerdergeber": "ENGAGEMENT GLOBAL mit finanzieller Unterstützung durch das Bundesministerium für wirtschaftliche Zusammenarbeit und Entwicklung (BMZ)",
+      "ebene": "Bund",
+      "foerdergebiet": "Deutschland",
+      "fachbereiche": [
+        "Gesundheit",
+        "Grundbildung und Alphabetisierung",
+        "Integration",
+        "Kultur – Gestalten",
+        "Politik – Gesellschaft – Umwelt",
+        "Sprachen"
+      ],
+      "kurzbeschreibung": "Das Programm „Globales Lernen in der vhs“ fördert Kursformate und andere Bildungsveranstaltungen an Volkshochschulen, die sich mit Fragen von Klimagerechtigkeit, Generationengerechtigkeit und Nachhaltigkeit gemäß der Agenda 2030 (2015) befassen. Hierunter fallen Themen, die Menschen befähigen, sich an der sozial-ökologischen-ökonomischen Transformation zu einer gerechten und nachhaltigen Weltgesellschaft zu beteiligen. Erwachsene sind Hauptzielgruppe der Volkshochschulen. Bildungsangebote können sich an altersgemischte Gruppen richten oder an spezielle Zielgruppen, zum Beispiel junge Erwachsene, ältere Menschen, Teilnehmende eines Integrationskurses oder Vereinsmitglieder (Förderlinie E) Die Zielgruppe der Jungen Menschen umfasst Grundschüler*innen bis hin zu Teilnehmenden im Zweiten Bildungsweg, die an schulischen Veranstaltungen und Lernprojekten (z. B. Projekttage oder Projektwochen) oder an Veranstaltungen der außerschulischen Jugendarbeit teilnehmen (Förderlinie J). Multiplikator*innen können Mitarbeitende von Volkshochschulen und/oder ihrer Kooperationspartner*innen sein. Aber auch Menschen in sozialen Berufen, Bilder*innen und Lehrende, Ehrenamtliche oder Mitarbeitende von Kommunalverwaltungen oder Personen, die wegen ihrer gesellschaftlichen Position oder Funktion Veränderung eine Schlüsselrolle bei der sozialökologischen-ökonomischen Transformation übernehmen (Förderlinie M)\nFörderfähig sind Ausgaben, die mit der Konzeption und Durchführung der Veranstaltungen tatsächlich entstehen und nicht anderweitig gedeckt sind. Dazu gehören: Honorare für Referent*innen sowie Seminar-leitende und deren Fahrtkosten nach Bundesreisekostengesetz, Honorare für die pädagogische Konzipierung und Konzepterstellung, ggf. Fahrtkosten für veranstaltungsbedingte Exkursionen innerhalb Deutschlands sowie sonstige Ausgaben wie Verbrauchsmaterial, Eintrittsgelder, externe Raum- und Technikmiete, Werbung und Öffentlichkeitsarbeit.",
+      "foerderung": {
+        "projektbudget": "verhandelbar",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Eigenanteil muss eingebracht werden.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": true,
+          "beleg": "Eigenanteil muss eingebracht werden."
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.dvv-international.de/vhs-kooperationen/globales-lernen",
+        "projektbeispiele": "https://www.dvv-international.de/vhs-kooperationen/globales-lernen/aus-der-praxis-des-globalen-lernens"
+      },
+      "kontakt": {
+        "name": "Michael Lesky",
+        "email": "lesky@vhs-bw.de"
+      },
+      "anmerkungen": "Programm des DVV",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 3
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Globales Lernen an der Volkshochschule.docx"
+        }
+      ]
+    },
+    {
+      "id": "horizon-europe",
+      "titel": "Horizon Europe",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Europa"
+      ],
+      "kurzbeschreibung": "Horizon Europe ist das zentrale Forschungs- und Innovationsprogramm der Europäischen Union für den Zeitraum 2021–2027 und mit rund 95,5 Mrd. Euro ausgestattet. Es fördert transnationale Projekte, die gesellschaftliche Herausforderungen adressieren, Wissen schaffen und innovative Lösungen entwickeln. Bildungsprojekte werden vor allem über die Säulen „Globale Herausforderungen und industrielle Wettbewerbsfähigkeit Europas“ sowie „Innovatives Europa“ unterstützt. Thematische Schwerpunkte sind unter anderem soziale Inklusion, Bildung, lebenslanges Lernen, Digitalisierung, Demokratie, Migration und Chancengleichheit. Antragsberechtigt sind Hochschulen, Forschungseinrichtungen, öffentliche Institutionen, Unternehmen, NGOs und Bildungsträger in internationalen Konsortien. Die Förderung erfolgt überwiegend als Zuschuss zu Projektkosten.",
+      "foerderung": {
+        "projektbudget": "Die Fördersummen reichen je nach Ausschreibung von kleineren Projekten bis zu mehreren Millionen Euro.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Projektzuschuss bis zu 100 %",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.horizont-europa.de/",
+        "projektbeispiele": "https://www.horizont-europa.de/de/Projektbeispiele-aus-dem-EU-Rahmenprogramm-3370.html"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "In Horizon Europe können Volkshochschulen Teil interessanter Forschungsvorhaben werden.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 21
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Horizon Europe neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "idee-bw",
+      "titel": "idee BW",
+      "kurzname": null,
+      "foerdergeber": "MedienFokus BW (MFG/Staatsministerium)",
+      "ebene": "Land",
+      "foerdergebiet": "Baden-Württemberg",
+      "fachbereiche": [
+        "Digitalisierung",
+        "Junge vhs",
+        "Politik – Gesellschaft – Umwelt",
+        "Andere"
+      ],
+      "kurzbeschreibung": "Der Ideenwettbewerb unterstützt innovative Ideen und erfolgreiche Maßnahmen von Initiativen oder Einzelprojekte, die die Medienkompetenz in Baden-Württemberg nachhaltig stärken. Bewerbungen sind sowohl mit Projekten möglich, die bereits erfolgreich verwirklicht wurden, als auch mit noch nicht in die Praxis umgesetzten Konzepten. Teilnahmeberechtigt sind juristische oder natürliche Personen, die keine Gewinnenserzielungsabsicht im Rahmen des Projekts anstreben. Antragsziel muss die Stärkung der Medienkompetenz in Baden-Württemberg sein und einen Wissenstransfer und die Nachahmbarkeit durch andere ermöglichen. Das maximale Preisgeld pro Projekt beträgt € 20.000,-. Die Unterstützung darf nur für die im Bewilligungszeitraum für das Vorhaben verursachten Ausgaben getätigt werden.",
+      "foerderung": {
+        "projektbudget": "bis zu 20.000 Euro",
+        "minEur": null,
+        "maxEur": 20000,
+        "art": null,
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.medienfokus-bw.de/angebot/idee-bw/",
+        "projektbeispiele": "https://www.medienfokus-bw.de/angebote/ideebw/idee-bw-2025-die-preistraeger/"
+      },
+      "kontakt": {
+        "name": "Julia Gassner",
+        "email": "gassner@vhs-bw.de"
+      },
+      "anmerkungen": null,
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 4
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/idee BW.docx"
+        }
+      ]
+    },
+    {
+      "id": "impulse-inklusion",
+      "titel": "Impulse Inklusion",
+      "kurzname": null,
+      "foerdergeber": "Ministerium für Soziales, Arbeit und Gesundheit",
+      "ebene": "Land",
+      "foerdergebiet": "Baden-Württemberg",
+      "fachbereiche": [
+        "Inklusion"
+      ],
+      "kurzbeschreibung": "Mit der Projektförderung „Impulse Inklusion“ fördert das Sozialministerium Baden-Württemberg Projekte, die besonderen Modellcharakter für die weitere inklusive Gestaltung Baden-Württembergs haben. Jährlich stellt das Ministerium Fördergelder zur Verfügung, um innovative Projekte im Bereich der Inklusion zu entwickeln und zu finanzieren. Gefördert werden Projekte, in denen neue Formen des Zusammenlebens erprobt und neue Wege des gemeinsamen Miteinanders beschritten werden. Das Förderprojekt sollte von Menschen mit und ohne Behinderungen gemeinsam entwickelt, geplant und durchgeführt werden. Berücksichtigt werden neue Initiativen oder neue Vorhaben beziehungsweise Module, die bestehende Projekte maßgeblich erweitern.",
+      "foerderung": {
+        "projektbudget": "Min. 5.000 € bis max. 20.000 €",
+        "minEur": 5000,
+        "maxEur": 20000,
+        "art": "Es ist mindestens ein Anteil von 10 % der zuwendungsfähigen Ausgaben aus Eigenmitteln zu tragen.",
+        "eigenanteil": {
+          "mindestProzent": 10,
+          "erforderlich": true,
+          "beleg": "Es ist mindestens ein Anteil von 10 % der zuwendungsfähigen Ausgaben aus Eigenmitteln zu tragen."
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://sozialministerium.baden-wuerttemberg.de/de/soziales/menschen-mit-behinderungen/foerderprogramme/projektfoerderung-impulse-inklusion",
+        "projektbeispiele": "https://sozialministerium.baden-wuerttemberg.de/fileadmin/redaktion/m-sm/intern/downloads/Downloads_Menschen_mit_Behinderungen/Impulse-Inklusion_Projektuebersicht_2025.pdf"
+      },
+      "kontakt": {
+        "name": "Michael Lesky",
+        "email": "lesky@vhs-bw.de"
+      },
+      "anmerkungen": null,
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 2
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Impulse Inklusion neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "innovationsfonds-des-gemeinsamen-bundesausschusses-g-ba",
+      "titel": "Innovationsfonds des Gemeinsamen Bundesausschusses (G-BA)",
+      "kurzname": null,
+      "foerdergeber": "Gemeinsamer Bundesausschuss",
+      "ebene": "Bund",
+      "foerdergebiet": "Deutschland",
+      "fachbereiche": [
+        "Gesundheit"
+      ],
+      "kurzbeschreibung": "Gefördert werden insbesondere Projekte, die innerhalb einer kurzen Laufzeit von maximal 24 Monaten einen Nachweis einer gesundheitsbezogenen Verbesserung oder einer patientenrelevanten Struktur- oder Verfahrensverbesserung liefern können. Ebenso gefördert werden Vorhaben, die die Machbarkeit und Umsetzung einer komplexen neuen Versorgungsform untersuchen, etwa im Hinblick auf organisatorische, technische, finanzielle, rechtliche oder zeitliche Aspekte. Antragstellung bis 31.12.2026 möglich.",
+      "foerderung": {
+        "projektbudget": "300.000–1 Mio. €",
+        "minEur": 300000,
+        "maxEur": 1000000,
+        "art": "Personalkosten, Sachkosten",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "datum",
+        "datum": "2026-12-31",
+        "beleg": "Antragstellung bis 31.12.2026 möglich."
+      },
+      "links": {
+        "programmwebsite": "https://innovationsfonds.g-ba.de/foerderbekanntmachungen/foerderbekanntmachung-neue-versorgungsformen-zum-themenoffenen-bereich-einstufig-kurz-einreichung-laufend-im-jahr-moeglich.66",
+        "projektbeispiele": "https://innovationsfonds.g-ba.de/service/projekteinblicke/"
+      },
+      "kontakt": {
+        "name": "Markus Haas",
+        "email": "haas@vhs-bw.de"
+      },
+      "anmerkungen": "Hier ist es normalerweise notwendig, mit Kostenträgern oder Leistungserbringern zu kooperieren.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 8
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Innovationsfonds des G-BA neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "interreg",
+      "titel": "Interreg",
+      "kurzname": null,
+      "foerdergeber": "Europäische Union. Die regionalen Programme werden durch regionale Programmbüros verwaltet.",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Europa"
+      ],
+      "kurzbeschreibung": "Interreg ist das Programm der Europäischen Union zur Förderung der europäischen territorialen Zusammenarbeit. Im Förderzeitraum 2021–2027 unterstützt es gemeinsame Projekte von Partnern aus verschiedenen Ländern und Regionen Europas. Die europaweite Förderlinie Interreg Europe fördert Projekte mit Partnern aus allen europäischen Regionen. Regionalprogramme wie Interreg Oberrhein, Interreg Alpenrhein-Bodensee-Hochrhein, Interreg Alpenraum, Interreg Donauraum, Interreg Mitteleuropa und Interreg Nordwesteuropa sind nur für Antragstellende aus den beteiligten Regionen zugänglich. Gefördert werden grenzüberschreitende, transnationale und interregionale Kooperationsprojekte zu Themen wie Innovation, Digitalisierung, Klimaschutz, nachhaltiger Mobilität, sozialer Inklusion, Bildung und Gesundheit. Zielgruppen sind Kommunen, Regionen, öffentliche Verwaltungen, Bildungseinrichtungen, Forschungseinrichtungen, Unternehmen und zivilgesellschaftliche Organisationen.",
+      "foerderung": {
+        "projektbudget": "Abhängig von der (regionalen) Programmlinie.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "In der Regel Förderquoten, gelegentlich auch Pauschalen.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://interreg.eu/",
+        "projektbeispiele": "https://interreg.eu/news-stories/"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Informieren Sie sich, zu welchen regionalen Interreg-Programmen Ihre Region Zugang hat!",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 18
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Interreg neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "landesnetzwerk-weiterbildungsberatung-baden-wuerttemberg-ln-wbb",
+      "titel": "Landesnetzwerk Weiterbildungsberatung Baden-Württemberg | LN WBB",
+      "kurzname": null,
+      "foerdergeber": "Kultusministerium",
+      "ebene": "Land",
+      "foerdergebiet": "Baden-Württemberg",
+      "fachbereiche": [
+        "Andere"
+      ],
+      "kurzbeschreibung": "Als Mitgliedseinrichtung beim LN WBB (Mitgliedschaft kostenfrei) erklärt sich die beitretende vhs bereit, trägerneutral, kostenfrei und anonym Weiterbildungsberatung ressortübergreifend zur allgemeinen, beruflichen und wissenschaftlichen Weiterbildung in der Erwachsenenbildung anzubieten. Dies wird vom Land Baden-Württemberg geldwert gefördert. Die Beratungen müssen im Online-Dokumentationssystem des LN WBB dokumentiert werden.",
+      "foerderung": {
+        "projektbudget": "Förderfähig sind Beratungen im Sinne des LN WBB ab 20 Minuten mit 1 Euro pro Minute, pro Beratungsfall 180 Minuten pro Halbjahr. Grundförderung 1.000 € pro Jahr, abgedeckt sind hier die ersten 600 förderfähigen Beratungsminuten.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Siehe oben.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.bildung-bringt-weiter.de",
+        "projektbeispiele": null
+      },
+      "kontakt": {
+        "name": "Regine Zizelmann",
+        "email": "zizelmann@vhs-bw.de"
+      },
+      "anmerkungen": null,
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 22
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/LN WBB neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "politische-jugendbildung-an-volkshochschulen-kjp",
+      "titel": "Politische Jugendbildung an Volkshochschulen (KJP)",
+      "kurzname": null,
+      "foerdergeber": "Deutscher Volkshochschulverband (DVV)",
+      "ebene": "Bund",
+      "foerdergebiet": "Deutschland",
+      "fachbereiche": [
+        "Junge vhs",
+        "Politik – Gesellschaft – Umwelt"
+      ],
+      "kurzbeschreibung": "Demokratie lebt von Beteiligung. Junge Menschen sollen die Chance haben, sich eine Meinung zu bilden, sich einzubringen und die Demokratie zu ihrer Sache zu machen. Nahe am Lebensumfeld junger Menschen vermitteln die vielfältigen Veranstaltungen der Politischen Jugendbildung den Teilnehmer*innen gesellschaftspolitische Zusammenhänge und Zugänge zu Beteiligungsmöglichkeiten. Sie binden die jungen Menschen aktiv ein und motivieren sie zu eigenem Denken und Handeln. Die Teilnehmenden machen die positive Erfahrung, dass sie etwas zu sagen haben, dass sie Gehör für ihre Anliegen finden und dass es sich lohnt, sich für gemeinsame Ziele einzusetzen. Die Zentralstelle für Politische Jugendbildung im DVV fördert jedes Jahr 100 bis 150 Maßnahmen der Volkshochschulen. Bis zu 3.000 junge Menschen von 10 bis 26 Jahren profitieren davon. Das Projekt wird aus Mitteln des Kinder- und Jugendplans des Bundes (KJP) vom Bundesministerium für Bildung, Familie, Senioren, Frauen und Jugend (BMBFSFJ) gefördert.",
+      "foerderung": {
+        "projektbudget": "Ein- oder mehrtägige Kurse: Zuschüsse pro Veranstaltungstag und Teilnehmer*in von bis zu EUR 40,00 im Rahmen eines Defizitausgleichs gefördert werden. Honorare bis zu EUR 305,00 pro Veranstaltungstag.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Pauschalen. Bei \"Sonstige Aktivitäten\" mit. Eigenanteil von mindestens 10 Prozent",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": "Bei \"Sonstige Aktivitäten\" mit. Eigenanteil von mindestens 10 Prozent"
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.volkshochschule.de/projekte/politische-jugendbildung/index.php",
+        "projektbeispiele": "https://www.volkshochschule.de/projekte/politische-jugendbildung/praxisbeispiele.php"
+      },
+      "kontakt": {
+        "name": "Michael Lesky",
+        "email": "lesky@vhs-bw.de"
+      },
+      "anmerkungen": "Es gibt regelmäßig themenspezifische Ausschreibungen",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 7
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/KJP.docx"
+        }
+      ]
+    },
+    {
+      "id": "scp-eltern-staerken-lernen-foerdern",
+      "titel": "SCP: Eltern stärken - Lernen Fördern",
+      "kurzname": null,
+      "foerdergeber": "Ministerium für Kultus",
+      "ebene": "Land",
+      "foerdergebiet": "Baden-Württemberg",
+      "fachbereiche": [
+        "Grundbildung und Alphabetisierung",
+        "vhs + Schule"
+      ],
+      "kurzbeschreibung": "„Eltern stärken – Lernen fördern“ ist ein landesweites Förderprojekt für Volkshochschulen, die mit Schulen des Startchancen-Programms kooperieren. Im Zeitraum September 2026 bis Juli 2029 werden niedrigschwellige Elternbildungsangebote direkt an den beteiligten Schulen umgesetzt, etwa regelmäßige Elterncafés, bedarfsorientierte Grundbildungskurse und Kinderbetreuung. Zielgruppe sind insbesondere Eltern, die von bestehenden Weiterbildungsangeboten bislang kaum erreicht werden. Gefördert werden die Durchführung der Angebote sowie anteilige Personal- und Koordinationskosten der Volkshochschulen. Voraussetzung ist die Zusammenarbeit mit einer teilnehmenden Startchancen-Schule sowie eine Projektskizze und ein Weiterleitungsvertrag mit dem vhs-Verband Baden-Württemberg. Der vhs-Verband übernimmt die landesweite Koordination, Qualifizierung und fachliche Begleitung.",
+      "foerderung": {
+        "projektbudget": "Zwischen 14.424 € und 29.786 € pro Projektjahr, abhängig von der Anzahl der betreuten Schulen: 1 Schule: 14.424 €, 2 Schulen: 22.054 €, 3 Schulen: 29.786 €",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Festbetragsfinanzierung auf Grundlage festgelegter Pauschalen.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.vhs-bw.de/projekte/eltern-staerken-lernen-foerdern/",
+        "projektbeispiele": null
+      },
+      "kontakt": {
+        "name": "Ferda Torre",
+        "email": "torre@vhs-bw.de"
+      },
+      "anmerkungen": "Eine Antragstellung außerhalb der am Projekt beteiligten Startchancen-Schulen ist derzeit nicht möglich.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 9
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/SCP-Eltern neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "talentcampus-ein-ferienbildungsprogramm-fuer-die-kulturelle-bildung",
+      "titel": "talentCAMPus - ein Ferienbildungsprogramm für die kulturelle Bildung",
+      "kurzname": null,
+      "foerdergeber": "Deutscher Volkshochschulverband",
+      "ebene": "Bund",
+      "foerdergebiet": "Deutschland",
+      "fachbereiche": [
+        "Junge vhs",
+        "Kultur - Gestalten"
+      ],
+      "kurzbeschreibung": "Bildungschancen verbessern – unabhängig von der sozialen Herkunft: Mit talentCAMPus, dem außerschulischen Ferienbildungskonzept des DVV, erhalten Kinder und Jugendliche Zugang zu Kunst und Kultur. talentCAMPus wird 2023 bis 2027 im Programm „Kultur macht stark. Bündnisse für Bildung“ vom BMBFSFJ gefördert. In den Schulferien haben Kinder und Jugendliche Zeit, um nicht-alltägliche Erfahrungen zu machen und verborgene Interessen und Talente zu wecken. talentCAMPus ermöglicht dies auch 6- bis 18-Jährigen aus bildungsbenachteiligten Familien bundesweit, meist an den Volkshochschulen vor Ort. In ein- oder mehrwöchigen Projekten befassen sich die Teilnehmenden intensiv mit kultureller Bildung und werden selbst künstlerisch aktiv. Vorkenntnisse sind nicht nötig.",
+      "foerderung": {
+        "projektbudget": "Ein- oder mehrwöchige Projekte: Zuschüsse pro Veranstaltungstag und Teilnehmer*in von 45,00 € für halbtägige und 80,00 € für ganztägige Umsetzung der Ferienwoche.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Pauschalen",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.volkshochschule.de/medien/downloads/unsere-projekte/talentcampus/materialbox-talentcampus/Anlage-A-Foerderbekanntmachung_tC_III_Dez25.pdf",
+        "projektbeispiele": "https://www.volkshochschule.de/projekte/talentcampus/index.php"
+      },
+      "kontakt": {
+        "name": "Dorothee Müller",
+        "email": "mueller@vhs-bw.de"
+      },
+      "anmerkungen": "Aktuell endet das Programm Ende 2027.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "dokument",
+          "datei": "raw/TalentCAMPus neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "wandel-der-arbeit",
+      "titel": "Wandel der Arbeit",
+      "kurzname": "ESF+ Bund",
+      "foerdergeber": "Europäischen Union zusammen mit dem Bund",
+      "ebene": "Europa",
+      "foerdergebiet": "Europäische Union",
+      "fachbereiche": [
+        "Arbeit – Beruf",
+        "Europa"
+      ],
+      "kurzbeschreibung": "Das ESF-Plus-Programm „Wandel der Arbeit sozialpartnerschaftlich gestalten: weiter bilden und Gleichstellung fördern“ ist eine gemeinsame Initiative des Bundesministeriums für Arbeit und Soziales (BMAS), der Bundesvereinigung der Deutschen Arbeitgeberverbände (BDA) und des Deutschen Gewerkschaftsbundes (DGB). Ziel ist es, die Innovations- und Wettbewerbsfähigkeit von Unternehmen im Zuge des digitalen, demografischen und ökologischen Wandels zu stärken. Im Fokus stehen der Aufbau nachhaltiger betrieblicher Weiterbildungsstrukturen sowie die gleichberechtigte, existenzsichernde Teilhabe von Frauen am Arbeitsmarkt. Gefördert werden praxisnahe, sozialpartnerschaftlich getragene Projekte in vier Handlungsfeldern: Weiterbildung im Wandel, Gleichstellung, regionale Verbünde für KMU sowie innovative betriebliche Modelle.",
+      "foerderung": {
+        "projektbudget": "Das Finanzvolumen variiert je nach Förderaufruf. Beispielsweise wurden für den 6. und 7. Förderaufruf jeweils bis zu 19 Millionen Euro bereitgestellt, einzelne Projekte sollten im letzten Aufruf bis zu 1,35 Millionen Euro nicht überschreiten.",
+        "minEur": null,
+        "maxEur": null,
+        "art": "Projektförderung im Wege der Anteilfinanzierung als nicht rückzahlbarer Zuschuss.",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "kein_aufruf",
+        "datum": null,
+        "beleg": "Aktuell ist kein Förderaufruf offen."
+      },
+      "links": {
+        "programmwebsite": "https://www.wandelderarbeit.de/",
+        "projektbeispiele": "https://www.wandelderarbeit.de/projects/"
+      },
+      "kontakt": {
+        "name": "Andrea Bernert-Bürkle",
+        "email": "bernert-buerkle@vhs-bw.de"
+      },
+      "anmerkungen": "Aktuell ist kein Förderaufruf offen. Im neuen ESF-Bundesprogramm dürfte ein Nachfolgeprogramm aufgelegt werden.",
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "dokument",
+          "datei": "raw/Wandel der Arbeit neu.docx"
+        }
+      ]
+    },
+    {
+      "id": "wegweiserkurse-wwk",
+      "titel": "Wegweiserkurse (WWK)",
+      "kurzname": null,
+      "foerdergeber": "AMIF, BAMF, Ministerium der Justiz und für Migration Baden-Württemberg",
+      "ebene": "Andere",
+      "foerdergebiet": null,
+      "fachbereiche": [
+        "Integration",
+        "Sprachen"
+      ],
+      "kurzbeschreibung": "WWK haben das Ziel, Schutzsuchenden zu Beginn ihres Aufenthalts in Deutschland nützliche Informationen für den Alltag und wesentliche Grundlagen des kulturellen Zusammenlebens in Deutschland zu vermitteln. Zudem können auch Schutzberechtigte einen Wegweiserkurs besuchen, beispielsweise wenn ein WWK nicht gleich nach Ankunft zur Verfügung stand. Das Projekt wird vom Asyl-, Migrations- und Integrationsfonds (AMIF) finanziert sowie durch den Bund und das Land kofinanziert.",
+      "foerderung": {
+        "projektbudget": null,
+        "minEur": null,
+        "maxEur": null,
+        "art": "Pauschalen",
+        "eigenanteil": {
+          "mindestProzent": null,
+          "erforderlich": null,
+          "beleg": null
+        }
+      },
+      "frist": {
+        "status": "unbekannt",
+        "datum": null,
+        "beleg": null
+      },
+      "links": {
+        "programmwebsite": "https://www.bamf.de/DE/Themen/Integration/TraegerLehrFachkraefte/TraegerProjektfoerderung/Wegweiserkurse/wegweiserkurse-node.html",
+        "projektbeispiele": null
+      },
+      "kontakt": {
+        "name": "Olga Grimm",
+        "email": "grimm@vhs-bw.de"
+      },
+      "anmerkungen": null,
+      "unterlagen": null,
+      "quellen": [
+        {
+          "typ": "excel",
+          "datei": "raw/AG Fördermittelguide_Basisbericht.xlsx",
+          "blatt": "Sheet1",
+          "zeile": 5
+        },
+        {
+          "typ": "dokument",
+          "datei": "raw/Wegweiserkurse neu.docx"
+        }
+      ]
+    }
+  ]
+}
