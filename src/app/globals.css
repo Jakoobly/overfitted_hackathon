@@ -13,7 +13,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 body, h1, h2, h3, p { margin: 0; }
-button, textarea { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button:not(:disabled) { cursor: pointer; }
 a { color: var(--navy); }
 :focus-visible { outline: 3px solid #1e73af; outline-offset: 3px; }
@@ -152,6 +152,47 @@ a { color: var(--navy); }
 
 .send-button:hover:not(:disabled) { background: #ffcd46; }
 .send-button:disabled { color: var(--muted); background: #edf2f7; }
+.project-details {
+  padding: .5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: #f4f8fb;
+}
+.project-details-heading, .project-details-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem 1rem;
+}
+.project-details-heading { justify-content: space-between; min-height: 44px; }
+.project-details-heading h3 { color: var(--navy); font-size: 1.05rem; }
+.project-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .55rem .8rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: .875rem;
+}
+.project-details-wide { grid-column: 1 / -1; }
+.project-details-grid dt, .project-details-grid label { color: var(--navy); font-weight: 700; }
+.project-details-grid dd { margin: 0; overflow-wrap: anywhere; }
+.project-details-grid label { display: grid; align-content: start; gap: .2rem; min-width: 0; }
+.project-details-grid input, .project-details-grid select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: .4rem .5rem;
+  border: 1px solid #a8b8ca;
+  border-radius: .4rem;
+  color: var(--ink);
+  background: white;
+  font-weight: normal;
+}
+.project-details-grid span { color: var(--muted); font-size: .75rem; }
+.project-details-actions, .project-details form > p { margin-top: .65rem; }
+.profile-error { padding: .5rem .65rem; border-radius: .4rem; }
 .matches { display: grid; gap: .75rem; padding: 1rem 1.25rem; }
 .match-summary { color: var(--muted); font-size: .875rem; }
 .programme { border: 1px solid var(--line); border-left: 4px solid #1e73af; border-radius: .5rem; padding: .75rem 1rem; }
@@ -190,7 +231,7 @@ a { color: var(--navy); }
   .site-link { text-align: right; }
   .hero { background: var(--navy); }
   .workspace-columns { grid-template-columns: minmax(0, 1fr); }
-  .panel-header, .chat-context, .conversation, .chat-error, .composer, .matches { padding-inline: .9rem; }
+  .panel-header, .chat-context, .conversation, .chat-error, .composer, .project-details, .matches { padding-inline: .9rem; }
 }
 
 @media (max-width: 390px) {

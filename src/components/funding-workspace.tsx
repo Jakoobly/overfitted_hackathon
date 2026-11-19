@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import {
+  emptyProfile,
   matchStatusLabel,
+  profileSchema,
   type ChatError,
   type ChatRequest,
   type CatalogEntry,
@@ -20,6 +22,14 @@ const greeting: HistoryEntry = {
 
 const exampleMessage = "Unsere kleine VHS in Heilbronn ist ein eingetragener Verein und plant einen Kurs zur digitalen Grundbildung für Erwachsene. Das Budget beträgt rund 15.000 Euro.";
 const requestError = "Der Förderfinder ist gerade nicht erreichbar. Bitte versuchen Sie es erneut.";
+const recheckMessage = "Bitte prüfen Sie die Förderprogramme mit den aktualisierten Projekteckdaten erneut.";
+const states = [
+  "Baden-Württemberg", "Bayern", "Berlin", "Brandenburg", "Bremen", "Hamburg", "Hessen",
+  "Mecklenburg-Vorpommern", "Niedersachsen", "Nordrhein-Westfalen", "Rheinland-Pfalz",
+  "Saarland", "Sachsen", "Sachsen-Anhalt", "Schleswig-Holstein", "Thüringen",
+];
+const budgetFormat = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" });
+const startFormat = new Intl.DateTimeFormat("de-DE", { month: "long", year: "numeric", timeZone: "UTC" });
 
 const fristLabel: Record<string, string> = {
   laufend: "Laufende Antragstellung",
@@ -36,14 +46,18 @@ export function FundingWorkspace() {
   const [messages, setMessages] = useState<HistoryEntry[]>([]);
   const [draft, setDraft] = useState("");
   const [profile, setProfile] = useState<Profile>();
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileError, setProfileError] = useState("");
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [selectedProgramme, setSelectedProgramme] = useState<ChatResponse["selectedProgramme"]>();
-  const [pendingTurn, setPendingTurn] = useState<{ message: HistoryEntry; restart: boolean } | null>(null);
+  const [pendingTurn, setPendingTurn] = useState<{ message: HistoryEntry; restart: boolean; recheck: boolean } | null>(null);
   const [error, setError] = useState("");
   /** Katalog ohne Bewertung, solange die KI-Anbindung gestört ist. */
   const [catalog, setCatalog] = useState<CatalogEntry[] | null>(null);
   const conversation = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
+  const editProfileButton = useRef<HTMLButtonElement>(null);
+  const projectInput = useRef<HTMLInputElement>(null);
   const pending = pendingTurn !== null;
   const visibleMessages = [greeting, ...(pendingTurn?.restart ? [] : messages)];
   if (pendingTurn) visibleMessages.push(pendingTurn.message);
@@ -53,12 +67,21 @@ export function FundingWorkspace() {
     if (log) log.scrollTop = log.scrollHeight;
   }, [messages, pendingTurn]);
 
-  async function runTurn(request: ChatRequest, userText: string, restart = false) {
+  useEffect(() => {
+    if (editingProfile) projectInput.current?.focus();
+  }, [editingProfile]);
+
+  async function runTurn(
+    request: ChatRequest,
+    userText: string,
+    { restart = false, recheck }: { restart?: boolean; recheck?: Profile } = {},
+  ) {
     if (pending) return false;
     const userMessage: HistoryEntry = { role: "user", text: userText };
-    setPendingTurn({ message: userMessage, restart });
+    setPendingTurn({ message: userMessage, restart, recheck: Boolean(recheck) });
     setError("");
-    input.current?.focus();
+    const showError = recheck ? setProfileError : setError;
+    if (!recheck) input.current?.focus();
 
     try {
       const response = await fetch("/api/chat", {
@@ -67,11 +90,11 @@ export function FundingWorkspace() {
         body: JSON.stringify({
           ...request,
           history: restart ? [] : messages.slice(-60),
-          profile: restart ? undefined : profile,
+          profile: restart ? undefined : recheck ?? profile,
         } satisfies ChatRequest),
       });
       const data: ChatResponse | ChatUnavailable | ChatError = await response.json();
-      if ("code" in data && data.code === "KI_NICHT_ERREICHBAR") {
+      if (!recheck && "code" in data && data.code === "KI_NICHT_ERREICHBAR") {
         setMessages((current) => [
           ...(restart ? [] : current),
           userMessage,
@@ -81,11 +104,15 @@ export function FundingWorkspace() {
         return true;
       }
       if ("error" in data) {
-        setError(data.error);
+        showError(data.error);
         return false;
       }
       if (!response.ok) {
-        setError(requestError);
+        showError(requestError);
+        return false;
+      }
+      if (recheck && !Array.isArray(data.matches)) {
+        showError("Es liegt keine neue Bewertung vor. Bitte versuchen Sie es erneut.");
         return false;
       }
 
@@ -94,13 +121,14 @@ export function FundingWorkspace() {
         userMessage,
         { role: "assistant", text: data.reply },
       ]);
-      setProfile(data.profile);
+      setProfile(recheck ?? data.profile);
       setCatalog(null);
       if (restart || data.matches !== undefined) setMatches(data.matches ?? null);
-      if (restart || data.selectedProgramme) setSelectedProgramme(data.selectedProgramme);
+      if (recheck) setSelectedProgramme(undefined);
+      else if (restart || data.selectedProgramme) setSelectedProgramme(data.selectedProgramme);
       return true;
     } catch {
-      setError(requestError);
+      showError(requestError);
       return false;
     } finally {
       setPendingTurn(null);
@@ -108,9 +136,52 @@ export function FundingWorkspace() {
   }
 
   async function loadExample() {
-    if (await runTurn({ action: "message", message: exampleMessage }, exampleMessage, true)) {
+    if (await runTurn({ action: "message", message: exampleMessage }, exampleMessage, { restart: true })) {
       setDraft("");
+      setEditingProfile(false);
+      setProfileError("");
     }
+  }
+
+  function closeProfileForm() {
+    setEditingProfile(false);
+    requestAnimationFrame(() => editProfileButton.current?.focus());
+  }
+
+  async function recheckProfile(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (pending) return;
+    setProfileError("");
+    const fields = new FormData(event.currentTarget);
+    const current = profile ?? emptyProfile();
+    const budget = String(fields.get("budget")).trim();
+    const start = String(fields.get("start")).trim() || null;
+    const targetGroups = String(fields.get("zielgruppen"));
+    const updated = profileSchema.safeParse({
+      ...current,
+      vorhaben: String(fields.get("vorhaben")).trim(),
+      zielgruppen: targetGroups === current.zielgruppen.join(", ")
+        ? current.zielgruppen
+        : targetGroups.split(",").map((group) => group.trim()).filter(Boolean),
+      bundesland: fields.get("bundesland") || null,
+      budget: budget ? Number(budget) : null,
+      start,
+      startOffen: start === null && current.startOffen,
+    });
+    if (!updated.success) {
+      setProfileError("Bitte prüfen Sie die eingegebenen Projekteckdaten.");
+      return;
+    }
+    const state = updated.data.bundesland;
+    const userText = state && states.includes(state)
+      ? `Das Bundesland des Vorhabens ist ${state}. ${recheckMessage}`
+      : recheckMessage;
+    const checked = await runTurn({
+      action: "message",
+      message: `${userText} Verwenden Sie das mitgesendete Profil als verbindliche Grundlage, auch bei offenen Angaben oder Widersprüchen zum bisherigen Chatverlauf. Berücksichtigen Sie die regionalen Fördervoraussetzungen aus dem Katalog. Führen Sie eine neue Suche durch (neueSuche = true).`,
+      selectedProgrammeId: null,
+    }, userText, { recheck: updated.data });
+    if (checked) closeProfileForm();
   }
 
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
@@ -163,7 +234,7 @@ export function FundingWorkspace() {
                 <p className="bubble">{text}</p>
               </div>
             ))}
-            {pending && <p className="match-summary" role="status">Der Förderfinder antwortet …</p>}
+            {pending && !pendingTurn.recheck && <p className="match-summary" role="status">Der Förderfinder antwortet …</p>}
           </div>
           {error && <p className="chat-error" role="alert">{error}</p>}
           <form className="composer" onSubmit={sendMessage}>
@@ -187,6 +258,91 @@ export function FundingWorkspace() {
           <header className="panel-header">
             <h2 id="matches-title">Förderprogramme</h2>
           </header>
+          <section className="project-details" aria-labelledby="project-details-title">
+            <div className="project-details-heading">
+              <h3 id="project-details-title">Projekteckdaten</h3>
+              {!editingProfile && (
+                <button
+                  className="programme-action"
+                  type="button"
+                  ref={editProfileButton}
+                  disabled={pending}
+                  onClick={() => {
+                    setProfileError("");
+                    setEditingProfile(true);
+                  }}
+                >
+                  Bearbeiten
+                </button>
+              )}
+            </div>
+            {editingProfile ? (
+              <form onSubmit={recheckProfile}>
+                <fieldset className="project-details-grid" disabled={pending}>
+                  <label className="project-details-wide">
+                    Vorhaben
+                    <input name="vorhaben" ref={projectInput} defaultValue={profile?.vorhaben} />
+                  </label>
+                  <div className="project-details-wide">
+                    <label>
+                      Zielgruppe
+                      <input name="zielgruppen" defaultValue={profile?.zielgruppen.join(", ")} aria-describedby="target-group-hint" />
+                    </label>
+                    <span id="target-group-hint">Mehrere Zielgruppen mit Komma trennen.</span>
+                  </div>
+                  <label>
+                    Bundesland
+                    <select name="bundesland" defaultValue={profile?.bundesland ?? ""}>
+                      <option value="">Noch offen</option>
+                      {profile?.bundesland && !states.includes(profile.bundesland) && (
+                        <option value={profile.bundesland}>{profile.bundesland}</option>
+                      )}
+                      {states.map((state) => <option key={state}>{state}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    Budget in Euro
+                    <input name="budget" type="number" min="0" step="any" defaultValue={profile?.budget ?? ""} />
+                  </label>
+                  <label>
+                    Projektstart
+                    <input name="start" type="month" placeholder="JJJJ-MM" defaultValue={profile?.start ?? ""} />
+                  </label>
+                </fieldset>
+                {profileError && <p className="chat-error profile-error" role="alert">{profileError}</p>}
+                {pendingTurn?.recheck && <p className="match-summary" role="status">Förderprogramme werden erneut geprüft …</p>}
+                <div className="project-details-actions">
+                  <button className="send-button" type="submit" disabled={pending}>Erneut prüfen</button>
+                  <button className="programme-action" type="button" disabled={pending} onClick={closeProfileForm}>
+                    Abbrechen
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <dl className="project-details-grid">
+                <div className="project-details-wide">
+                  <dt>Vorhaben</dt>
+                  <dd>{profile?.vorhaben.trim() || "Noch offen"}</dd>
+                </div>
+                <div className="project-details-wide">
+                  <dt>Zielgruppe</dt>
+                  <dd>{profile?.zielgruppen.filter((group) => group.trim()).join(", ") || "Noch offen"}</dd>
+                </div>
+                <div>
+                  <dt>Bundesland</dt>
+                  <dd>{profile?.bundesland?.trim() || "Noch offen"}</dd>
+                </div>
+                <div>
+                  <dt>Budget</dt>
+                  <dd>{profile?.budget != null ? budgetFormat.format(profile.budget) : "Noch offen"}</dd>
+                </div>
+                <div>
+                  <dt>Projektstart</dt>
+                  <dd>{profile?.start ? startFormat.format(new Date(`${profile.start}-01T00:00:00Z`)) : "Noch offen"}</dd>
+                </div>
+              </dl>
+            )}
+          </section>
           <div className="matches" aria-live="polite">
             {catalog ? (
               <>

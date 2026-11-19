@@ -11,6 +11,14 @@ Im Chat sendet **Enter** die Nachricht. **Umschalt+Enter** fügt einen Zeilenumb
 - `npm test` prüft ohne Langdock-Schlüssel die Chat-Route gegen ein simuliertes Langdock: Antwortformat, Treffer nur aus dem Katalog, Anfrage an Langdock (`gpt-5.1`, `store: false`), Fehler 400/404, den Ersatzweg mit HTTP 503 und Katalogliste sowie die Neubewertung nach einer Korrektur. Außerdem prüft es, dass der Katalog dem Import entspricht. Läuft auch in der CI.
 - `npm run smoke:chat` spielt bei laufender App (`npm run dev`, oder `SMOKE_URL=<App-URL>`) den Demo-Ablauf live mit dem echten Schlüssel durch: Projektbeschreibung mit Rückfrage, „Antrag vorbereiten“, Frage nach den Unterlagen und Korrektur des Standorts auf Bayern. Verbraucht Tokens, deshalb nur vor Demo oder Übergabe ausführen. Am 19. November 2026 zweimal vollständig bestanden. Die Treffer schwanken zwischen den Läufen (z. B. nach der Korrektur auf Bayern einmal keine, einmal drei bundesweite Programme). Bei einem Fehlschlag die ausgegebenen Antworten lesen und den Lauf wiederholen.
 
+## Projekteckdaten korrigieren
+
+Über den Förderprogrammen stehen Vorhaben, Zielgruppe, Bundesland, Budget und Projektstart. Fehlende Angaben erscheinen als „Noch offen“. **Bearbeiten** öffnet das Formular. **Abbrechen** verwirft den Entwurf. **Erneut prüfen** sendet die geänderten Eckdaten mit dem übrigen Projektprofil an den Förderfinder.
+
+Sobald die API eine neue Trefferliste liefert, übernimmt die Oberfläche die Eckdaten, aktualisiert die Treffer und hebt die Programmauswahl auf. Der bisherige Chatverlauf bleibt sichtbar. Liefert die API einen Fehler oder keine neue Trefferliste, bleibt das Formular mit dem Entwurf zur Wiederholung geöffnet. Eine leere Trefferliste gilt als abgeschlossene Prüfung ohne Treffer.
+
+Am 19. November 2026 in Chrome geprüft. Mit dem Demo-Beispiel und Langdock verschwand die ESF-Fachkursförderung Baden-Württemberg nach dem Wechsel auf Bayern. Der Chatverlauf blieb sichtbar und die Programmauswahl wurde aufgehoben. Abbrechen, Wiederholen nach HTTP 503 und nach einer Antwort ohne Trefferliste sowie die Anzeige einer leeren Trefferliste wurden lokal geprüft.
+
 ## Langdock-Zugang
 
 **Der Demo-Schlüssel ist nur für den Hackathon am 19. November 2026 vorgesehen. Er läuft am 20. November 2026 ab.** Für weitere Tests und den Betrieb stellt die zuständige Person im VHS-Langdock-Workspace einen neuen Workspace-Schlüssel mit Berechtigung für die Completion API bereit.
