@@ -20,7 +20,6 @@ const greeting: HistoryEntry = {
   text: "Was planen Sie? Beschreiben Sie kurz Ihre Projektidee, die Zielgruppe und den Standort Ihrer VHS.",
 };
 
-const exampleMessage = "Unsere kleine VHS in Heilbronn ist ein eingetragener Verein und plant einen Kurs zur digitalen Grundbildung für Erwachsene. Das Budget beträgt rund 15.000 Euro.";
 const requestError = "Der Förderfinder ist gerade nicht erreichbar. Bitte versuchen Sie es erneut.";
 const recheckMessage = "Bitte prüfen Sie die Förderprogramme mit den aktualisierten Projekteckdaten erneut.";
 const states = [
@@ -50,7 +49,7 @@ export function FundingWorkspace() {
   const [profileError, setProfileError] = useState("");
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [selectedProgramme, setSelectedProgramme] = useState<ChatResponse["selectedProgramme"]>();
-  const [pendingTurn, setPendingTurn] = useState<{ message: HistoryEntry; restart: boolean; recheck: boolean } | null>(null);
+  const [pendingTurn, setPendingTurn] = useState<{ message: HistoryEntry; recheck: boolean } | null>(null);
   const [error, setError] = useState("");
   /** Katalog ohne Bewertung, solange die KI-Anbindung gestört ist. */
   const [catalog, setCatalog] = useState<CatalogEntry[] | null>(null);
@@ -59,7 +58,7 @@ export function FundingWorkspace() {
   const editProfileButton = useRef<HTMLButtonElement>(null);
   const projectInput = useRef<HTMLInputElement>(null);
   const pending = pendingTurn !== null;
-  const visibleMessages = [greeting, ...(pendingTurn?.restart ? [] : messages)];
+  const visibleMessages = [greeting, ...messages];
   if (pendingTurn) visibleMessages.push(pendingTurn.message);
 
   useEffect(() => {
@@ -71,14 +70,10 @@ export function FundingWorkspace() {
     if (editingProfile) projectInput.current?.focus();
   }, [editingProfile]);
 
-  async function runTurn(
-    request: ChatRequest,
-    userText: string,
-    { restart = false, recheck }: { restart?: boolean; recheck?: Profile } = {},
-  ) {
+  async function runTurn(request: ChatRequest, userText: string, recheck?: Profile) {
     if (pending) return false;
     const userMessage: HistoryEntry = { role: "user", text: userText };
-    setPendingTurn({ message: userMessage, restart, recheck: Boolean(recheck) });
+    setPendingTurn({ message: userMessage, recheck: Boolean(recheck) });
     setError("");
     const showError = recheck ? setProfileError : setError;
     if (!recheck) input.current?.focus();
@@ -89,14 +84,14 @@ export function FundingWorkspace() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...request,
-          history: restart ? [] : messages.slice(-60),
-          profile: restart ? undefined : recheck ?? profile,
+          history: messages.slice(-60),
+          profile: recheck ?? profile,
         } satisfies ChatRequest),
       });
       const data: ChatResponse | ChatUnavailable | ChatError = await response.json();
       if (!recheck && "code" in data && data.code === "KI_NICHT_ERREICHBAR") {
         setMessages((current) => [
-          ...(restart ? [] : current),
+          ...current,
           userMessage,
           { role: "assistant", text: data.reply },
         ]);
@@ -117,29 +112,21 @@ export function FundingWorkspace() {
       }
 
       setMessages((current) => [
-        ...(restart ? [] : current),
+        ...current,
         userMessage,
         { role: "assistant", text: data.reply },
       ]);
       setProfile(recheck ?? data.profile);
       setCatalog(null);
-      if (restart || data.matches !== undefined) setMatches(data.matches ?? null);
+      if (data.matches !== undefined) setMatches(data.matches);
       if (recheck) setSelectedProgramme(undefined);
-      else if (restart || data.selectedProgramme) setSelectedProgramme(data.selectedProgramme);
+      else if (data.selectedProgramme) setSelectedProgramme(data.selectedProgramme);
       return true;
     } catch {
       showError(requestError);
       return false;
     } finally {
       setPendingTurn(null);
-    }
-  }
-
-  async function loadExample() {
-    if (await runTurn({ action: "message", message: exampleMessage }, exampleMessage, { restart: true })) {
-      setDraft("");
-      setEditingProfile(false);
-      setProfileError("");
     }
   }
 
@@ -180,7 +167,7 @@ export function FundingWorkspace() {
       action: "message",
       message: `${userText} Verwenden Sie das mitgesendete Profil als verbindliche Grundlage, auch bei offenen Angaben oder Widersprüchen zum bisherigen Chatverlauf. Berücksichtigen Sie die regionalen Fördervoraussetzungen aus dem Katalog. Führen Sie eine neue Suche durch (neueSuche = true).`,
       selectedProgrammeId: null,
-    }, userText, { recheck: updated.data });
+    }, userText, updated.data);
     if (checked) closeProfileForm();
   }
 
@@ -220,9 +207,6 @@ export function FundingWorkspace() {
         <section className="panel chat" id="beratung" tabIndex={-1} aria-labelledby="chat-title">
           <header className="panel-header">
             <h2 id="chat-title">Ihr Projekt</h2>
-            <button className="example-button" type="button" onClick={loadExample} disabled={pending}>
-              Beispiel laden
-            </button>
           </header>
           {selectedProgramme && (
             <p className="chat-context">Im Chat ausgewählt <strong>{selectedProgramme.titel}</strong></p>

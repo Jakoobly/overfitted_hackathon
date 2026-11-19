@@ -2,7 +2,7 @@
 
 ## Förderfinder lokal starten
 
-Im Repo-Ordner `npm ci` ausführen, den Langdock-Zugang in `.env.local` einrichten und mit `npm run dev` starten. Unter `http://localhost:3000` eine Projektidee eingeben oder „Beispiel laden“ wählen. Beides startet eine Suche im importierten Förderkatalog. „Antrag vorbereiten“ fügt die Checkliste für das ausgewählte Programm zum Chat hinzu. Für den Funktionstest „Welche Unterlagen brauchen wir?“ eingeben und prüfen, ob sich die Antwort auf das ausgewählte Programm bezieht. Falls mehrere Treffer vorliegen, ein anderes Programm wählen und die Frage wiederholen.
+Im Repo-Ordner `npm ci` ausführen, den Langdock-Zugang in `.env.local` einrichten und mit `npm run dev` starten. Unter `http://localhost:3000` die Projektidee, Zielgruppe und den Standort der VHS in den Chat eingeben und **Senden** wählen. Das startet die Suche im importierten Förderkatalog. „Antrag vorbereiten“ fügt die Checkliste für das ausgewählte Programm zum Chat hinzu. Für den Funktionstest „Welche Unterlagen brauchen wir?“ eingeben und prüfen, ob sich die Antwort auf das ausgewählte Programm bezieht. Falls mehrere Treffer vorliegen, ein anderes Programm wählen und die Frage wiederholen.
 
 Im Chat sendet **Enter** die Nachricht. **Umschalt+Enter** fügt einen Zeilenumbruch ein. Die Nachricht erscheint sofort im Verlauf. Darunter steht „Der Förderfinder antwortet …“, bis die Antwort eintrifft. Schlägt der Versand fehl, steht der Text wieder im Eingabefeld.
 
@@ -27,7 +27,7 @@ Am 19. November 2026 in Chrome geprüft. Mit dem Demo-Beispiel und Langdock vers
 
 **Der Demo-Schlüssel ist nur für den Hackathon am 19. November 2026 vorgesehen. Er läuft am 20. November 2026 ab.** Für weitere Tests und den Betrieb stellt die zuständige Person im VHS-Langdock-Workspace einen neuen Workspace-Schlüssel mit Berechtigung für die Completion API bereit.
 
-Am 19. November 2026 wurde `gpt-5.1` mit dem Demo-Schlüssel geprüft. Im lokalen Browser-Test führten eine freie Projektbeschreibung und „Beispiel laden“ zu Katalogtreffern und einer gezielten Rückfrage. Nach „Antrag vorbereiten“ erschienen Checklisten im Chat. Die freie Unterlagenfrage bezog sich vor und nach dem Programmwechsel auf den jeweils ausgewählten Treffer. Bei fehlenden Katalogangaben verwies der Chat an die Förderstelle oder die Programmwebsite. Für die ESF-Fachkursförderung Baden-Württemberg nannte er nach der Ergänzung die belegten Antragsunterlagen. [API-Vertrag und Beispiele](api-chat.md)
+Am 19. November 2026 wurde `gpt-5.1` mit dem Demo-Schlüssel geprüft. Im lokalen Browser-Test führten eine freie Projektbeschreibung und das damalige Demo-Beispiel zu Katalogtreffern und einer gezielten Rückfrage. Nach „Antrag vorbereiten“ erschienen Checklisten im Chat. Die freie Unterlagenfrage bezog sich vor und nach dem Programmwechsel auf den jeweils ausgewählten Treffer. Bei fehlenden Katalogangaben verwies der Chat an die Förderstelle oder die Programmwebsite. Für die ESF-Fachkursförderung Baden-Württemberg nannte er nach der Ergänzung die belegten Antragsunterlagen. [API-Vertrag und Beispiele](api-chat.md)
 
 ## Antragsunterlagen ergänzen
 
