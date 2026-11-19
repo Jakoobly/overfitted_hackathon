@@ -1,6 +1,6 @@
 # Rafael · Katalog und Matching
 
-Lege in `data/catalog/` zwei bis drei Demo-Programme an. Implementiere die Förderprüfung in `src/lib/funding/`.
+Lege in `data/json/` zwei bis drei Demo-Programme an. Implementiere die Förderprüfung in `src/lib/funding/`.
 
 - Stimme in den ersten zehn Minuten mit Robert die benötigten Profilfelder ab. Nutze als Demo eine VHS in Baden-Württemberg mit einem Kurs zur digitalen Grundbildung.
 - Hinterlege pro Programm eine stabile ID, Thema, Fördergebiet, Bedingungen, Unterlagen und Quelle. Stelle für die Chat-Route den Katalogeintrag per ID und die bewerteten Treffer mit Begründung bereit.

@@ -29,7 +29,7 @@ src/lib/funding/           Funding types and matching logic
 src/lib/server/            Server-side OpenAI and catalogue access
 scripts/                   Local Excel import scripts
 raw/                       Existing source documents
-data/catalog/              Runtime JSON catalogue
+data/json/                 Runtime JSON catalogue
 mockups/                   Static UI drafts
 docs/                      Specification and team schedule
 tests/                     Tests

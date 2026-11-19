@@ -1,4 +1,4 @@
-import catalogFile from "../../../data/catalog/foerderprogramme.json";
+import catalogFile from "../../../data/json/foerderprogramme.json";
 
 export type Programme = (typeof catalogFile.programme)[number];
 

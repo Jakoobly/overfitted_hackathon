@@ -13,7 +13,7 @@ import * as XLSX from 'xlsx';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const RAW = path.join(ROOT, 'raw');
-const OUT = path.join(ROOT, 'data/catalog/foerderprogramme.json');
+const OUT = path.join(ROOT, 'data/json/foerderprogramme.json');
 const EXCEL = 'AG Fördermittelguide_Basisbericht.xlsx';
 
 const warnings = [];

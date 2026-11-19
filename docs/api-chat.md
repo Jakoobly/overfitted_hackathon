@@ -2,7 +2,7 @@
 
 Typen: [`src/lib/chat/contract.ts`](../src/lib/chat/contract.ts). Der Browser hält Verlauf, Profil und Programmauswahl und schickt sie bei jeder Anfrage mit. Antwortzeit live etwa 5–10 Sekunden.
 
-Treffer, Rückfragen und Checkliste erzeugt das Modell über Langdock (`gpt-5.1`, Responses API, `store: false`) aus dem Katalog `data/catalog/foerderprogramme.json`. Der Server prüft Anfrage, Profil und Modellausgabe mit Zod und verwirft Treffer-IDs, die nicht im Katalog stehen.
+Treffer, Rückfragen und Checkliste erzeugt das Modell über Langdock (`gpt-5.1`, Responses API, `store: false`) aus dem Katalog `data/json/foerderprogramme.json`. Der Server prüft Anfrage, Profil und Modellausgabe mit Zod und verwirft Treffer-IDs, die nicht im Katalog stehen.
 
 ## Aktion `message`
 
