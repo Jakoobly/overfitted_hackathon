@@ -233,7 +233,8 @@ function build() {
       kurzname: doc?.programmName && doc.programmName !== titel ? doc.programmName : null,
       foerdergeber: pick(doc?.foerdergeber, row?.foerdergeber),
       ebene,
-      foerdergebiet: FOERDERGEBIET[ebene] ?? null,
+      // EU-Mittel mit Landesprogramm (z. B. ESF Plus Baden-Württemberg) gelten nur im Land aus dem Titel
+      foerdergebiet: /Baden-Württemberg/.test(titel ?? '') ? 'Baden-Württemberg' : FOERDERGEBIET[ebene] ?? null,
       fachbereiche: splitList(pick(doc?.fachbereich, row?.fachbereich)),
       kurzbeschreibung: beschreibung,
       foerderung: {
