@@ -88,7 +88,7 @@ a { color: var(--navy); }
 }
 
 .panel-header h2 { color: var(--navy); font-size: 1.45rem; line-height: 1.2; }
-.chat { display: flex; flex-direction: column; }
+.chat { align-self: start; display: flex; flex-direction: column; }
 .chat-context {
   padding: .6rem 1.25rem;
   border-bottom: 1px solid var(--line);

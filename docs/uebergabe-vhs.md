@@ -4,7 +4,7 @@
 
 Im Repo-Ordner `npm ci` ausführen, den Langdock-Zugang in `.env.local` einrichten und mit `npm run dev` starten. Unter `http://localhost:3000` die Projektidee, Zielgruppe und den Standort der VHS in den Chat eingeben und **Senden** wählen. Das startet die Suche im importierten Förderkatalog. „Antrag vorbereiten“ fügt die Checkliste für das ausgewählte Programm zum Chat hinzu. Für den Funktionstest „Welche Unterlagen brauchen wir?“ eingeben und prüfen, ob sich die Antwort auf das ausgewählte Programm bezieht. Falls mehrere Treffer vorliegen, ein anderes Programm wählen und die Frage wiederholen.
 
-Im Chat sendet **Enter** die Nachricht. **Umschalt+Enter** fügt einen Zeilenumbruch ein. Die Nachricht erscheint sofort im Verlauf. Darunter steht „Der Förderfinder antwortet …“, bis die Antwort eintrifft. Der Verlauf wächst mit dem Gespräch. Bei längeren Unterhaltungen lässt er sich oberhalb des Eingabefelds scrollen. Schlägt der Versand fehl, steht der Text wieder im Eingabefeld.
+Im Chat sendet **Enter** die Nachricht. **Umschalt+Enter** fügt einen Zeilenumbruch ein. Die Nachricht erscheint sofort im Verlauf. Darunter steht „Der Förderfinder antwortet …“, bis die Antwort eintrifft. Der Verlauf wächst bis zu einer vom Browserfenster abhängigen Maximalhöhe. Danach scrollen die Nachrichten innerhalb des Chatfensters oberhalb des Eingabefelds. Schlägt der Versand fehl, steht der Text wieder im Eingabefeld.
 
 ### Nur offene Programme und künftige Projekte
 
