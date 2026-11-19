@@ -47,15 +47,17 @@ TBD: prerequisites, dependency installation, run commands, and test commands aft
 ## Collaboration
 
 1. Agree on a small task, create an issue, and assign one owner.
-2. Keep `main` stable. Start each feature from the latest `main`:
+2. Work on `main` by default. Check the current state and fast-forward before starting:
    ```sh
    git switch main
+   git fetch origin
+   git status -sb
    git pull --ff-only origin main
-   git switch -c feature/description
    ```
-3. Make small, focused commits using the conventions in [AGENTS.md](AGENTS.md), such as `docs: add challenge overview`.
-4. Push your branch and open a pull request using the template. Link its issue and describe how you tested the change.
-5. Ask one teammate to review, merge after resolving feedback, and delete the merged branch.
+3. Run the quickest relevant check and make a focused commit using the conventions in [AGENTS.md](AGENTS.md), such as `docs: add challenge overview`.
+4. Fetch again and check `git status -sb` before pushing directly with `git push origin main`. If `origin/main` has advanced, integrate it and rerun the relevant checks before pushing.
+
+Create a separate branch only when explicitly requested. For that workflow, open a pull request using the template, link the issue, describe how you tested the change, and ask a teammate to review before merging.
 
 Use Discord for quick coordination and debugging. Keep tasks in issues and record important technical decisions in [the decision log](docs/decisions.md). This workflow is a team convention; branch protection is not configured by these files.
 

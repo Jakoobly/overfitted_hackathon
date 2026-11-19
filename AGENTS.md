@@ -8,11 +8,11 @@ We are a team of three with one day to deliver a working prototype and demo.
 - Prioritize the end-to-end demo path. When time is tight, cut optional scope and keep a working version on `main`.
 - Run the quickest relevant check and commit each coherent, verified slice. Push completed slices promptly so teammates can build on them.
 
-## Keep your branch current
+## Work on main
 
-- Before starting or resuming a task and before pushing, run `git fetch origin` and check `git status -sb`. On a feature branch, compare against `origin/main` as well. Repeat at the end of each work cycle.
-- Start new branches from an updated `main` using `git pull --ff-only origin main`. On an active feature branch, integrate `origin/main` when it advances, then rerun the relevant checks. Preserve local changes and coordinate with the team if branches diverge or conflicts affect someone else's work.
-- Follow the pull request and teammate review workflow in the README. A direct push to `main` requires an explicit request. Use normal pushes and avoid rewriting shared history.
+- Work on `main` and push verified commits directly to `origin/main` by default. Create a separate branch only when explicitly requested.
+- Before starting or resuming a task, before pushing, and at the end of each work cycle, run `git fetch origin` and check `git status -sb`. Fast-forward `main` with `git pull --ff-only origin main` when it is behind. If local commits and `origin/main` diverge, preserve local changes, coordinate any conflicts with the team, and rerun the relevant checks after integrating.
+- Use normal pushes and avoid rewriting shared history. When a separate branch is explicitly requested, start from updated `main` and use the pull request workflow in the README.
 
 ## Commit messages
 
