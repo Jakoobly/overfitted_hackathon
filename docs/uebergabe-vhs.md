@@ -4,7 +4,7 @@
 
 Im Repo-Ordner `npm ci` ausführen, den Langdock-Zugang in `.env.local` einrichten und mit `npm run dev` starten. Unter `http://localhost:3000` eine Projektidee eingeben oder „Beispiel laden“ wählen. Beides startet eine Suche im importierten Förderkatalog. „Antrag vorbereiten“ fügt die Checkliste für das ausgewählte Programm zum Chat hinzu. Für den Funktionstest „Welche Unterlagen brauchen wir?“ eingeben und prüfen, ob sich die Antwort auf das ausgewählte Programm bezieht. Falls mehrere Treffer vorliegen, ein anderes Programm wählen und die Frage wiederholen.
 
-Im Chat sendet **Enter** die Nachricht. **Umschalt+Enter** fügt einen Zeilenumbruch ein.
+Im Chat sendet **Enter** die Nachricht. **Umschalt+Enter** fügt einen Zeilenumbruch ein. Die Nachricht erscheint sofort im Verlauf. Darunter steht „Der Förderfinder antwortet …“, bis die Antwort eintrifft. Schlägt der Versand fehl, steht der Text wieder im Eingabefeld.
 
 ## Langdock-Zugang
 

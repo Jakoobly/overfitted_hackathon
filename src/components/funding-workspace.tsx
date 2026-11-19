@@ -38,21 +38,25 @@ export function FundingWorkspace() {
   const [profile, setProfile] = useState<Profile>();
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [selectedProgramme, setSelectedProgramme] = useState<ChatResponse["selectedProgramme"]>();
-  const [pending, setPending] = useState(false);
+  const [pendingTurn, setPendingTurn] = useState<{ message: HistoryEntry; restart: boolean } | null>(null);
   const [error, setError] = useState("");
   /** Katalog ohne Bewertung, solange die KI-Anbindung gestört ist. */
   const [catalog, setCatalog] = useState<CatalogEntry[] | null>(null);
   const conversation = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
+  const pending = pendingTurn !== null;
+  const visibleMessages = [greeting, ...(pendingTurn?.restart ? [] : messages)];
+  if (pendingTurn) visibleMessages.push(pendingTurn.message);
 
   useEffect(() => {
     const log = conversation.current;
     if (log) log.scrollTop = log.scrollHeight;
-  }, [messages, pending]);
+  }, [messages, pendingTurn]);
 
   async function runTurn(request: ChatRequest, userText: string, restart = false) {
     if (pending) return false;
-    setPending(true);
+    const userMessage: HistoryEntry = { role: "user", text: userText };
+    setPendingTurn({ message: userMessage, restart });
     setError("");
     input.current?.focus();
 
@@ -70,7 +74,7 @@ export function FundingWorkspace() {
       if ("code" in data && data.code === "KI_NICHT_ERREICHBAR") {
         setMessages((current) => [
           ...(restart ? [] : current),
-          { role: "user", text: userText },
+          userMessage,
           { role: "assistant", text: data.reply },
         ]);
         setCatalog(data.catalog);
@@ -87,7 +91,7 @@ export function FundingWorkspace() {
 
       setMessages((current) => [
         ...(restart ? [] : current),
-        { role: "user", text: userText },
+        userMessage,
         { role: "assistant", text: data.reply },
       ]);
       setProfile(data.profile);
@@ -99,7 +103,7 @@ export function FundingWorkspace() {
       setError(requestError);
       return false;
     } finally {
-      setPending(false);
+      setPendingTurn(null);
     }
   }
 
@@ -112,13 +116,14 @@ export function FundingWorkspace() {
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const text = draft.trim();
-    if (!text) return;
+    if (!text || pending) return;
+    setDraft("");
     const sent = await runTurn({
       action: "message",
       message: text,
       selectedProgrammeId: selectedProgramme?.id ?? null,
     }, text);
-    if (sent) setDraft("");
+    if (!sent) setDraft(draft);
   }
 
   function handleComposerKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -152,7 +157,7 @@ export function FundingWorkspace() {
             <p className="chat-context">Im Chat ausgewählt <strong>{selectedProgramme.titel}</strong></p>
           )}
           <div className="conversation" ref={conversation} role="log" aria-label="Chatverlauf">
-            {[greeting, ...messages].map(({ role, text }, index) => (
+            {visibleMessages.map(({ role, text }, index) => (
               <div className={`message message--${role}`} key={index}>
                 <p className="speaker">{role === "assistant" ? "Förderfinder" : "Sie"}</p>
                 <p className="bubble">{text}</p>
