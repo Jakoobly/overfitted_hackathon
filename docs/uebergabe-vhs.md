@@ -1,5 +1,9 @@
 # Übergabe an die VHS
 
+## Lokale UI-Vorschau
+
+Im Repo-Ordner `npm ci` und `npm run dev` ausführen. Unter `http://localhost:3000` lässt sich die Oberfläche ohne Langdock-Schlüssel prüfen. „Beispiel laden“ zeigt einen vorbereiteten Dialog und zwei fiktive Förderprogramme. Freie Texteingaben erscheinen im aktuellen Chatverlauf. Live-Antworten und die echte Katalogsuche stehen für diese Vorschau noch aus.
+
 ## Langdock-Zugang
 
 **Der Demo-Schlüssel ist nur für den Hackathon am 19. November 2026 vorgesehen. Er läuft am 20. November 2026 ab.** Für weitere Tests und den Betrieb stellt die zuständige Person im VHS-Langdock-Workspace einen neuen Workspace-Schlüssel mit Berechtigung für die Completion API bereit.
