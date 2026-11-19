@@ -8,6 +8,12 @@ We are a team of three with one day to deliver a working prototype and demo.
 - Prioritize the end-to-end demo path. When time is tight, cut optional scope and keep a working version on `main`.
 - Run the quickest relevant check and commit each coherent, verified slice. Push completed slices promptly so teammates can build on them.
 
+## Keep the VHS handoff current
+
+- Before closing each task, check whether its outcome changes anything the VHS needs to install, configure, deploy, operate, or verify the app. Update the relevant section of [the VHS handoff](docs/uebergabe-vhs.md) before closing the task.
+- Capture changes to startup or deployment steps, website integration, catalogue updates, API settings and key expiry or rotation, verification results, known limitations, and ownership. Record variable names and where to configure them. Keep actual secrets in local or hosting secret storage.
+- Replace outdated steps and mark pending or unverified items explicitly. Include the handoff update in the same commit as the relevant change where practical.
+
 ## Work on main
 
 - Work on `main` and push verified commits directly to `origin/main` by default. Create a separate branch only when explicitly requested.
