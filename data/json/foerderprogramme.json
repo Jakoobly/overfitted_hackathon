@@ -441,7 +441,26 @@
         "email": "bernert-buerkle@vhs-bw.de"
       },
       "anmerkungen": "Damit auch kleine Volkshochschulen bei Nichterreichen der Mindestförderung ihren Teilnehmenden die Fachkursförderung anbieten können, hat der vhs-Verband in der Vergangenheit einen Sammelantrag gestellt. Dies ist nicht mehr möglich.",
-      "unterlagen": null,
+      "unterlagen": {
+        "einreichung": "Antrag rechtzeitig vor Kursbeginn über das Antragsportal ELAN (https://elan.esf-bw.de) bei der L-Bank einreichen. Die L-Bank entscheidet über die Bewilligung; Bearbeitung in der Reihenfolge der vollständigen Antragseingänge. Empfohlen sind Jahresanträge für Kursbeginne vom 1. September bis 31. August des Folgejahres (aktuelle Förderrunde: Kursbeginne 01.09.2026 bis 31.08.2027).",
+        "antrag": [
+          "Ausgefüllter Antragsvordruck (Excel) mit den Tabellenblättern „Antrag“ und „Anlage 1: Aufstellung der geplanten Fachkurse“ (je Kurs: Kurstitel/-nummer, Kursbezeichnung, Anzahl der geplanten Kurse, Dauer in Unterrichtseinheiten, geschätzte Zahl förderfähiger Teilnehmender, voraussichtliche Teilnahmegebühr)",
+          "Tabellenblatt „Unterschrift und Bestätigungen“, ausgedruckt, handschriftlich unterschrieben und eingescannt",
+          "Aussagekräftige Kursbeschreibung(en) mit Nummer, Dauer (Unterrichtseinheiten), Termin, Thema, Inhalt und Ort, ggf. Zielgruppe – ersatzweise das Kursprogramm, in dem die Kurse aus Anlage 1 markiert sind",
+          "Formular „Identifikation des Antragstellers in der EU-Förderung“ zur Ermittlung der/des wirtschaftlich Berechtigten (Legitimationsanforderungen der L-Bank)"
+        ],
+        "bereithalten": [
+          "Kalkulation über das Zustandekommen der Teilnahmegebühr je beantragtem Fachkurs (auf Anforderung kurzfristig vorzulegen)"
+        ],
+        "nachBewilligung": [
+          "Zielgruppenabfrage je Teilnehmendem und Fachkurs bei den Kursunterlagen aufbewahren (Vorlage „Muster Zielgruppenabfrage Fachkursprogramm“)",
+          "Teilnahmefragebogen einmal pro Teilnehmendem und Bewilligung",
+          "Upload-Tabelle (ZuMa-Portal der L-Bank) und Kontaktdatentabelle (ISG-Portal) zum 30. Juni, zum 31. Dezember und mit jedem Verwendungsnachweis",
+          "ESF-Plus-Maßnahmenplakat (mind. DIN A3) während der Durchführung aushängen; Logoreihe des Wirtschaftsministeriums auf der Rechnung oder als Beiblatt (Publizität)",
+          "Zwischen- oder Schlussverwendungsnachweis (Excel-Vordruck) mit Rechnungsbelegen über das ZuMa-Portal; Schlussverwendungsnachweis grundsätzlich innerhalb von drei Monaten nach Ende des letzten Kurses",
+          "Alle Belege, Verträge und Unterlagen zum Zuschuss bis mindestens 31. Dezember 2035 aufbewahren"
+        ]
+      },
       "quellen": [
         {
           "typ": "excel",
@@ -452,6 +471,36 @@
         {
           "typ": "dokument",
           "datei": "raw/ESF-FachkurseBW neu.docx"
+        },
+        {
+          "typ": "web",
+          "titel": "Antrag Förderprogramm Fachkurse, Tabellenblatt „Vorgehen ELAN“",
+          "stand": "November 2026",
+          "url": "https://www.esf-bw.de/fileadmin/user_upload/DOWNLOAD_CENTER_2021-2027/FB_Wirtschaft/Foerderprogramme/Antrag_FP_Fachkurse_Stand_November_26.xlsx"
+        },
+        {
+          "typ": "web",
+          "titel": "Merkblatt Förderprogramm Fachkurse, Ziffer 10 Verfahren",
+          "stand": "September 2026",
+          "url": "https://www.esf-bw.de/fileadmin/user_upload/DOWNLOAD_CENTER_2021-2027/FB_Wirtschaft/Foerderprogramme/2609_Merkblatt_FP_Fachkurse.pdf"
+        },
+        {
+          "typ": "web",
+          "titel": "Förderprogramm Fachkurse",
+          "stand": "abgerufen 2026-11-19",
+          "url": "https://www.esf-bw.de/projekte-und-programme-umsetzen/foerderbereich-wirtschaft/foerderprogramm-fachkurse"
+        },
+        {
+          "typ": "web",
+          "titel": "Datenerhebung Fachkurse",
+          "stand": "abgerufen 2026-11-19",
+          "url": "https://www.esf-bw.de/datenerhebung-fachkurse"
+        },
+        {
+          "typ": "web",
+          "titel": "Wichtige Termine Fachkurse",
+          "stand": "abgerufen 2026-11-19",
+          "url": "https://www.esf-bw.de/wichtige-termine-fachkurse"
         }
       ]
     },

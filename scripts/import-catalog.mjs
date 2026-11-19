@@ -15,6 +15,7 @@ const ROOT = path.resolve(import.meta.dirname, '..');
 const RAW = path.join(ROOT, 'raw');
 const OUT = path.join(ROOT, 'data/json/foerderprogramme.json');
 const EXCEL = 'AG Fördermittelguide_Basisbericht.xlsx';
+const ERGAENZUNGEN = path.join(ROOT, 'data/ergaenzungen/unterlagen.json');
 
 const warnings = [];
 const warn = (msg) => warnings.push(msg);
@@ -273,6 +274,15 @@ function build() {
     if (!p.links.programmwebsite) warn(`${p.id}: keine Programmwebsite.`);
   }
   programme.sort((a, b) => a.titel.localeCompare(b.titel, 'de'));
+
+  // Manuell ergänzte Antragsunterlagen mit eigener Quelle
+  const ergaenzungen = JSON.parse(fs.readFileSync(ERGAENZUNGEN, 'utf8')).programme;
+  for (const [id, { quellen, ...unterlagen }] of Object.entries(ergaenzungen)) {
+    const p = programme.find((x) => x.id === id);
+    if (!p) throw new Error(`Ergänzung für unbekannte ID ${id} in ${path.relative(ROOT, ERGAENZUNGEN)}`);
+    p.unterlagen = unterlagen;
+    p.quellen.push(...quellen);
+  }
 
   return {
     schemaVersion: 1,
