@@ -13,11 +13,11 @@ This repository is our shared workspace for the **KI-Hackathon für Weiterbildun
 
 ## Challenge
 
-TBD after the challenge announcement: problem, target users, success criteria, and minimum viable product (MVP).
+The VHS-Förderfinder helps adult education centres find funding programmes for project ideas and prepare the next steps. The [hackathon specification](docs/vhs-foerderfinder.md) defines the MVP, Excel data flow and demo acceptance criteria.
 
 ## Tech stack
 
-TBD once we have selected the challenge. No frameworks or dependencies are installed yet.
+The [technology proposal](docs/vhs-foerderfinder.md#technikvorschlag) uses Next.js, TypeScript, a JSON catalogue imported from Excel, and an AI wrapper for extracting project details from chat.
 
 ## Repository structure
 
