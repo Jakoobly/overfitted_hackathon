@@ -62,6 +62,7 @@
               </div>
             </div>
             <form class="composer" id="composer">
+              <p class="chat-context" id="chat-context" hidden><strong>Im Chat</strong> <span id="context-program"></span></p>
               <div class="quick-actions" id="quick-actions" aria-label="Beispielantworten">
                 <button class="chip" type="button" data-start="november">November ist möglich</button>
                 <button class="chip" type="button" data-start="september">September bleibt</button>
@@ -83,79 +84,136 @@
             </header>
             <div class="match-content" id="match-content">
               <ul class="profile" aria-label="Projektprofil">
-                <li>Kleine VHS</li><li>Baden-Württemberg</li><li id="start-date">Start September 2027</li>
+                <li>Kleine VHS</li>
+                <li class="profile-location">
+                  <label class="visually-hidden" for="project-region">Projektstandort</label>
+                  <select id="project-region">
+                    <option value="bw">Baden-Württemberg</option>
+                    <option value="by">Bayern</option>
+                    <option value="he">Hessen</option>
+                  </select>
+                </li>
+                <li id="start-date">Start September 2027</li>
               </ul>
-              <article class="program program-fit" aria-labelledby="program-one">
+              <article class="program program-fit" aria-labelledby="program-one" data-regions="bw">
                 <p class="status status-fit"><span aria-hidden="true">✓</span> Passend nach Datenlage</p>
                 <h3 id="program-one">Digital im Alltag</h3>
                 <p>Unterstützt Kurse zur digitalen Grundbildung für Erwachsene.</p>
                 <details>
                   <summary>Voraussetzungen und nächste Schritte</summary>
-                  <p>Das Beispielprogramm richtet sich an VHS in Baden-Württemberg. Für die Antragsvorbereitung wären eine Kursbeschreibung und ein Kostenplan nötig.</p>
+                  <dl class="program-details">
+                    <div><dt>Fördergebiet und Voraussetzungen</dt><dd data-program-field="eligibility">VHS in Baden-Württemberg. Gefördert werden Einstiegskurse zur digitalen Grundbildung für Erwachsene.</dd></div>
+                    <div><dt>Förderfähig</dt><dd data-program-field="scope">Honorare für die Kursleitung und Leihgeräte für die Unterrichtszeit.</dd></div>
+                    <div><dt>Unterlagen</dt><dd data-program-field="documents">Kursbeschreibung, Kostenplan und geplanter Zeitrahmen.</dd></div>
+                    <div><dt>Erster Schritt</dt><dd data-program-field="next">Skizzieren Sie den Kurs in drei Punkten: Lernziel, Zielgruppe und Umfang.</dd></div>
+                  </dl>
                 </details>
+                <button class="program-select" type="button" aria-describedby="program-one">Antrag vorbereiten</button>
               </article>
-              <article class="program program-near" id="program-two-card" aria-labelledby="program-two">
+              <article class="program program-near" id="program-two-card" aria-labelledby="program-two" data-regions="all">
                 <p class="status status-near" id="second-status"><span aria-hidden="true">↔</span> Ähnlich</p>
                 <h3 id="program-two">Lernorte digital</h3>
                 <p id="second-reason"><strong>Mögliche Anpassung</strong> · Kursstart auf November 2027 verschieben.</p>
                 <details>
                   <summary>Voraussetzungen und nächste Schritte</summary>
-                  <p>Das Beispielprogramm setzt einen Kursbeginn ab November 2027 voraus. Wenn der Termin machbar ist, wären der Zeitplan und eine kurze Zielgruppenbeschreibung vorzubereiten.</p>
+                  <dl class="program-details">
+                    <div><dt>Fördergebiet und Voraussetzungen</dt><dd data-program-field="eligibility">VHS bundesweit. Der Kurs darf frühestens im November 2027 beginnen.</dd></div>
+                    <div><dt>Förderfähig</dt><dd data-program-field="scope">Kursleitung und Einrichtung eines betreuten Lernorts.</dd></div>
+                    <div><dt>Unterlagen</dt><dd data-program-field="documents">Zeitplan mit Kursbeginn, Zielgruppenbeschreibung und Angaben zum Lernort.</dd></div>
+                    <div><dt>Erster Schritt</dt><dd data-program-field="next">Halten Sie den geplanten Start im Zeitplan fest und beschreiben Sie den Lernort.</dd></div>
+                  </dl>
                 </details>
+                <button class="program-select" type="button" aria-describedby="program-two">Antrag vorbereiten</button>
               </article>
-              <article class="program program-fit" aria-labelledby="program-three">
+              <article class="program program-fit" aria-labelledby="program-three" data-regions="bw by">
                 <p class="status status-fit"><span aria-hidden="true">✓</span> Passend nach Datenlage</p>
                 <h3 id="program-three">Digitale Teilhabe vor Ort</h3>
                 <p>Unterstützt wohnortnahe Lernangebote für Erwachsene, die wenig Erfahrung mit digitalen Diensten haben.</p>
                 <details>
                   <summary>Voraussetzungen und nächste Schritte</summary>
-                  <p>Skizzieren Sie, wie Sie die Zielgruppe im Einzugsgebiet erreichen. Bereiten Sie einen Kostenplan für Kursleitung und Leihgeräte vor.</p>
+                  <dl class="program-details">
+                    <div><dt>Fördergebiet und Voraussetzungen</dt><dd data-program-field="eligibility">VHS in Baden-Württemberg und Bayern. Das Angebot muss Erwachsene aus dem örtlichen Einzugsgebiet erreichen.</dd></div>
+                    <div><dt>Förderfähig</dt><dd data-program-field="scope">Kursleitung, Leihgeräte und barrierearme Lernmaterialien.</dd></div>
+                    <div><dt>Unterlagen</dt><dd data-program-field="documents">Kurskonzept, Kostenplan und Plan zur Ansprache der Zielgruppe.</dd></div>
+                    <div><dt>Erster Schritt</dt><dd data-program-field="next">Planen Sie, wie die Zielgruppe vor Ort auf den Kurs aufmerksam wird.</dd></div>
+                  </dl>
                 </details>
+                <button class="program-select" type="button" aria-describedby="program-three">Antrag vorbereiten</button>
               </article>
-              <article class="program program-fit" aria-labelledby="program-four">
+              <article class="program program-fit" aria-labelledby="program-four" data-regions="all">
                 <p class="status status-fit"><span aria-hidden="true">✓</span> Passend nach Datenlage</p>
                 <h3 id="program-four">Grundbildung in kleinen Gruppen</h3>
                 <p>Fördert betreute Einstiegskurse an kleinen Volkshochschulen.</p>
                 <details>
                   <summary>Voraussetzungen und nächste Schritte</summary>
-                  <p>Reichen Sie einen Ablaufplan mit Gruppengröße, Unterrichtsumfang und Qualifikation der Kursleitung ein.</p>
+                  <dl class="program-details">
+                    <div><dt>Fördergebiet und Voraussetzungen</dt><dd data-program-field="eligibility">Kleine Volkshochschulen bundesweit, mit höchstens zwölf Teilnehmenden pro Kursgruppe.</dd></div>
+                    <div><dt>Förderfähig</dt><dd data-program-field="scope">Unterricht und Betreuung während der Übungen.</dd></div>
+                    <div><dt>Unterlagen</dt><dd data-program-field="documents">Ablaufplan mit Gruppengröße, Unterrichtsumfang und Qualifikation der Kursleitung.</dd></div>
+                    <div><dt>Erster Schritt</dt><dd data-program-field="next">Legen Sie Gruppengröße und Unterrichtsumfang fest.</dd></div>
+                  </dl>
                 </details>
+                <button class="program-select" type="button" aria-describedby="program-four">Antrag vorbereiten</button>
               </article>
-              <article class="program program-review" aria-labelledby="program-five">
+              <article class="program program-review" aria-labelledby="program-five" data-regions="bw he">
                 <p class="status status-review"><span aria-hidden="true">?</span> Noch zu prüfen</p>
                 <h3 id="program-five">Lernpartnerschaften für digitale Grundbildung im ländlichen Raum</h3>
                 <p><strong>Offen</strong> · Das Programm setzt eine Kooperation mit einer Bibliothek oder einem Bürgertreff voraus.</p>
                 <details>
                   <summary>Voraussetzungen und nächste Schritte</summary>
-                  <p>Klären Sie, ob ein lokaler Partner Geräte, Räume oder Beratung beisteuern kann. Halten Sie Rolle und Beitrag schriftlich fest.</p>
+                  <dl class="program-details">
+                    <div><dt>Fördergebiet und Voraussetzungen</dt><dd data-program-field="eligibility">VHS in Baden-Württemberg und Hessen. Eine Bibliothek oder ein Bürgertreff muss sich beteiligen.</dd></div>
+                    <div><dt>Förderfähig</dt><dd data-program-field="scope">Gemeinsam organisierte Kursangebote und Nutzung eines lokalen Lernorts.</dd></div>
+                    <div><dt>Unterlagen</dt><dd data-program-field="documents">Kooperationszusage mit Aufgabenverteilung, Kurskonzept und Kostenplan.</dd></div>
+                    <div><dt>Erster Schritt</dt><dd data-program-field="next">Fragen Sie bei einer Bibliothek oder einem Bürgertreff nach Räumen, Geräten oder Betreuung.</dd></div>
+                  </dl>
                 </details>
+                <button class="program-select" type="button" aria-describedby="program-five">Antrag vorbereiten</button>
               </article>
-              <article class="program program-fit" aria-labelledby="program-six">
+              <article class="program program-fit" aria-labelledby="program-six" data-regions="all">
                 <p class="status status-fit"><span aria-hidden="true">✓</span> Passend nach Datenlage</p>
                 <h3 id="program-six">Sicher online im Alltag</h3>
                 <p>Unterstützt VHS-Kurse zu sicheren Passwörtern, Online-Formularen und digitalen Behördenangeboten.</p>
                 <details>
                   <summary>Voraussetzungen und nächste Schritte</summary>
-                  <p>Beschreiben Sie die geplanten Lernziele und zwei Übungen, bei denen Teilnehmende typische Alltagssituationen ausprobieren.</p>
+                  <dl class="program-details">
+                    <div><dt>Fördergebiet und Voraussetzungen</dt><dd data-program-field="eligibility">VHS bundesweit. Der Kurs muss praktische Übungen zur sicheren Nutzung digitaler Dienste enthalten.</dd></div>
+                    <div><dt>Förderfähig</dt><dd data-program-field="scope">Unterricht und Materialien für angeleitete Übungen.</dd></div>
+                    <div><dt>Unterlagen</dt><dd data-program-field="documents">Kursplan mit Lernzielen und zwei konkreten Übungsbeispielen.</dd></div>
+                    <div><dt>Erster Schritt</dt><dd data-program-field="next">Wählen Sie zwei typische Alltagssituationen für die Übungen aus.</dd></div>
+                  </dl>
                 </details>
+                <button class="program-select" type="button" aria-describedby="program-six">Antrag vorbereiten</button>
               </article>
-              <article class="program program-fit" aria-labelledby="program-seven">
+              <article class="program program-fit" aria-labelledby="program-seven" data-regions="bw by">
                 <p class="status status-fit"><span aria-hidden="true">✓</span> Passend nach Datenlage</p>
                 <h3 id="program-seven">Erste Schritte mit Smartphone und Tablet</h3>
                 <p>Fördert Einsteigerkurse mit praktischen Übungen für Erwachsene ohne digitale Vorkenntnisse.</p>
                 <details>
                   <summary>Voraussetzungen und nächste Schritte</summary>
-                  <p>Legen Sie einen Kursplan vor und geben Sie an, wie Teilnehmende bei Bedarf ein Gerät ausleihen können.</p>
+                  <dl class="program-details">
+                    <div><dt>Fördergebiet und Voraussetzungen</dt><dd data-program-field="eligibility">VHS in Baden-Württemberg und Bayern. Leihgeräte müssen bei Bedarf verfügbar sein.</dd></div>
+                    <div><dt>Förderfähig</dt><dd data-program-field="scope">Unterricht, Leihgeräte und Anleitungen für Einsteigerinnen und Einsteiger.</dd></div>
+                    <div><dt>Unterlagen</dt><dd data-program-field="documents">Kursplan und Übersicht über die verfügbaren Leihgeräte.</dd></div>
+                    <div><dt>Erster Schritt</dt><dd data-program-field="next">Prüfen Sie, wie viele Geräte die VHS für den Kurs bereitstellen kann.</dd></div>
+                  </dl>
                 </details>
+                <button class="program-select" type="button" aria-describedby="program-seven">Antrag vorbereiten</button>
               </article>
-              <article class="program program-review" aria-labelledby="program-eight">
+              <article class="program program-review" aria-labelledby="program-eight" data-regions="bw he">
                 <p class="status status-review"><span aria-hidden="true">?</span> Noch zu prüfen</p>
                 <h3 id="program-eight">Digitale Lernwerkstatt für Erwachsene</h3>
                 <p><strong>Offen</strong> · Für ein Kursangebot sind Eigenmittel vorgesehen. Der Eigenanteil steht im Projektprofil noch nicht fest.</p>
                 <details>
                   <summary>Voraussetzungen und nächste Schritte</summary>
-                  <p>Prüfen Sie den verfügbaren Eigenanteil und ergänzen Sie ihn im Finanzierungsplan.</p>
+                  <dl class="program-details">
+                    <div><dt>Fördergebiet und Voraussetzungen</dt><dd data-program-field="eligibility">VHS in Baden-Württemberg und Hessen. Ein Eigenanteil der VHS ist erforderlich.</dd></div>
+                    <div><dt>Förderfähig</dt><dd data-program-field="scope">Betreuung der Lernwerkstatt und Material für offene Übungszeiten.</dd></div>
+                    <div><dt>Unterlagen</dt><dd data-program-field="documents">Finanzierungsplan mit Eigenanteil sowie ein Konzept für die Lernwerkstatt.</dd></div>
+                    <div><dt>Erster Schritt</dt><dd data-program-field="next">Klären Sie den verfügbaren Eigenanteil und tragen Sie ihn in den Finanzierungsplan ein.</dd></div>
+                  </dl>
                 </details>
+                <button class="program-select" type="button" aria-describedby="program-eight">Antrag vorbereiten</button>
               </article>
             </div>
             <p class="empty" id="empty-matches" hidden>Laden Sie das Beispielprojekt, um die Trefferansicht zu erkunden.</p>
@@ -175,7 +233,8 @@
     <ol>
       <li>Beschreiben Sie Ihre Projektidee sowie Standort, Zielgruppe, Budget und geplanten Start.</li>
       <li>Beantworten Sie bei Bedarf eine Rückfrage und vergleichen Sie die Förderprogramme.</li>
-      <li>Öffnen Sie die Voraussetzungen und nächsten Schritte eines Programms.</li>
+      <li>Ändern Sie bei Bedarf den Projektstandort oberhalb der Trefferliste.</li>
+      <li>Öffnen Sie die Voraussetzungen und wählen Sie „Antrag vorbereiten“, um das Programm im Chat zu besprechen.</li>
     </ol>
     <p>Dieser Entwurf zeigt den Ablauf mit einem vorbereiteten Beispiel.</p>
     <form method="dialog"><button class="send" type="submit">Schließen</button></form>
