@@ -157,6 +157,8 @@ a { color: var(--navy); }
 .programme { border: 1px solid var(--line); border-left: 4px solid #1e73af; border-radius: .5rem; padding: .75rem 1rem; }
 .programme--aehnlich { border-left-color: var(--yellow); }
 .programme--pruefen { border-left-color: #738da9; }
+.programme--katalog { border-left-color: var(--line); }
+.catalog-notice { padding: .6rem .75rem; border-radius: .5rem; color: #744f00; background: #fff7e0; }
 .programme-status { color: var(--navy); font-size: .75rem; font-weight: 700; }
 .programme--aehnlich .programme-status { color: #744f00; }
 .programme h3 { margin-block: .2rem; color: var(--navy); font-size: 1.1rem; }

@@ -5,7 +5,9 @@ import {
   matchStatusLabel,
   type ChatError,
   type ChatRequest,
+  type CatalogEntry,
   type ChatResponse,
+  type ChatUnavailable,
   type HistoryEntry,
   type Match,
   type Profile,
@@ -19,6 +21,17 @@ const greeting: HistoryEntry = {
 const exampleMessage = "Unsere kleine VHS in Heilbronn ist ein eingetragener Verein und plant einen Kurs zur digitalen Grundbildung für Erwachsene. Das Budget beträgt rund 15.000 Euro.";
 const requestError = "Der Förderfinder ist gerade nicht erreichbar. Bitte versuchen Sie es erneut.";
 
+const fristLabel: Record<string, string> = {
+  laufend: "Laufende Antragstellung",
+  kein_aufruf: "Derzeit kein Aufruf",
+  unbekannt: "Frist bei der Förderstelle prüfen",
+};
+
+function formatFrist({ status, datum }: CatalogEntry["frist"]) {
+  if (status === "datum" && datum) return `Frist: ${new Date(`${datum}T00:00:00`).toLocaleDateString("de-DE")}`;
+  return fristLabel[status] ?? fristLabel.unbekannt;
+}
+
 export function FundingWorkspace() {
   const [messages, setMessages] = useState<HistoryEntry[]>([]);
   const [draft, setDraft] = useState("");
@@ -27,6 +40,8 @@ export function FundingWorkspace() {
   const [selectedProgramme, setSelectedProgramme] = useState<ChatResponse["selectedProgramme"]>();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  /** Katalog ohne Bewertung, solange die KI-Anbindung gestört ist. */
+  const [catalog, setCatalog] = useState<CatalogEntry[] | null>(null);
   const conversation = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
 
@@ -51,7 +66,16 @@ export function FundingWorkspace() {
           profile: restart ? undefined : profile,
         } satisfies ChatRequest),
       });
-      const data: ChatResponse | ChatError = await response.json();
+      const data: ChatResponse | ChatUnavailable | ChatError = await response.json();
+      if ("code" in data && data.code === "KI_NICHT_ERREICHBAR") {
+        setMessages((current) => [
+          ...(restart ? [] : current),
+          { role: "user", text: userText },
+          { role: "assistant", text: data.reply },
+        ]);
+        setCatalog(data.catalog);
+        return true;
+      }
       if ("error" in data) {
         setError(data.error);
         return false;
@@ -67,6 +91,7 @@ export function FundingWorkspace() {
         { role: "assistant", text: data.reply },
       ]);
       setProfile(data.profile);
+      setCatalog(null);
       if (restart || data.matches !== undefined) setMatches(data.matches ?? null);
       if (restart || data.selectedProgramme) setSelectedProgramme(data.selectedProgramme);
       return true;
@@ -151,44 +176,74 @@ export function FundingWorkspace() {
             <h2 id="matches-title">Förderprogramme</h2>
           </header>
           <div className="matches" aria-live="polite">
-            {matches === null && <p className="match-summary">Beschreiben Sie Ihr Projekt, um Förderprogramme zu finden.</p>}
-            {matches?.length === 0 && <p className="match-summary">Für dieses Projekt wurden keine passenden Programme gefunden.</p>}
-            {matches && matches.length > 0 && <p className="match-summary">Fördervoraussetzungen bitte bei der Förderstelle bestätigen.</p>}
-            {matches?.map((match) => {
-              const isSelected = selectedProgramme?.id === match.programmeId;
-              const titleId = `programme-${match.programmeId}`;
-              return (
-                <article className={`programme programme--${match.status}`} key={match.programmeId}>
-                  <p className="programme-status">{matchStatusLabel[match.status]}</p>
-                  <h3 id={titleId}>{match.titel}</h3>
-                  <p className="programme-description">{match.begruendung}</p>
-                  {match.anpassung && (
-                    <p className="programme-description"><strong>Mögliche Anpassung:</strong> {match.anpassung}</p>
-                  )}
-                  {match.offenePunkte.length > 0 && (
-                    <details className="programme-details">
-                      <summary>Offene Punkte</summary>
-                      <ul>{match.offenePunkte.map((point, index) => <li key={index}>{point}</li>)}</ul>
-                    </details>
-                  )}
-                  <div className="programme-actions">
-                    <button
-                      className="programme-action"
-                      type="button"
-                      aria-describedby={titleId}
-                      aria-current={isSelected || undefined}
-                      disabled={pending}
-                      onClick={() => selectProgramme(match)}
-                    >
-                      {isSelected ? "Im Chat ausgewählt" : "Antrag vorbereiten"}
-                    </button>
-                    {match.url && /^https?:\/\//i.test(match.url) && (
-                      <a href={match.url} target="_blank" rel="noreferrer">Programmseite ↗</a>
+            {catalog ? (
+              <>
+                <p className="match-summary catalog-notice" role="status">
+                  Die KI-Bewertung ist gerade nicht verfügbar. Hier sehen Sie alle {catalog.length} Programme aus dem Katalog, ohne Prüfung Ihres Projekts.
+                </p>
+                {catalog.map((entry) => (
+                  <article className="programme programme--katalog" key={entry.id}>
+                    <p className="programme-status">
+                      {[entry.ebene, entry.foerdergebiet].filter(Boolean).join(" · ") || "Förderprogramm"}
+                    </p>
+                    <h3>{entry.titel}</h3>
+                    {entry.kurzbeschreibung && (
+                      <details className="programme-details">
+                        <summary>Beschreibung</summary>
+                        <p>{entry.kurzbeschreibung}</p>
+                      </details>
                     )}
-                  </div>
-                </article>
-              );
-            })}
+                    <div className="programme-actions">
+                      <span className="programme-description">{formatFrist(entry.frist)}</span>
+                      {entry.url && /^https?:\/\//i.test(entry.url) && (
+                        <a href={entry.url} target="_blank" rel="noreferrer">Programmseite ↗</a>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </>
+            ) : (
+              <>
+                {matches === null && <p className="match-summary">Beschreiben Sie Ihr Projekt, um Förderprogramme zu finden.</p>}
+                {matches?.length === 0 && <p className="match-summary">Für dieses Projekt wurden keine passenden Programme gefunden.</p>}
+                {matches && matches.length > 0 && <p className="match-summary">Fördervoraussetzungen bitte bei der Förderstelle bestätigen.</p>}
+                {matches?.map((match) => {
+                  const isSelected = selectedProgramme?.id === match.programmeId;
+                  const titleId = `programme-${match.programmeId}`;
+                  return (
+                    <article className={`programme programme--${match.status}`} key={match.programmeId}>
+                      <p className="programme-status">{matchStatusLabel[match.status]}</p>
+                      <h3 id={titleId}>{match.titel}</h3>
+                      <p className="programme-description">{match.begruendung}</p>
+                      {match.anpassung && (
+                        <p className="programme-description"><strong>Mögliche Anpassung:</strong> {match.anpassung}</p>
+                      )}
+                      {match.offenePunkte.length > 0 && (
+                        <details className="programme-details">
+                          <summary>Offene Punkte</summary>
+                          <ul>{match.offenePunkte.map((point, index) => <li key={index}>{point}</li>)}</ul>
+                        </details>
+                      )}
+                      <div className="programme-actions">
+                        <button
+                          className="programme-action"
+                          type="button"
+                          aria-describedby={titleId}
+                          aria-current={isSelected || undefined}
+                          disabled={pending}
+                          onClick={() => selectProgramme(match)}
+                        >
+                          {isSelected ? "Im Chat ausgewählt" : "Antrag vorbereiten"}
+                        </button>
+                        {match.url && /^https?:\/\//i.test(match.url) && (
+                          <a href={match.url} target="_blank" rel="noreferrer">Programmseite ↗</a>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </>
+            )}
           </div>
         </section>
       </div>
