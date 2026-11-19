@@ -51,19 +51,28 @@ Förderprüfung (nur Programme aus dem Katalog):
 - "pruefen": fachlich passend, aber Pflichtbedingungen sind offen (Angabe fehlt), keine bekannte Abweichung.
 - "aehnlich": eine dokumentierte, realistisch veränderbare Bedingung weicht ab (z. B. späterer Projektbeginn, höheres Budget, zusätzlicher Partner). Nenne die Änderung in "anpassung".
 - Schließe aus und liste NICHT: falsche Förderregion (foerdergebiet passt nicht zum Bundesland), ungeeigneter Träger, abgelaufene Frist, frist.status "kein_aufruf".
+- Bewerte bei jeder neuen Suche alle Programme im Katalog selbst, statt eine Prüfung nur anzubieten. Fallen regionale Programme weg, prüfe bundes- und EU-weite Programme mit fachlichem Bezug.
 - Höchstens ${MAX_MATCHES} Treffer, nach Relevanz für Thema und Zielgruppe sortiert. Gibt es keine, ist "treffer" leer und die Antwort nennt kurz die Gründe.
 - Die Größe der VHS (klein/mittel/groß) beeinflusst die Förderfähigkeit nur, wenn der Katalog dafür ein Kriterium nennt.
 
 Gesprächsführung:
-- Setze neueSuche = true bei einer neuen Projektbeschreibung oder wenn sich eine Angabe ändert, die die Bewertung beeinflusst. Sonst neueSuche = false und treffer = [].
+- Setze neueSuche = true bei einer neuen Projektbeschreibung oder wenn sich eine Angabe ändert, die die Bewertung beeinflusst (Thema, Zielgruppe, Bundesland, Träger, Budget, Eigenanteil, Projektbeginn, Partner). Das gilt auch, wenn bereits ein Programm ausgewählt ist. Sonst neueSuche = false und treffer = [].
 - Fehlt eine Angabe, die die Bewertung eines Top-Treffers ändert (z. B. Bundesland, Projektbeginn, Budget, Eigenanteil, Partner), stelle am Ende genau EINE gezielte Rückfrage und begründe sie kurz mit dem betroffenen Programm.
 - Fasse die erkannten Eckdaten in einem kurzen Satz zur Kontrolle zusammen, wenn sich das Profil geändert hat.`;
 
 function selectedRules(programme: Programme) {
   return `
 Die VHS hat das Programm "${programme.titel}" (id: ${programme.id}) ausgewählt, um den Antrag vorzubereiten.
-Beantworte Fragen zu Voraussetzungen, Unterlagen, Fristen und nächsten Schritten anhand dieses Katalogeintrags:
+Beantworte Fragen zu Voraussetzungen, Unterlagen, Fristen und nächsten Schritten anhand dieses Katalogeintrags.
+Korrigiert oder ergänzt die VHS dabei Eckdaten, übernimm sie ins Profil und führe eine neue Suche durch. Passt das ausgewählte Programm danach nicht mehr, sage das deutlich.
 ${JSON.stringify(programme)}`;
+}
+
+/** Profilfelder, deren Änderung die Bewertung beeinflusst. */
+const SEARCH_FIELDS = ["themen", "zielgruppen", "bundesland", "traeger", "budget", "eigenanteil", "start", "partner"] as const;
+
+function searchCriteriaChanged(before: Profile, after: Profile) {
+  return SEARCH_FIELDS.some((field) => JSON.stringify(before[field]) !== JSON.stringify(after[field]));
 }
 
 function historyInput(history: HistoryEntry[]) {
@@ -97,20 +106,31 @@ export async function handleMessage(input: {
   selectedProgrammeId: string | null;
 }): Promise<ChatResponse> {
   const selected = input.selectedProgrammeId ? getProgramme(input.selectedProgrammeId) : undefined;
-  const instructions = [
-    BASE_RULES,
-    SEARCH_RULES,
-    selected ? selectedRules(selected) : "",
-    `\nBisheriges Projektprofil:\n${JSON.stringify(input.profile)}`,
-    `\nKatalog:\n${JSON.stringify(catalogForSearch())}`,
-  ].join("\n");
+  const messages = [...historyInput(input.history), { role: "user" as const, content: input.message }];
+  const ask = (profile: Profile, extra = "") =>
+    generateStructured({
+      name: "chat_antwort",
+      schema: messageOutputSchema,
+      instructions: [
+        BASE_RULES,
+        SEARCH_RULES,
+        selected ? selectedRules(selected) : "",
+        `\nBisheriges Projektprofil:\n${JSON.stringify(profile)}`,
+        extra,
+        `\nKatalog:\n${JSON.stringify(catalogForSearch())}`,
+      ].join("\n"),
+      input: messages,
+    });
 
-  const output = await generateStructured({
-    name: "chat_antwort",
-    schema: messageOutputSchema,
-    instructions,
-    input: [...historyInput(input.history), { role: "user", content: input.message }],
-  });
+  let output = await ask(input.profile);
+  // Absicherung: Eine bewertungsrelevante Korrektur muss die Trefferliste neu bewerten.
+  if (!output.neueSuche && searchCriteriaChanged(input.profile, output.profile)) {
+    output = await ask(
+      output.profile,
+      "\nDas Projektprofil oben enthält bereits die Änderungen aus der letzten Nachricht. Führe jetzt eine neue Suche durch (neueSuche = true), nenne kurz die Auswirkung und beantworte die Nachricht.",
+    );
+    output.neueSuche = true;
+  }
 
   return {
     reply: output.reply,
