@@ -90,9 +90,6 @@ code { font-size: .85em; background: var(--vhs-blau-10); padding: 0 4px; border-
 .demo-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 14px; }
 .demo-bar p { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: .875rem; }
 .demo-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--vhs-gelb); }
-.mode-switch { display: flex; background: white; border: 1px solid var(--line); border-radius: 20px; padding: 3px; }
-.mode-switch button { border: 0; background: transparent; color: var(--vhs-blau); padding: 5px 14px; border-radius: 16px; font-size: .875rem; font-weight: bold; }
-.mode-switch button[aria-selected="true"] { background: var(--vhs-blau); color: white; }
 
 .columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); align-items: start; gap: 22px; }
 .panel { min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: white; box-shadow: 0 3px 9px rgb(0 40 90 / 4%); }
@@ -132,9 +129,7 @@ code { font-size: .85em; background: var(--vhs-blau-10); padding: 0 4px; border-
 .examples { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; color: var(--muted); font-size: .8125rem; }
 .examples .chip { min-height: 30px; font-size: .75rem; }
 
-/* Formular */
-.form-view { padding: 16px 22px 20px; }
-.hint { margin-bottom: 12px; color: var(--muted); font-size: .875rem; }
+/* Eckdaten bearbeiten */
 .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px 14px; margin-bottom: 14px; }
 .field label { display: block; margin-bottom: 2px; color: var(--muted); font-size: .8125rem; }
 .field input, .field select { width: 100%; padding: 7px 9px; border: 1px solid #a8b8ca; border-radius: 6px; background: white; color: var(--ink); }
@@ -229,7 +224,7 @@ code { font-size: .85em; background: var(--vhs-blau-10); padding: 0 4px; border-
   .site-link { text-align: right; }
   .hero-inner { padding-block: 29px 33px; }
   .hero-art { opacity: .25; right: -235px; }
-  .panel-heading, .conversation, .composer, .panel-body, .form-view { padding-inline: 15px; }
+  .panel-heading, .conversation, .composer, .panel-body { padding-inline: 15px; }
   .card { padding-inline: 15px; }
   .card-top { flex-direction: column; gap: 6px; }
   .message-user { max-width: 91%; }

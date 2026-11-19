@@ -37,14 +37,10 @@
       <div class="wrap">
         <div class="demo-bar">
           <p><span class="demo-dot" aria-hidden="true"></span> Mockup ohne KI · Katalog aus <code>raw/</code>, Stand 19.11.2026 · Orientierung, keine Förderzusage</p>
-          <div class="mode-switch" role="tablist" aria-label="Eingabemodus">
-            <button type="button" role="tab" aria-selected="true" data-mode="chat">Chat</button>
-            <button type="button" role="tab" aria-selected="false" data-mode="form">Formular</button>
-          </div>
         </div>
 
         <div class="columns">
-          <!-- Linke Spalte: Chat oder Formular -->
+          <!-- Linke Spalte: Chat -->
           <section class="panel input-panel" id="beratung" aria-labelledby="chat-title">
             <header class="panel-heading">
               <div>
@@ -70,12 +66,6 @@
                 </div>
               </form>
             </div>
-
-            <form id="formView" class="form-view" hidden>
-              <p class="hint">Formularmodus für den Fall eines KI-Ausfalls. Die Förderprüfung ist dieselbe wie im Chat.</p>
-              <div id="formFields"></div>
-              <button type="submit" class="send">Förderprogramme suchen</button>
-            </form>
           </section>
 
           <!-- Rechte Spalte: Profil und Ergebnisse -->
@@ -84,7 +74,7 @@
               <header class="panel-heading">
                 <div>
                   <h2>Erkannte Eckdaten</h2>
-                  <p>Prüfen und bei Bedarf korrigieren</p>
+                  <p>Prüfen und korrigieren oder direkt eingeben, falls der Chat nicht antwortet</p>
                 </div>
                 <button type="button" id="editProfile" class="text-button">Bearbeiten</button>
               </header>

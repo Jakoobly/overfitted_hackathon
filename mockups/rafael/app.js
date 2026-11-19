@@ -395,7 +395,7 @@
     $('#profileList').innerHTML = profileRows().map(([k, v]) => `<div><dt>${k}</dt>${v}</div>`).join('');
   }
 
-  // Formular für Profilkorrektur und Formularmodus
+  // Eckdaten bearbeiten: Korrektur der Extraktion und Ersatzweg bei KI-Ausfall
   function fieldsHtml(prefix) {
     const p = state.profile;
     const tri = (k) => {
@@ -551,22 +551,7 @@
     ev.preventDefault();
     readForm(ev.target);
     closeEdit();
-    addMsg('system', 'Eckdaten korrigiert, Suche erneut ausgeführt');
-    runAndReply(false);
-  });
-
-  document.querySelectorAll('.mode-switch button').forEach((b) => b.addEventListener('click', () => {
-    document.querySelectorAll('.mode-switch button').forEach((x) => x.setAttribute('aria-selected', x === b));
-    const form = b.dataset.mode === 'form';
-    $('#chatView').hidden = form;
-    $('#formView').hidden = !form;
-    if (form) $('#formFields').innerHTML = fieldsHtml('form');
-  }));
-  $('#formView').addEventListener('submit', (ev) => {
-    ev.preventDefault();
-    readForm(ev.target);
-    state.asked = new Set(['bundesland', 'start', 'budget', ...Object.keys(PARTNER).map((k) => 'partner.' + k)]);
-    addMsg('system', 'Suche über den Formularmodus');
+    addMsg('system', 'Eckdaten bearbeitet, Suche erneut ausgeführt');
     runAndReply(false);
   });
 

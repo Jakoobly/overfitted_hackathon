@@ -11,7 +11,7 @@ Die Anwendung berücksichtigt Unterschiede zwischen VHS über konkrete Eckdaten 
 ## Ablauf im MVP
 
 1. **Förderfinder starten und Projekt beschreiben.** Der Button „Förderfinder starten“ auf `vhs-bw.de` führt direkt zur deutschsprachigen Web-App. Dort gibt die VHS ihr Vorhaben im Chat ein, etwa mit Zielgruppe, Standort, Budget und geplantem Start.
-2. **Eckdaten klären.** Der Chat zeigt die erkannten Angaben zur Kontrolle. Fehlt eine Angabe, die das Ergebnis beeinflusst, stellt er eine gezielte Rückfrage. Die VHS kann Angaben korrigieren und die Suche erneut ausführen.
+2. **Eckdaten klären.** Der Chat zeigt die erkannten Angaben zur Kontrolle. Fehlt eine Angabe, die das Ergebnis beeinflusst, stellt er eine gezielte Rückfrage. Die VHS kann Angaben in der Eckdaten-Ansicht korrigieren oder ergänzen und die Suche erneut ausführen.
 3. **Förderprogramme vergleichen.** Die App zeigt bis zu drei Ergebnisse mit Titel, Fördergeber, Begründung, offenen oder abweichenden Bedingungen, Frist und Quelle, soweit im Katalog vorhanden.
 4. **Projektanpassung prüfen.** Bei einem ähnlichen Programm zeigt die App, welche planbare Änderung helfen könnte, etwa einen späteren Projektbeginn. Die VHS entscheidet, ob sie die Änderung übernimmt. Danach kann sie das Projekt erneut prüfen.
 5. **Förderprogramm auswählen.** Über „Antrag vorbereiten“ auf einer Trefferkarte wählt die VHS das Programm aus, das sie weiterverfolgen möchte. Der Chat nennt das ausgewählte Programm und führt die Unterhaltung dazu weiter.
@@ -40,7 +40,8 @@ Leere oder mehrdeutige Angaben bleiben unbekannt. Der Import unterscheidet ausdr
 - **KI für die Projekteingabe.** Ein schlanker Server-Wrapper extrahiert aus dem Chat ein Projektprofil mit Thema, Zielgruppe, Region, Trägerform, Budget, Eigenmitteln, ggf. Partnern und Projektbeginn. Die Ausgabe folgt einem Schema und wird serverseitig geprüft. Fehlende Angaben bleiben unbekannt. Eine Korrektur der VHS hat Vorrang.
 - **Code für die Förderprüfung.** Für den kleinen Demo-Katalog prüft der Server strukturierte Bedingungen pro Programm und sortiert nach Themen- und Zielgruppenbezug. Standort, Trägerform, Fristen und weitere belegte Voraussetzungen können einen Treffer ausschließen. Jedes geprüfte Kriterium ist erfüllt, offen oder abweichend.
 - **Verständliche Ergebnisse.** *Passend nach Datenlage* setzt fachlichen Bezug und erfüllte erfasste Pflichtbedingungen voraus. *Noch zu prüfen* kennzeichnet fachlich passende Programme mit offenen Pflichtbedingungen und ohne bekannte Abweichung. *Ähnlich* kommt bei einer dokumentierten, realistisch veränderbaren Projektbedingung infrage. Die Anwendung nennt die nötige Anpassung und alle übrigen offenen Punkte. Ein ungeeigneter Träger, eine falsche Förderregion oder eine abgelaufene Antragsfrist scheiden für das laufende Programm aus. Bei null Treffern zeigt die Anwendung die wesentlichen Gründe und, falls sinnvoll, eine Rückfrage.
-- **Begründungen und Antragscheckliste aus dem Katalog.** Treffertexte und die erste Chatantwort nach der Programmauswahl lassen sich aus Vorlagen erzeugen. Für Checkliste und programmspezifische Rückfragen verwendet der Chat die belegten Angaben zum ausgewählten Programm. Dazu gehören Fristen, Unterlagen, Beträge und URLs. Offene Punkte verweist er an die Förderstelle. Bei einem Ausfall der KI können die relevanten Eckdaten über einen einfachen Formularmodus eingegeben werden und durchlaufen dieselbe Förderprüfung.
+- **Begründungen und Antragscheckliste aus dem Katalog.** Treffertexte und die erste Chatantwort nach der Programmauswahl lassen sich aus Vorlagen erzeugen. Für Checkliste und programmspezifische Rückfragen verwendet der Chat die belegten Angaben zum ausgewählten Programm. Dazu gehören Fristen, Unterlagen, Beträge und URLs. Offene Punkte verweist er an die Förderstelle.
+- **Ersatzweg bei KI-Ausfall.** Die VHS kann die Eckdaten auch ohne KI direkt in der Eckdaten-Ansicht eintragen, über dieselbe Bearbeitung, mit der sie erkannte Angaben korrigiert. Die Angaben durchlaufen dieselbe Förderprüfung. Einen separaten Formularmodus gibt es nicht.
 
 ## Technikvorschlag
 
@@ -62,7 +63,7 @@ Fiktives Szenario für die Vorbereitung. Eine kleine VHS in Baden-Württemberg p
 - Fehlende Pflichtangaben und eindeutige Ausschlüsse führen zu den vorgesehenen Ergebnissen. Der Chat kann auch einen leeren Ergebnissatz verständlich anzeigen.
 - Die ausgegebenen Konditionen der Treffer stimmen mit dem Demo-Katalog überein. Nach „Antrag vorbereiten“ nennt der Chat das gewählte Programm, zeigt die belegten Voraussetzungen, Unterlagen und Fristen und nennt mindestens einen nächsten Schritt. Fehlende Angaben und die verfügbare Quelle sind erkennbar.
 - Bei einem Programmwechsel beziehen sich die neue Checkliste und weitere Chatantworten auf die neue Auswahl.
-- Der Kernablauf lässt sich lokal mit vorbereitetem Katalog und bei KI-Ausfall über den Formularmodus vorführen.
+- Der Kernablauf lässt sich lokal mit vorbereitetem Katalog und bei KI-Ausfall über die direkte Eingabe in der Eckdaten-Ansicht vorführen.
 - Für die Website-Übergabe wird auf einer WordPress-Testseite geprüft, dass der Button den Förderfinder direkt öffnet, die App zur VHS-Gestaltung passt und der Rücklink funktioniert. Die Prüfung umfasst Desktop und Handy.
 
 ## Aufteilung im Dreierteam

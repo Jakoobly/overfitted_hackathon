@@ -10,7 +10,7 @@ Klickbarer Frontend-Entwurf in reinem HTML, CSS und JavaScript, ohne Build und o
 
 | Datei | Zweck |
 | --- | --- |
-| `index.html` | Seitenaufbau: Chat oder Formular, erkannte Eckdaten, Ergebniskarten |
+| `index.html` | Seitenaufbau: Chat, erkannte Eckdaten, Ergebniskarten |
 | `styles.css` | Gestaltung nach DVV-Styleguide als CSS-Variablen: vhs Blau `#00285A` mit fünf Abstufungen, sieben Sekundärfarben A/B mit Themenfeldern, Arial, Kreiselement in 15-%-Schritten. Die Trefferstatus vermeiden Rot-Grün-Kombinationen. Layout und Komponenten folgen `mockups/Jakob`. |
 | `vhs-logo.png` | Positives vhs-Logo, übernommen aus `mockups/Jakob` |
 | `app.js` | Simulierte KI-Extraktion über Schlüsselwörter, Rückfragen, Förderprüfung und Darstellung |
@@ -22,7 +22,7 @@ Klickbarer Frontend-Entwurf in reinem HTML, CSS und JavaScript, ohne Build und o
 2. „März 2027“ wählen. ESF Plus BW wird „Ähnlich“ und schlägt einen Start im September 2027 vor.
 3. Die Anpassung übernehmen. Das Programm wird „Passend nach Datenlage“.
 4. Unter „Bearbeiten“ als Standort Bayern setzen. Die Landesprogramme aus Baden-Württemberg scheiden aus.
-5. Der Formularmodus oben rechts zeigt den Ersatzweg für einen KI-Ausfall.
+5. Ersatzweg bei KI-Ausfall: Ohne Chat unter „Erkannte Eckdaten“ auf „Bearbeiten“ klicken, die Angaben eintragen und die Suche starten.
 
 ## Grenzen
 
