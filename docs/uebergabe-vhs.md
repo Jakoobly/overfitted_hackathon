@@ -1,16 +1,16 @@
 # Übergabe an die VHS
 
-## Lokale UI-Vorschau
+## Förderfinder lokal starten
 
-Im Repo-Ordner `npm ci` und `npm run dev` ausführen. Unter `http://localhost:3000` lässt sich die Oberfläche ohne Langdock-Schlüssel prüfen. „Beispiel laden“ zeigt einen vorbereiteten Dialog und zwei fiktive Förderprogramme. Freie Texteingaben erscheinen im aktuellen Chatverlauf. Live-Antworten und die echte Katalogsuche stehen für diese Vorschau noch aus.
+Im Repo-Ordner `npm ci` ausführen, den Langdock-Zugang in `.env.local` einrichten und mit `npm run dev` starten. Unter `http://localhost:3000` eine Projektidee eingeben oder „Beispiel laden“ wählen. Beides startet eine Suche im importierten Förderkatalog. „Antrag vorbereiten“ fügt die Checkliste für das ausgewählte Programm zum Chat hinzu. Für den Funktionstest „Welche Unterlagen brauchen wir?“ eingeben und prüfen, ob sich die Antwort auf das ausgewählte Programm bezieht. Falls mehrere Treffer vorliegen, ein anderes Programm wählen und die Frage wiederholen.
 
 ## Langdock-Zugang
 
 **Der Demo-Schlüssel ist nur für den Hackathon am 19. November 2026 vorgesehen. Er läuft am 20. November 2026 ab.** Für weitere Tests und den Betrieb stellt die zuständige Person im VHS-Langdock-Workspace einen neuen Workspace-Schlüssel mit Berechtigung für die Completion API bereit.
 
-Am 19. November 2026 hat der Langdock-EU-Endpunkt mit `gpt-5.1` auf eine fiktive Testnachricht mit `Langdock OK` geantwortet. Damit sind Schlüssel, Endpunkt und Modellzugriff für den Demo-Schlüssel geprüft. Ebenfalls am 19. November 2026 lieferte `POST /api/chat` lokal mit `gpt-5.1` die strukturierte Ausgabe für Projektprofil und Treffer. Geprüft: Eine freie Projektbeschreibung einer VHS in Heilbronn führte zu Treffern und einer gezielten Rückfrage. Nach „Antrag vorbereiten“ kam die Checkliste, und die Frage nach den Unterlagen wurde aus dem Katalogeintrag beantwortet. Weil der Katalog noch keine Unterlagen enthält, verweist der Chat dafür an die Förderstelle. Schnittstelle und Beispiele: [docs/api-chat.md](api-chat.md). Der Ablauf über die Oberfläche steht noch zur Abnahme aus.
+Am 19. November 2026 wurde `gpt-5.1` mit dem Demo-Schlüssel geprüft. Im lokalen Browser-Test führten eine freie Projektbeschreibung und „Beispiel laden“ zu Katalogtreffern und einer gezielten Rückfrage. Nach „Antrag vorbereiten“ erschienen Checklisten im Chat. Die freie Unterlagenfrage bezog sich vor und nach dem Programmwechsel auf den jeweils ausgewählten Treffer. Bei fehlenden Katalogangaben verwies der Chat an die Förderstelle oder die Programmwebsite. [API-Vertrag und Beispiele](api-chat.md)
 
-Treffer und Checkliste erzeugt das Sprachmodell aus dem Katalog. Ohne erreichbaren KI-Zugang zeigt der Förderfinder deshalb keine Treffer (siehe [Entscheidungen](decisions.md)).
+Treffer und Checkliste erzeugt das Sprachmodell aus dem Katalog. Ohne erreichbaren KI-Zugang zeigt der Förderfinder deshalb keine Treffer. Im Browser-Test wertete das Modell bei der ESF-Fachkursförderung „erwerbsfähig“ einmal als erfüllt, obwohl die Projekteingabe nur „Erwachsene“ nannte. Die Fördervoraussetzungen sind fachlich zu bestätigen. [Technische Entscheidung](decisions.md)
 
 ### Schlüssel ersetzen
 

@@ -23,7 +23,7 @@ The starter uses Next.js App Router, React and TypeScript. The OpenAI SDK and Zo
 
 ```text
 src/app/                   Next.js pages and layout
-src/app/api/chat/          Location for the chat route
+src/app/api/chat/          Chat route
 src/components/            Chat and funding result UI
 src/lib/funding/           Funding types and matching logic
 src/lib/server/            Server-side OpenAI and catalogue access
@@ -44,9 +44,9 @@ npm ci
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the starter page. On Windows PowerShell, use `npm.cmd` if script execution is restricted.
+Open [http://localhost:3000](http://localhost:3000) for the Förderfinder. On Windows PowerShell, use `npm.cmd` if script execution is restricted.
 
-For chat development, copy `.env.example` to `.env.local`. Set `LANGDOCK_API_KEY` to a VHS Langdock workspace key with Completion API access and `LANGDOCK_MODEL` to an available model ID. The template uses Langdock Cloud's EU base URL. For a dedicated Langdock deployment, set `LANGDOCK_BASE_URL` to the corresponding OpenAI-compatible endpoint root. Keep the key on the server and out of Git. The starter page runs without a key. [Langdock Responses API](https://docs.langdock.com/en/developer/completion-api/openai-responses)
+For chat and funding results, copy `.env.example` to `.env.local`. Set `LANGDOCK_API_KEY` to a VHS Langdock workspace key with Completion API access and `LANGDOCK_MODEL` to an available model ID. The template uses Langdock Cloud's EU base URL. For a dedicated Langdock deployment, set `LANGDOCK_BASE_URL` to the corresponding OpenAI-compatible endpoint root. Keep the key on the server and out of Git. Restart the dev server after changing these values. [VHS handoff](docs/uebergabe-vhs.md)
 
 Run `npm run lint` and `npm run typecheck` before committing. Use `npm run build` to check the production build and `npm start` to serve it locally.
 
