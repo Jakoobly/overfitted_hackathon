@@ -125,7 +125,7 @@ a { color: var(--navy); }
   border-top: 1px solid var(--line);
 }
 
-.composer textarea { flex: 1; min-width: 0; padding: .65rem .75rem; border: 1px solid #a8b8ca; border-radius: .4rem; resize: vertical; }
+.composer textarea { flex: 1; min-width: 0; padding: .65rem .75rem; border: 1px solid #a8b8ca; border-radius: .4rem; resize: none; }
 .composer textarea:focus { border-color: #595959; outline: none; }
 .composer textarea::placeholder { color: var(--muted); }
 .send-button {
