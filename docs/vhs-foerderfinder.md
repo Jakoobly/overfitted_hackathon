@@ -47,7 +47,7 @@ Leere oder mehrdeutige Angaben bleiben unbekannt. Der Import unterscheidet ausdr
 | Excel | **SheetJS CE** in einem lokalen Node-Skript. Die Laufzeit verwendet den validierten JSON-Katalog. [Installation](https://docs.sheetjs.com/docs/getting-started/installation/nodejs/) · [Excel-Daten lesen](https://docs.sheetjs.com/docs/solutions/output/) |
 | KI | **OpenAI Responses API mit Structured Outputs** für die Felder des Projektprofils. Modell und Schlüssel werden serverseitig konfiguriert. Für die Demo verwenden wir fiktive Projekteingaben. [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses) |
 | Förderprüfung | **TypeScript-Funktionen über JSON**. Für den vorbereiteten Katalog genügen einfache Regeln und sortierbare Themenmerkmale. |
-| Demo und Einbindung | **Vercel als Hosting-Option** mit eigener URL und serverseitigen Umgebungsvariablen. Lokal läuft die Demo ebenfalls. Für die VHS-Website ist ein Link der kleinste Integrationsschritt. Ein `iframe` kann ergänzt werden, wenn Ziel-CMS und Hosting die Einbettung erlauben. [Deployment](https://nextjs.org/docs/app/getting-started/deploying) · [Umgebungsvariablen](https://vercel.com/docs/environment-variables) |
+| Demo und Einbindung | **Vercel als Hosting-Option** mit eigener URL und serverseitigen Umgebungsvariablen. Lokal läuft die Demo ebenfalls. Die VHS kann die gehostete App von ihrer WordPress-Seite aus verlinken oder einbetten. [Deployment](https://nextjs.org/docs/app/getting-started/deploying) · [Umgebungsvariablen](https://vercel.com/docs/environment-variables) |
 
 **Schnittstelle für den ersten Durchlauf.** `POST /api/chat` erhält die neue Nachricht und das bisher vom Nutzer bestätigte Projektprofil. Die Route liefert das aktualisierte Profil, gegebenenfalls eine Rückfrage und eine Trefferliste. Jeder Treffer hat eine Programm-ID, einen Status, Gründe, offene Bedingungen sowie gegebenenfalls eine Projektanpassung und nächste Schritte. Der Browser hält den Sitzungsstand für die laufende Suche.
 
@@ -70,17 +70,25 @@ Fiktives Szenario für die Vorbereitung. Eine kleine VHS in Baden-Württemberg p
 
 Vor dem ersten parallelen Arbeitsblock stimmen die drei Rollen Projektprofil, Trefferstatus und API-Antwort ab. [Hackathon-Zeitplan](hackathon-zeitplan.md)
 
+## Einbindung in vhs-bw.de
+
+Die Website `vhs-bw.de` läuft laut Projektabstimmung auf WordPress/PHP. Der Förderfinder wird als eigenständige Next.js-App über HTTPS bereitgestellt. Oberfläche, API und KI-Aufrufe laufen auf dem Hosting der App.
+
+- **Für die Demo** verlinkt ein WordPress-Button „Förderfinder starten“ auf die App-URL.
+- **Für einen Chat direkt auf der VHS-Seite** fügt die VHS ein `iframe` in einen WordPress-Block vom Typ „Individuelles HTML“ ein. Das zuständige Konto braucht die Berechtigung, diesen HTML-Code zu speichern. [WordPress-Dokumentation zum HTML-Block](https://wordpress.org/documentation/article/custom-html/)
+- **Für die Freigabe** erlaubt die App der tatsächlich verwendeten VHS-Domain die Einbettung über `Content-Security-Policy: frame-ancestors`. Eine vorhandene `frame-src`-Regel der VHS-Seite muss die App-Domain zulassen. Die Einstellungen und die Darstellung auf dem Handy prüft das Team auf einer WordPress-Testseite. Diese Prüfung steht noch aus. [MDN zu `frame-ancestors`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors) · [MDN zu `frame-src`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-src)
+
 ## Übergabe an die VHS
 
 Zum Abschluss liefert das Team `docs/uebergabe-vhs.md` als Betriebs- und Einbindungsanleitung. Das Dokument enthält die tatsächlich geprüften Schritte und Zuständigkeiten für:
 
 - Lokalen Start und Bereitstellung mit Voraussetzungen, Befehlen, Konfigurationsnamen und einem kurzen Funktionstest.
 - Aktualisierung des Excel-Katalogs mit Tabellenblatt, Spaltenzuordnung, Beispieldatensatz, Importbefehl und Umgang mit Fehlern.
-- Website-Einbindung über einen Link und, sofern erprobt, ein `iframe`-Beispiel mit Voraussetzungen für das Ziel-CMS und Angaben zur mobilen Darstellung.
+- Website-Einbindung in WordPress mit App-URL, Anleitung zum Verlinken und, sofern erprobt, einem `iframe`-Beispiel mit nötigen Berechtigungen, Domain-Freigaben und geprüftem Verhalten auf Mobilgeräten.
 - Betrieb mit Ansprechperson für Datenpflege, Hosting und KI-Zugang. Dazu gehören der Umgang mit Chat-Eingaben, die Prüfung durch die VHS vor einer Veröffentlichung mit realen Daten und der Ablauf bei KI-Ausfall.
 
 ## Beim Praxispartner klären
 
 - Welche Excel-Spalten sind verlässlich gepflegt, welche Bedingungen stehen nur im Freitext, und welche Beispieldaten dürfen für Demo oder Repository verwendet werden?
 - Welche zwei Vorhaben und Programme eignen sich zur fachlichen Abnahme, und welche Unterschiede zwischen VHS ändern dabei tatsächlich die Förderprüfung?
-- Wer pflegt nach der Übergabe die Förderliste, und welches CMS sowie welche Einbindung sind bei der VHS vorgesehen?
+- Wer pflegt nach der Übergabe die Förderliste, und soll der Förderfinder auf der WordPress-Seite verlinkt werden oder direkt darin erscheinen?
