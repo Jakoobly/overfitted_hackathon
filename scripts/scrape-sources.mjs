@@ -5,6 +5,7 @@
 //   npm run scrape                     alle Programmseiten abrufen
 //   npm run scrape -- --extract        geänderte Programmseiten zusätzlich mit Langdock auswerten
 //   npm run scrape -- --only idee-bw   nur ein Programm (mehrfach angeben möglich)
+//   npm run scrape -- --extract --reextract   gespeicherten Text erneut auswerten (z. B. nach neuer Anweisung)
 //   npm run scrape -- --report         letzten Stand aus der Datenbank anzeigen, nichts abrufen
 //
 // Regeln: robots.txt wird vor jedem Lauf gelesen (RFC 9309). Gesperrte Seiten werden übersprungen,
@@ -36,6 +37,7 @@ const args = process.argv.slice(2);
 const opt = {
   extract: args.includes('--extract'),
   report: args.includes('--report'),
+  reextract: args.includes('--reextract'),
   only: args.flatMap((a, i) => (a === '--only' && args[i + 1] ? [args[i + 1]] : [])),
 };
 
@@ -280,8 +282,10 @@ const EXTRACT_SCHEMA = {
 const INSTRUCTIONS = `Du liest die offizielle Seite eines Förderprogramms für Volkshochschulen.
 Gib nur Angaben zurück, die eindeutig im Seitentext stehen. Erfinde nichts und leite nichts ab.
 Für jede Angabe zitierst du in "beleg" den Satz wörtlich aus dem Text. Steht etwas nicht im Text, setze null bzw. eine leere Liste.
-frist.status: "datum" bei einem konkreten Einreichungsdatum, "laufend" bei laufender Einreichung, "kein_aufruf" wenn ausdrücklich kein Aufruf offen ist, sonst "unbekannt".
-foerderbetrag: Betrag pro Projekt bzw. Antrag, nicht das Gesamtbudget des Programms.`;
+frist.status: "datum" nur bei einem konkreten Einreichungsdatum mit Tag, Monat und Jahr. Ungefähre Angaben wie „voraussichtlich März 2027“ ergeben "unbekannt" (Beleg trotzdem zitieren). "laufend" nur, wenn ausdrücklich eine laufende bzw. jederzeit mögliche Einreichung genannt ist. "kein_aufruf", wenn ausdrücklich kein Aufruf offen ist.
+aufruf.offen: true nur, wenn am heutigen Datum eine Einreichung möglich ist. Ein Aufruf mit abgelaufener Frist ist nicht offen, auch wenn die Seite noch „Jetzt bewerben“ zeigt.
+foerderbetrag: Betrag, den die antragstellende Einrichtung pro Projekt bzw. Antrag erhält. Nicht das Gesamtbudget des Programms und keine Prämien oder Leistungen für Teilnehmende.
+unterlagen: nur Dokumente, die für den Antrag einzureichen oder auszufüllen sind, bzw. die Antragsgrundlagen (Förderbekanntmachung, Leitfaden, Formular). Keine Flyer, Plakate oder Kursmaterialien.`;
 
 let langdock;
 async function getLangdock() {
@@ -291,6 +295,9 @@ async function getLangdock() {
   return (langdock = new OpenAI({ apiKey: process.env.LANGDOCK_API_KEY, baseURL: process.env.LANGDOCK_BASE_URL || 'https://api.langdock.com/openai/eu/v1', timeout: 60_000, maxRetries: 1 }));
 }
 
+const lastText = db.prepare(`SELECT id, text FROM abrufe WHERE quelle_id = ? AND text IS NOT NULL ORDER BY id DESC LIMIT 1`);
+const hasExtraction = db.prepare(`SELECT 1 FROM extraktionen WHERE abruf_id = ?`);
+const discardOpen = db.prepare(`UPDATE extraktionen SET status = 'verworfen' WHERE status = 'neu' AND abruf_id IN (SELECT id FROM abrufe WHERE quelle_id = ?)`);
 const insertExtraction = db.prepare(`INSERT INTO extraktionen (abruf_id, programm_id, zeitpunkt, modell, daten, belege_geprueft) VALUES (?, ?, ?, ?, ?, ?)`);
 const squash = (s) => s.replace(/\s+/g, ' ').toLowerCase();
 
@@ -298,12 +305,18 @@ async function extract(source, abrufId, text) {
   const client = await getLangdock();
   if (!client || !text) return null;
   const model = process.env.LANGDOCK_MODEL || 'gpt-5.1';
+  const today = new Date().toISOString().slice(0, 10);
   const res = await client.responses.create({
-    model, store: false, instructions: INSTRUCTIONS,
+    model, store: false, instructions: `${INSTRUCTIONS}\nHeutiges Datum: ${today}.`,
     input: [{ role: 'user', content: `Programm: ${source.programmId}\nURL: ${source.url}\n\nSeitentext:\n${text.slice(0, EXTRACT_CHARS)}` }],
     text: { format: { type: 'json_schema', name: 'programmangaben', strict: true, schema: EXTRACT_SCHEMA } },
   });
   const daten = JSON.parse(res.output_text);
+  // Regeln unabhängig vom Modell durchsetzen
+  if (daten.frist.status === 'datum' && !/^\d{4}-\d{2}-\d{2}$/.test(daten.frist.datum ?? '')) daten.frist.status = 'unbekannt';
+  if (daten.frist.status !== 'datum') daten.frist.datum = null;
+  if (daten.frist.status === 'datum' && daten.frist.datum < today) daten.aufruf.offen = false; // Frist abgelaufen
+  if (daten.frist.status === 'kein_aufruf') daten.aufruf.offen = false;
   // Belege gegen den Seitentext prüfen: nur wörtlich gefundene Zitate gelten als belegt
   const belege = [daten.frist.beleg, daten.aufruf.beleg, daten.foerderbetrag.beleg, daten.unterlagen.beleg].filter(Boolean);
   const geprueft = belege.every((b) => squash(text).includes(squash(b))) ? 1 : 0;
@@ -343,9 +356,18 @@ await Promise.all([...byOrigin].map(async ([origin, list]) => {
     if (i > 0) await sleep(delay * 1000);
     const r = await fetchSource(s);
     let extra = robots.hinweis ?? '';
-    if (opt.extract && s.typ === 'programmseite' && (r.ergebnis === 'neu' || r.ergebnis === 'geaendert')) {
+    // Auswerten: neue oder geänderte Seiten sowie unveränderte Seiten, deren letzter Text noch
+    // keine Extraktion hat (z. B. erster Lauf mit --extract)
+    let target = r.ergebnis === 'neu' || r.ergebnis === 'geaendert' ? { abrufId: r.abrufId, text: r.text } : null;
+    if (opt.extract && !target && r.ergebnis === 'unveraendert') {
+      const last = lastText.get(s.id);
+      if (last && (opt.reextract || !hasExtraction.get(last.id))) target = { abrufId: last.id, text: last.text };
+    }
+    // Bei --reextract ersetzt die neue Extraktion ungeprüfte ältere Vorschläge zu derselben Seite
+    if (opt.extract && opt.reextract && target) discardOpen.run(s.id);
+    if (opt.extract && s.typ === 'programmseite' && target?.text) {
       try {
-        const e = await extract(s, r.abrufId, r.text);
+        const e = await extract(s, target.abrufId, target.text);
         if (e) extra = `Frist: ${e.daten.frist.status}${e.daten.frist.datum ? ' ' + e.daten.frist.datum : ''}, Belege ${e.geprueft ? 'ok' : 'prüfen'}`;
       } catch (err) {
         extra = `Extraktion fehlgeschlagen: ${String(err.message).slice(0, 120)}`;
