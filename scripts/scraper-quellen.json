@@ -1,0 +1,26 @@
+{
+  "hinweis": "Ersetzt für den Scraper die Programmseite aus dem Katalog, wenn diese keine verwertbaren Angaben liefert. Der Katalog (Daten der Praxispartner) bleibt unverändert. Pro Programm sind mehrere URLs möglich.",
+  "quellen": {
+    "wegweiserkurse-wwk": {
+      "urls": [
+        "https://www.bamf.de/DE/Themen/Integration/TraegerLehrFachkraefte/TraegerProjektfoerderung/Wegweiserkurse/Ueberblick/ueberblick-node.html",
+        "https://www.bamf.de/DE/Themen/Integration/TraegerLehrFachkraefte/TraegerProjektfoerderung/Wegweiserkurse/VorOrt/vor-ort-node.html"
+      ],
+      "grund": "Katalog-Link ist eine Navigationsseite mit rund 550 Zeichen. Überblick und „Vor Ort“ (Förderung über AMIF, Zentralstelle vhs-Verband BW) sind die Unterseiten mit Inhalt."
+    },
+    "talentcampus-ein-ferienbildungsprogramm-fuer-die-kulturelle-bildung": {
+      "urls": [
+        "https://www.volkshochschule.de/projekte/talentcampus/index.php",
+        "https://www.volkshochschule.de/medien/downloads/unsere-projekte/talentcampus/materialbox-talentcampus/Anlage-A-Foerderbekanntmachung_tC_III_Dez25.pdf"
+      ],
+      "grund": "Katalog-Link ist nur das PDF der Förderbekanntmachung (Text wird nicht ausgewertet). Die Projektseite des DVV liefert Text, das PDF wird weiter über die Prüfsumme überwacht."
+    },
+    "gemeinsam-engagiert-in-bw-v": {
+      "urls": [
+        "https://sozialministerium.baden-wuerttemberg.de/fileadmin/redaktion/m-sm/intern/downloads/Foerderaufrufe/260730__F%C3%B6rderaufruf_GeiBW_V.pdf",
+        "https://sozialministerium.baden-wuerttemberg.de/de/service/foerderaufrufe"
+      ],
+      "grund": "Katalog-Link ist die allgemeine Übersicht der Förderaufrufe, in der das Programm nach Fristende nicht mehr steht. Der Förderaufruf V (PDF, 30.07.2026) ist die eigentliche Quelle. Die Übersicht bleibt, um einen Aufruf VI zu bemerken."
+    }
+  }
+}

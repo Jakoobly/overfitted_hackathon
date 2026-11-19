@@ -13,7 +13,8 @@
     "test": "node --test",
     "typecheck": "next typegen && tsc --noEmit",
     "import:catalog": "node scripts/import-catalog.mjs",
-    "smoke:chat": "node scripts/smoke-chat.mjs"
+    "smoke:chat": "node scripts/smoke-chat.mjs",
+    "scrape": "node scripts/scrape-sources.mjs"
   },
   "dependencies": {
     "next": "^16.4.6",
