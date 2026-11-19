@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import {
   matchStatusLabel,
   type ChatError,
@@ -121,6 +121,12 @@ export function FundingWorkspace() {
     if (sent) setDraft("");
   }
 
+  function handleComposerKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
+    event.preventDefault();
+    if (!event.repeat && !pending && draft.trim()) event.currentTarget.form?.requestSubmit();
+  }
+
   function selectProgramme(match: Match) {
     if (selectedProgramme?.id === match.programmeId) {
       input.current?.focus();
@@ -162,6 +168,7 @@ export function FundingWorkspace() {
               id="project-message"
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={handleComposerKeyDown}
               rows={2}
               maxLength={4000}
               placeholder={selectedProgramme ? "Zum ausgewählten Förderprogramm fragen …" : "Beschreiben Sie Ihre Projektidee …"}
