@@ -93,3 +93,27 @@ export type ChatResponse = {
 };
 
 export type ChatError = { error: string };
+
+/** Katalogeintrag für die Anzeige ohne KI-Bewertung. */
+export type CatalogEntry = {
+  id: string;
+  titel: string;
+  foerdergeber: string | null;
+  ebene: string | null;
+  foerdergebiet: string | null;
+  fachbereiche: string[];
+  kurzbeschreibung: string | null;
+  frist: { status: string; datum: string | null };
+  url: string | null;
+};
+
+/**
+ * Antwort mit HTTP 503, wenn die KI-Anbindung gestört ist.
+ * `reply` als Chatnachricht anzeigen und `catalog` statt der Treffer listen.
+ */
+export type ChatUnavailable = ChatError & {
+  code: "KI_NICHT_ERREICHBAR";
+  reply: string;
+  profile: Profile;
+  catalog: CatalogEntry[];
+};

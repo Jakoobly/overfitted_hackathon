@@ -93,5 +93,32 @@ Antwort `{ "error": "<kurze Meldung auf Deutsch>" }`, direkt anzeigbar.
 | --- | --- |
 | 400 | Ungültiges JSON oder Anfrage passt nicht zum Vertrag |
 | 404 | `programmeId` nicht im Katalog |
-| 500 | `LANGDOCK_API_KEY` fehlt auf dem Server |
-| 502 | Langdock nicht erreichbar oder ungültige Modellausgabe |
+| 503 | KI-Anbindung gestört, siehe unten |
+
+## KI nicht erreichbar (503)
+
+Fehlt der Schlüssel, ist Langdock nicht erreichbar, läuft der Aufruf in eine Zeitüberschreitung (45 s) oder ist die Modellausgabe ungültig, antwortet die Route für beide Aktionen mit `503` und `Retry-After: 60`. Typ: `ChatUnavailable`.
+
+```json
+{
+  "error": "Die KI-Anbindung ist gerade gestört.",
+  "code": "KI_NICHT_ERREICHBAR",
+  "reply": "Es gibt aktuell ein Problem mit der Anbindung an unseren KI-Dienst (Fehler 503 – Dienst nicht verfügbar). Ich kann Ihre Nachricht deshalb gerade nicht auswerten. Daneben sehen Sie alle 24 Förderprogramme aus unserem Katalog. Bitte versuchen Sie es in ein paar Minuten noch einmal.",
+  "profile": { "…": "unverändert aus der Anfrage" },
+  "catalog": [
+    {
+      "id": "esf-fachkursfoerderung-baden-wuerttemberg",
+      "titel": "ESF-Fachkursförderung Baden-Württemberg",
+      "foerdergeber": "…",
+      "ebene": "Europa",
+      "foerdergebiet": "Baden-Württemberg",
+      "fachbereiche": ["Arbeit – Beruf"],
+      "kurzbeschreibung": "…",
+      "frist": { "status": "unbekannt", "datum": null },
+      "url": "https://www.esf-bw.de/…"
+    }
+  ]
+}
+```
+
+Oberfläche: Bei `code === "KI_NICHT_ERREICHBAR"` `reply` als Chatnachricht anzeigen und `catalog` statt der Trefferkarten listen, ohne Status-Badge, weil nichts bewertet wurde. Die Nachricht der VHS bleibt im Verlauf, damit sie sie später erneut senden kann.

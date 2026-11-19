@@ -1,12 +1,37 @@
 import { NextResponse } from "next/server";
-import { chatRequestSchema, type ChatError, type ChatResponse } from "@/lib/chat/contract";
+import {
+  chatRequestSchema,
+  type ChatError,
+  type ChatResponse,
+  type ChatUnavailable,
+  type Profile,
+} from "@/lib/chat/contract";
+import { catalogEntries } from "@/lib/server/catalog";
 import { handleMessage, handleSelectProgramme, UnknownProgrammeError } from "@/lib/server/chat";
-import { LangdockConfigError } from "@/lib/server/langdock";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const fail = (status: number, error: string) => NextResponse.json<ChatError>({ error }, { status });
+
+/** 503 Service Unavailable: KI gestört, Katalog trotzdem anzeigen. */
+function aiUnavailable(profile: Profile) {
+  const catalog = catalogEntries();
+  return NextResponse.json<ChatUnavailable>(
+    {
+      error: "Die KI-Anbindung ist gerade gestört.",
+      code: "KI_NICHT_ERREICHBAR",
+      reply:
+        "Es gibt aktuell ein Problem mit der Anbindung an unseren KI-Dienst (Fehler 503 – Dienst nicht verfügbar). " +
+        "Ich kann Ihre Nachricht deshalb gerade nicht auswerten. " +
+        `Daneben sehen Sie alle ${catalog.length} Förderprogramme aus unserem Katalog. ` +
+        "Bitte versuchen Sie es in ein paar Minuten noch einmal.",
+      profile,
+      catalog,
+    },
+    { status: 503, headers: { "Retry-After": "60" } },
+  );
+}
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -28,11 +53,8 @@ export async function POST(request: Request) {
     return NextResponse.json<ChatResponse>(result);
   } catch (error) {
     if (error instanceof UnknownProgrammeError) return fail(404, "Dieses Förderprogramm ist nicht im Katalog.");
-    if (error instanceof LangdockConfigError) {
-      console.error(error.message);
-      return fail(500, "Der KI-Zugang ist auf dem Server nicht eingerichtet.");
-    }
-    console.error("chat route failed", error);
-    return fail(502, "Der Förderfinder ist gerade nicht erreichbar. Bitte versuchen Sie es gleich noch einmal.");
+    // Fehlender Schlüssel, Netzwerk, Zeitüberschreitung, Langdock-Fehler oder ungültige Modellausgabe
+    console.error("chat route: KI nicht erreichbar", error);
+    return aiUnavailable(req.profile);
   }
 }

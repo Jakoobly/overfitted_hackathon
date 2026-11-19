@@ -9,7 +9,12 @@ let client: OpenAI | undefined;
 function getClient(): OpenAI {
   const apiKey = process.env.LANGDOCK_API_KEY;
   if (!apiKey) throw new LangdockConfigError("LANGDOCK_API_KEY fehlt in .env.local");
-  client ??= new OpenAI({ apiKey, baseURL: process.env.LANGDOCK_BASE_URL || DEFAULT_BASE_URL });
+  client ??= new OpenAI({
+    apiKey,
+    baseURL: process.env.LANGDOCK_BASE_URL || DEFAULT_BASE_URL,
+    timeout: 45_000,
+    maxRetries: 1,
+  });
   return client;
 }
 
