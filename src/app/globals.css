@@ -104,7 +104,8 @@ a { color: var(--navy); }
   align-content: start;
   gap: .8rem;
   min-height: 20rem;
-  max-height: clamp(37rem, 75svh, 45rem);
+  /* Ganzes Chatfenster samt Überschrift, Schnellantworten und Eingabe soll auf den Bildschirm passen (ca. 18.5rem für die übrigen Teile). */
+  max-height: clamp(16rem, calc(100svh - 18.5rem), 45rem);
   overflow: auto;
   padding: 1.25rem;
 }
