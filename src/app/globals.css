@@ -126,7 +126,10 @@ a { color: var(--navy); }
 }
 
 .composer textarea { flex: 1; min-width: 0; padding: .65rem .75rem; border: 1px solid #a8b8ca; border-radius: .4rem; resize: none; }
-.composer textarea:focus { border-color: #595959; outline: none; }
+/* Eingabefelder: statt des blauen Fokusrings wird der vorhandene Rahmen dunkler und etwas dicker. */
+.composer textarea:focus,
+.project-details-grid input:focus,
+.project-details-grid select:focus { border-color: var(--ink); outline: none; box-shadow: 0 0 0 1px var(--ink); }
 .composer textarea::placeholder { color: var(--muted); }
 .send-button {
   min-height: 46px;
