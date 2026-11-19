@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Förderfinder für Volkshochschulen · Designentwurf</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="demo.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#beratung">Zum Förderfinder</a>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <div class="brand">
+        <!-- Positive logo from the DVV style guide in docs, p. 3. -->
+        <img src="vhs-logo.png" alt="vhs" width="105" height="37">
+        <span>Volkshochschulverband<br>Baden-Württemberg</span>
+      </div>
+      <a class="site-link" href="https://www.vhs-bw.de/">Zur Verbandswebsite <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Service für Volkshochschulen</p>
+          <h1 id="page-title">Förderfinder</h1>
+          <p>Beschreiben Sie Ihr Vorhaben und finden Sie passende Förderprogramme für Ihre Volkshochschule.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <div class="wrap">
+        <div class="demo-bar">
+          <p><span class="demo-dot" aria-hidden="true"></span> Designentwurf mit Beispieldaten</p>
+          <button class="text-button" id="show-help" type="button">So funktioniert’s <span aria-hidden="true">↗</span></button>
+        </div>
+
+        <div class="columns">
+          <section class="panel chat" id="beratung" aria-labelledby="chat-title">
+            <header class="panel-heading">
+              <div>
+                <h2 id="chat-title">Ihr Projekt</h2>
+                <p>Beschreiben Sie Ihre Idee im Chat.</p>
+              </div>
+              <button class="text-button example-button" type="button" id="load-example">Beispiel laden</button>
+            </header>
+            <div class="conversation" id="conversation" role="log" aria-label="Chatverlauf" aria-live="polite">
+              <div class="message message-user">
+                <p class="speaker">Sie</p>
+                <p class="bubble">Unsere kleine VHS in Baden-Württemberg plant einen Kurs zur digitalen Grundbildung für Erwachsene. Wir möchten im September 2027 starten und haben rund 8.000&nbsp;€ Budget.</p>
+              </div>
+              <div class="message message-assistant">
+                <span class="avatar" aria-hidden="true">vhs</span>
+                <div>
+                  <p class="speaker">Förderfinder</p>
+                  <p class="bubble">Ich habe ein passendes Beispielprogramm gefunden. Ein weiteres kommt infrage, wenn der Kurs erst im November starten kann. Lässt sich der Start verschieben?</p>
+                </div>
+              </div>
+            </div>
+            <form class="composer" id="composer">
+              <div class="quick-actions" id="quick-actions" aria-label="Beispielantworten">
+                <button class="chip" type="button" data-start="november">November ist möglich</button>
+                <button class="chip" type="button" data-start="september">September bleibt</button>
+              </div>
+              <label class="visually-hidden" for="message">Ihre Nachricht</label>
+              <div class="input-row">
+                <textarea id="message" name="message" rows="2" maxlength="600" placeholder="Ihre Nachricht …" required></textarea>
+                <button class="send" type="submit">Senden <span aria-hidden="true">↑</span></button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel matches" aria-labelledby="matches-title">
+            <header class="panel-heading">
+              <div>
+                <h2 id="matches-title">Förderprogramme</h2>
+                <p id="match-count" aria-live="polite">2 Treffer für Ihr Beispielprojekt</p>
+              </div>
+            </header>
+            <div class="match-content" id="match-content">
+              <ul class="profile" aria-label="Projektprofil">
+                <li>Kleine VHS</li><li>Baden-Württemberg</li><li id="start-date">Start September 2027</li>
+              </ul>
+              <article class="program program-fit" aria-labelledby="program-one">
+                <p class="status status-fit"><span aria-hidden="true">✓</span> Passend nach Datenlage</p>
+                <h3 id="program-one">Digital im Alltag</h3>
+                <p>Unterstützt Kurse zur digitalen Grundbildung für Erwachsene.</p>
+                <details>
+                  <summary>Voraussetzungen und nächste Schritte</summary>
+                  <p>Das Beispielprogramm richtet sich an VHS in Baden-Württemberg. Für die Antragsvorbereitung wären eine Kursbeschreibung und ein Kostenplan nötig.</p>
+                </details>
+              </article>
+              <article class="program program-near" id="program-two-card" aria-labelledby="program-two">
+                <p class="status status-near" id="second-status"><span aria-hidden="true">↔</span> Ähnlich</p>
+                <h3 id="program-two">Lernorte digital</h3>
+                <p id="second-reason"><strong>Mögliche Anpassung</strong> · Kursstart auf November 2027 verschieben.</p>
+                <details>
+                  <summary>Voraussetzungen und nächste Schritte</summary>
+                  <p>Das Beispielprogramm setzt einen Kursbeginn ab November 2027 voraus. Wenn der Termin machbar ist, wären der Zeitplan und eine kurze Zielgruppenbeschreibung vorzubereiten.</p>
+                </details>
+              </article>
+            </div>
+            <p class="empty" id="empty-matches" hidden>Laden Sie das Beispielprojekt, um die Trefferansicht zu erkunden.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="wrap footer">
+    <p>Hackathon-Entwurf · Jakob</p>
+    <p>Die gezeigten Förderprogramme sind fiktiv.</p>
+  </footer>
+
+  <dialog id="help-dialog" aria-labelledby="help-title">
+    <h2 id="help-title">So funktioniert der Förderfinder</h2>
+    <ol>
+      <li>Beschreiben Sie Ihre Projektidee sowie Standort, Zielgruppe, Budget und geplanten Start.</li>
+      <li>Beantworten Sie bei Bedarf eine Rückfrage und vergleichen Sie die Förderprogramme.</li>
+      <li>Öffnen Sie die Voraussetzungen und nächsten Schritte eines Programms.</li>
+    </ol>
+    <p>Dieser Entwurf zeigt den Ablauf mit einem vorbereiteten Beispiel.</p>
+    <form method="dialog"><button class="send" type="submit">Schließen</button></form>
+  </dialog>
+</body>
+</html>
