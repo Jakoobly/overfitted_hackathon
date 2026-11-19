@@ -50,6 +50,8 @@ For chat development, copy `.env.example` to `.env.local` and set `OPENAI_API_KE
 
 Run `npm run lint` and `npm run typecheck` before committing. Use `npm run build` to check the production build and `npm start` to serve it locally.
 
+Run `npm test` for the two core demo flows. They exercise funding matching (clarification, project adjustment, region exclusion) and programme-specific chat answers (document requirements after selecting and switching programmes). GitHub Actions runs these tests and the Next.js build on pushes and pull requests to `main`. The tests run against the current local mockups and use their simulated chat responses.
+
 ## Collaboration
 
 1. Agree on a small task, create an issue, and assign one owner.
