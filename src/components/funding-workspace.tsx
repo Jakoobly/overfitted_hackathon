@@ -280,7 +280,7 @@ export function FundingWorkspace() {
               <h3 id="project-details-title">Projekteckdaten</h3>
               {!editingProfile && (
                 <button
-                  className="programme-action"
+                  className="edit-button"
                   type="button"
                   ref={editProfileButton}
                   disabled={pending}

@@ -232,3 +232,22 @@ a { color: var(--navy); }
 .application-progress { display: flex; flex-wrap: wrap; gap: .2rem 1rem; color: var(--navy); font-size: .875rem; font-weight: 600; }
 .link-button { padding: 0; border: 0; background: none; color: var(--navy); font: inherit; font-weight: 400; text-decoration: underline; cursor: pointer; }
 .link-button:disabled { color: var(--muted); cursor: default; }
+
+/* Projekteckdaten: kurze Angaben nebeneinander, Bearbeiten als kleiner Button */
+dl.project-details-grid { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+.edit-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 36px;
+  padding: .3rem .8rem;
+  border: 1px solid #a8b8ca;
+  border-radius: .4rem;
+  color: var(--navy);
+  background: white;
+  font-size: .875rem;
+  font-weight: 700;
+}
+.edit-button::before { content: "✎"; font-size: 1rem; line-height: 1; }
+.edit-button:hover:not(:disabled) { border-color: var(--navy); background: #e3f1fb; }
+.edit-button:disabled { color: var(--muted); opacity: .7; }
