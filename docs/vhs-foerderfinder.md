@@ -10,7 +10,7 @@ Die Anwendung berücksichtigt Unterschiede zwischen VHS über konkrete Eckdaten 
 
 ## Ablauf im MVP
 
-1. **Förderfinder starten und Projekt beschreiben.** Der Button „Förderfinder starten“ auf `vhs-bw.de` führt direkt zur deutschsprachigen Web-App. Dort gibt die VHS ihr Vorhaben im Chat ein, etwa mit Zielgruppe, Standort, Budget und geplantem Start.
+1. **Förderfinder starten und Projekt beschreiben.** Für den späteren Betrieb führt der Button „Förderfinder starten“ im internen Bereich von `vhs-bw.de` zur geschützten Web-App. Dort gibt die VHS ihr Vorhaben im Chat ein, etwa mit Zielgruppe, Standort, Budget und geplantem Start.
 2. **Eckdaten klären.** Der Chat zeigt die erkannten Angaben zur Kontrolle. Fehlt eine Angabe, die das Ergebnis beeinflusst, stellt er eine gezielte Rückfrage. Die VHS kann Angaben in der Eckdaten-Ansicht korrigieren oder ergänzen und die Suche erneut ausführen.
 3. **Förderprogramme vergleichen.** Die App zeigt bis zu drei Ergebnisse mit Titel, Fördergeber, Begründung, offenen oder abweichenden Bedingungen, Frist und Quelle, soweit im Katalog vorhanden.
 4. **Projektanpassung prüfen.** Bei einem ähnlichen Programm zeigt die App, welche planbare Änderung helfen könnte, etwa einen späteren Projektbeginn. Die VHS entscheidet, ob sie die Änderung übernimmt. Danach kann sie das Projekt erneut prüfen.
@@ -66,7 +66,7 @@ Fiktives Szenario für die Vorbereitung. Eine kleine VHS in Baden-Württemberg p
 - Die ausgegebenen Konditionen der Treffer stimmen mit dem Demo-Katalog überein. Nach „Antrag vorbereiten“ nennt der Chat das gewählte Programm, zeigt die belegten Voraussetzungen, Unterlagen und Fristen und nennt mindestens einen nächsten Schritt. Fehlende Angaben und die verfügbare Quelle sind erkennbar.
 - Bei einem Programmwechsel beziehen sich die neue Checkliste und weitere Chatantworten auf die neue Auswahl.
 - Der Kernablauf lässt sich lokal mit vorbereitetem Katalog und bei KI-Ausfall über die direkte Eingabe in der Eckdaten-Ansicht vorführen.
-- Für die Website-Übergabe wird auf einer WordPress-Testseite geprüft, dass der Button den Förderfinder direkt öffnet, die App zur VHS-Gestaltung passt und der Rücklink funktioniert. Die Prüfung umfasst Desktop und Handy.
+- Für die Website-Übergabe wird auf einer internen WordPress-Testseite geprüft, dass der Button die App für berechtigte VHS-Nutzende öffnet, die App zur VHS-Gestaltung passt und der Rücklink funktioniert. Die Prüfung umfasst Desktop und Handy sowie die Fälle unter [Anmeldung für den internen Betrieb](#anmeldung-für-den-internen-betrieb).
 
 ## Aufteilung im Dreierteam
 
@@ -82,9 +82,17 @@ Vor dem ersten parallelen Arbeitsblock stimmen die drei Rollen Projektprofil, Tr
 
 Die Website `vhs-bw.de` läuft laut Projektabstimmung auf WordPress/PHP. Der Förderfinder wird als eigenständige Next.js-App über HTTPS bereitgestellt. Oberfläche, API und KI-Aufrufe laufen auf dem Hosting der App.
 
-- **Standard für Demo und späteren Betrieb.** Die VHS-Redaktion setzt „Förderfinder starten“ als verlinkten Button im bestehenden WordPress-Seiteneditor. Empfohlen ist, direkt zur Chat-Ansicht im selben Tab zu navigieren. Ein normaler HTTPS-Link funktioniert auch in einem anderen WordPress-Seiteneditor als dem Blockeditor. [WordPress-Dokumentation zum Button-Block](https://wordpress.org/documentation/article/buttons-block/)
+- **Einstieg im internen Bereich.** Die VHS-Redaktion setzt „Förderfinder starten“ als Button auf eine Seite, die nur für berechtigte VHS-Nutzende sichtbar ist. Der Button öffnet die App im selben Tab. [WordPress-Dokumentation zum Button-Block](https://wordpress.org/documentation/article/buttons-block/)
 - **Option für die dauerhafte Adresse.** Die VHS kann eine eigene Subdomain wie `foerderfinder.vhs-bw.de` mit dem App-Hosting verbinden. Dafür braucht die zuständige IT Zugriff auf die DNS-Verwaltung und richtet die HTTPS-Adresse beim Hosting ein. Die Subdomain ist ein Vorschlag und noch nicht eingerichtet.
 - **Option für einen Chat innerhalb der WordPress-Seite.** Bei Bedarf kann die VHS die App per `iframe` in einem HTML-Block einbinden. Dafür braucht die Redaktion die passende Berechtigung. Die App muss die WordPress-Domain über `Content-Security-Policy: frame-ancestors` erlauben und eine vorhandene `frame-src`-Regel auf der WordPress-Seite muss die App-Domain zulassen. Bei Wahl dieser Option sind Einbettung und mobile Darstellung separat zu testen. [WordPress-Dokumentation zum HTML-Block](https://wordpress.org/documentation/article/custom-html/) · [MDN zu `frame-ancestors`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors) · [MDN zu `frame-src`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-src)
+
+### Anmeldung für den internen Betrieb
+
+**Plan vom 24. November 2026.** Die Anbindung an das VHS-Login steht zur Umsetzung und Abnahme aus. Das Anmeldesystem und die berechtigte Nutzergruppe sind mit der VHS-IT zu bestätigen.
+
+1. **VHS-Login anbinden.** Wenn der interne Bereich einen zentralen Anmeldedienst nutzt, registriert die VHS-IT den Förderfinder dort als Anwendung, hinterlegt die HTTPS-Rücksprungadresse der App und weist die vereinbarte Nutzergruppe zu. Mit Single Sign-on (SSO), etwa über OpenID Connect, kann der Anmeldedienst eine bestehende Sitzung wiederverwenden. Falls der interne Bereich nur WordPress-Konten nutzt, klärt die VHS-IT, wie diese Konten über eine unterstützte Integration für den Förderfinder geprüft werden können. [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)
+2. **Oberfläche und Chat-API schützen.** Der Server prüft bei der App und bei `POST /api/chat` die gültige Sitzung und die Zugriffsberechtigung. Beim Aufruf der App ohne Sitzung führt der Weg über das VHS-Login. Ein angemeldetes Konto aus der freigegebenen Gruppe kann die App auch über einen direkten Link öffnen. Die Chat-API antwortet ohne gültige Sitzung mit `401` und bei fehlender Berechtigung mit `403`. Langdock wird erst nach erfolgreicher Prüfung aufgerufen. Dieselben Regeln gelten für die vom Hosting erzeugten Adressen. [Next.js-Dokumentation zur Zugriffskontrolle](https://nextjs.org/docs/app/guides/authentication#route-handlers)
+3. **Vor der Freigabe prüfen.** Berechtigte Personen öffnen die App über den Button und senden eine Chatnachricht. Im privaten Browserfenster führt ein weitergeleiteter Link zur Anmeldung, ebenso ein Aufruf mit abgelaufener Sitzung. Ein angemeldetes Konto außerhalb der freigegebenen Gruppe erhält eine Meldung über den verweigerten Zugriff. Bei abgewiesenen API-Aufrufen die Statuscodes `401` oder `403` und das Ausbleiben eines Langdock-Aufrufs prüfen. Den Zugriff über die Standardadresse des Hostings und etwaige Vorschau-Adressen ebenfalls prüfen.
 
 ## Übergabe an die VHS
 
@@ -92,11 +100,12 @@ Zum Abschluss liefert das Team die [Übergabe an die VHS](uebergabe-vhs.md) als 
 
 - Lokalen Start und Bereitstellung mit Voraussetzungen, Befehlen, Konfigurationsnamen und einem kurzen Funktionstest von der Projektidee über die Programmauswahl bis zur Antragscheckliste im Chat.
 - Aktualisierung des Excel-Katalogs mit Tabellenblatt, Spaltenzuordnung, Beispieldatensatz, Importbefehl und Umgang mit Fehlern.
-- Website-Einbindung mit finaler App-URL, WordPress-Seite und Position des Buttons, Button-Text und Schritten zum Einfügen oder Ändern des Links. Die Übergabe dokumentiert den Rücklink zur Verbandswebsite, die zuständigen Ansprechpersonen und den Funktionstest auf Desktop und Handy. Eine gewählte Subdomain oder Einbettung wird mit den tatsächlich verwendeten Einstellungen dokumentiert.
+- Website-Einbindung mit finaler App-URL, interner WordPress-Seite, Button und Rücklink. Die Übergabe dokumentiert den verwendeten Anmeldedienst, die berechtigte Nutzergruppe, die Zuständigkeiten und die Ergebnisse der Zugriffsprüfung.
 - Betrieb mit Ansprechperson für Datenpflege, Hosting und KI-Zugang. Dazu gehören der Umgang mit Chat-Eingaben, die Prüfung durch die VHS vor einer Veröffentlichung mit realen Daten und der Ablauf bei KI-Ausfall.
 
 ## Beim Praxispartner klären
 
 - Welche Excel-Spalten sind verlässlich gepflegt, welche Bedingungen stehen nur im Freitext, und welche Beispieldaten dürfen für Demo oder Repository verwendet werden?
 - Welche zwei Vorhaben und Programme eignen sich zur fachlichen Abnahme, und welche Unterschiede zwischen VHS ändern dabei tatsächlich die Förderprüfung?
-- Wer pflegt nach der Übergabe die Förderliste? Wo auf `vhs-bw.de` soll der Button stehen, wer pflegt den Link und welche App-URL soll die VHS dauerhaft verwenden?
+- Wer pflegt nach der Übergabe die Förderliste? Auf welche interne Seite gehört der Button, wer pflegt ihn und welche App-URL soll die VHS dauerhaft verwenden?
+- Welches Anmeldesystem nutzt der interne Bereich, welche VHS-Konten sollen Zugriff haben und wer betreut die App-Anbindung?

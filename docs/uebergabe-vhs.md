@@ -102,13 +102,15 @@ console.log("Langdock OK");
 
 ## Bereitstellung und Einbindung in vhs-bw.de
 
-**Stand 19. November 2026: Die App läuft nur lokal. Es gibt noch keine öffentliche App-URL und keinen Button auf vhs-bw.de.** Die Oberfläche ist an die Gestaltung von vhs-bw.de angelehnt (Navy, Gelb, Arial) und im Browser auf Desktop und Handybreite geprüft.
+**Geprüfter Stand vom 19. November 2026.** Die an vhs-bw.de angelehnte Oberfläche wurde lokal auf Desktop und Handybreite geprüft. Die Bereitstellung auf dem Hosting, die Verlinkung im internen VHS-Bereich und die Anbindung an das VHS-Login stehen aus.
 
 Für eine Bereitstellung (z. B. Vercel) als Next.js-App: `npm run build` muss durchlaufen (läuft in der CI), serverseitig `LANGDOCK_API_KEY`, `LANGDOCK_BASE_URL` und `LANGDOCK_MODEL` setzen, optional `CHAT_ALLOWED_ORIGINS` und `FOERDER_DB_FILE` (alle Namen in `.env.example`). Zur Scraper-Datenbank auf dem Hosting siehe oben.
 
-Empfohlene Einbindung: Die Redaktion setzt auf der gewünschten WordPress-Seite einen Button „Förderfinder starten“, der im selben Tab auf die App-URL verlinkt. Die Kopfzeile der App verlinkt mit „Zur Verbandswebsite“ zurück auf vhs-bw.de. Offen und mit der VHS zu klären: finale App-URL (ggf. Subdomain wie `foerderfinder.vhs-bw.de`), Seite und Position des Buttons, wer den Link pflegt.
+### Geplanter Zugang für VHS-interne Nutzende
 
-Eine Einbettung per `iframe` ist nicht vorbereitet. Dafür müsste die App einen `Content-Security-Policy: frame-ancestors`-Header für vhs-bw.de senden (derzeit nicht gesetzt), und `https://www.vhs-bw.de` gehört in `CHAT_ALLOWED_ORIGINS`. Details zu den Optionen: [Spezifikation](vhs-foerderfinder.md#einbindung-in-vhs-bwde).
+- **VHS-IT.** Hosting und HTTPS-Adresse festlegen, optional eine Subdomain wie `foerderfinder.vhs-bw.de` einrichten und das bestehende Anmeldesystem sowie die berechtigte Nutzergruppe bestätigen. Für Single Sign-on (SSO) die App und ihre Rücksprungadresse beim Anmeldedienst registrieren. Zugangsdaten des Anmeldedienstes in der serverseitigen Konfiguration des Hostings hinterlegen.
+- **App-Betrieb.** VHS-Anmeldung und Berechtigung für die Oberfläche und `POST /api/chat` einrichten. Der Schutz gilt auch bei direktem Aufruf und auf Standard- und Vorschau-Adressen des Hostings. Vor der Freigabe den Aufruf samt Chat mit berechtigtem Konto, einen direkten Aufruf ohne Anmeldung und einen Zugriff mit angemeldetem Konto ohne Freigabe prüfen. Verantwortliche Person, konkrete Konfigurationsnamen für das gewählte Login und Prüfergebnisse nachtragen. [Ablauf und Abnahme in der Spezifikation](vhs-foerderfinder.md#anmeldung-für-den-internen-betrieb)
+- **VHS-Redaktion.** Nach der Zugriffsprüfung im internen WordPress-Bereich den Button „Förderfinder starten“ mit der finalen App-URL veröffentlichen. Seite und Position des Buttons sowie die Person für die Linkpflege mit der VHS klären. Die App verlinkt in der Kopfzeile zurück auf vhs-bw.de.
 
 ## Zuständigkeiten im Hackathon-Team
 
